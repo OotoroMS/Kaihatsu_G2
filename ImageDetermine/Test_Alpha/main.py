@@ -15,6 +15,11 @@ SIZE_IMG = [640, 480] # 全体で使用する画像サイズ
 Some things to do:
 '''
 
+# 適切な範囲に切り取る
+def cut_image():
+    # 画像を切り取る処理
+    print("cut_image")
+
 # PLCからの信号を受け取る
 def get_signal():
     # PLCからの信号を受け取る処理
@@ -30,6 +35,7 @@ def main():
         ### 画像処理開始 ###
         # カメラ画像を取得
         # 適切な範囲に切り取る
+        cut_image()  # 画像を切り取る処理
         # 画像をSIZE_IMGにリサイズ
 
         # ディープラーニング
