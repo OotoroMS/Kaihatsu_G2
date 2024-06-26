@@ -6,7 +6,7 @@
 # モジュールのインポート
 import Dtrmn_DL # ディープラーニング
 import Dtrmn_ED # エッジ検出
-import Dtrmn_PM # パターンマッチング
+import Dtrmn_TM # テンプレートマッチング
 
 # 変数設定
 SIZE_IMG = [640, 480] # 全体で使用する画像サイズ
