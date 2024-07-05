@@ -1,57 +1,74 @@
-### ���C���v���O���� ###
-# DL, ED, PM�̎O�𑖂点�A���ꂼ��̌��ʂ����Ƃɔ��ʂ��s��
+### メインプログラム ###
+# DL, ED, PMの三つを走らせ、それぞれの結果をもとに判別を行う
 
-# ���C�u�����̃C���|�[�g
+# ライブラリのインポート
+import cv2 # OpenCV
 
-# ���W���[���̃C���|�[�g
-import Dtrmn_DL # �f�B�[�v���[�j���O
-import Dtrmn_ED # �G�b�W���o
-import Dtrmn_TM # �e���v���[�g�}�b�`���O
+# モジュールのインポート
+import Dtrmn_DL # ディープラーニング
+import Dtrmn_ED # エッジ検出
+import Dtrmn_TM # テンプレートマッチング
 
-# �ϐ��ݒ�
-SIZE_IMG = [640, 480] # �S�̂Ŏg�p����摜�T�C�Y
+# 変数設定
+SIZE_IMG = [640, 480] # 全体で使用する画像サイズ？
 
-'''
-Some things to do:
-'''
+# 関数の設定
 
-# �K�؂Ȕ͈͂ɐ؂���
+# 適切な範囲に切り取る
 def cut_image():
-    # �摜��؂��鏈��
+    # 画像を切り取る処理
     print("cut_image")
 
-# PLC����̐M�����󂯎��
+# PLCからの信号を受け取る
 def get_signal():
-    # PLC����̐M�����󂯎�鏈��
+    # PLCからの信号を受け取る処理
     print("get_signal")
+    return True
 
-# �d�ݕt�����[
+# 重み付き投票
 def weighted_vote():
-    # �d�ݕt�����[�̏���
+    # 重み付き投票の処理
     print("weighted_vote")
 
-# ���C������
+# メイン処理
 def main():
-        ### �摜�����J�n ###
-        # �J�����摜���擾
-        # �K�؂Ȕ͈͂ɐ؂���
-        cut_image()  # �摜��؂��鏈��
-        # �摜��SIZE_IMG�Ƀ��T�C�Y
+        ### 画像処理開始 ###
+        ## 画像取得
+        # カメラを取得
+        cap = cv2.VideoCapture(0)
+        # カメラ画像を取得
+        ret, current_image = cap.read()
+        ## テストで表示
+        cv2.imshow("current_image", current_image)
+        cv2.waitKey(0)
+        # 適切な範囲に切り取る
+        tmp_img = cut_image(current_image)  # 画像を切り取る処理
 
-        # �f�B�[�v���[�j���O
+
+        ## 画像処理
+        #結果リストの初期化
+        results = [] # 結果リストの長さは3
         
-        # �G�b�W���o
+        # ディープラーニング
+        dl = Dtrmn_DL.DeepLearning() #クラスをインスタンス化
+        results[0] = dl.determine(tmp_img) # ディープラーニングで判別
+        
+        # エッジ検出
+        ed = Dtrmn_ED.EdgeDetection() #クラスをインスタンス化
+        results[1] = ed.determine(tmp_img) # エッジ検出で判別
 
-        # �p�^�[���}�b�`���O
+        # テンプレートマッチング
+        tm = Dtrmn_TM.TemplateMatching() #クラスをインスタンス化
+        results[2] = tm.determine(tmp_img) # テンプレートマッチングで判別
 
-        # ����
-        #���ꂼ��̌��ʂ���A�d�ݕt�����[���s���A����
+        ## 判別
+        #それぞれの結果から、重み付き投票を行い、判別
         weighted_vote()
 
 
 if __name__ == "__main__":
     while True:
-        if get_signal(): # �J�������V�����摜���擾������A��������PLC����M����������摜����
-            main()  # ���C������
+        if get_signal(): # カメラが新しく画像を取得したら、もしくはPLCから信号が来たら画像処理
+            main()  # メイン処理
         else:
-            pass    # �������Ȃ�
+            pass    # 何もしない
