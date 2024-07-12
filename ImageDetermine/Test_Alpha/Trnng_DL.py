@@ -1,1 +1,4 @@
-### ディープラーニングの学習を行うプログラム ###
+from ultralytics import YOLO
+
+model = YOLO('yolov8n.yaml')  # 縺ｾ縺溘�ｯ莠句燕蟄ｦ鄙呈ｸ医∩繝｢繝�繝ｫ 'yolov8n.pt'
+results = model.train(data='ImageDetermine/Test_Alpha/data.yaml', epochs=50, imgsz=640)
