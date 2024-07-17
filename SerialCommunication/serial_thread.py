@@ -135,9 +135,9 @@ if __name__ == "__main__":
                 print(f"data1 : {data1}")  # データを表示
                 data1 = ""
             # data2 = serial_conn2.get_receive_word()  # 二番目の受信データを取得
-            if data2:  # データがある場合
-                print(f"data2 : {data2}")  # データを表示
-                data2 = ""
+            # if data2:  # データがある場合
+            #     print(f"data2 : {data2}")  # データを表示
+            #     data2 = ""
 
     except KeyboardInterrupt:  # キーボード割り込み（Ctrl+C）をキャッチ
         print("プログラムが中断されました.")  # 中断メッセージを表示
