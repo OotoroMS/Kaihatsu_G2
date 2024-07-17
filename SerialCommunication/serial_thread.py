@@ -71,7 +71,7 @@ class SerialConnection:
         try:
             while not self.shutdown_flag:  # 終了フラグが設定されるまでループ
                 if self.is_open:  # シリアルポートが開かれている場合
-                    data = self.serial.read(255).strip()  # データを受信する
+                    data = self.serial.readline().strip()  # データを受信する
                     if data:  # データがある場合                        
                         print(f"受信したデータ ({self.serial.name}): {data}")  # 受信データを表示
                         self.receive_word = data  # 受信データを保存
