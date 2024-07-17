@@ -4,7 +4,7 @@ import time  # 時間モジュールのインポート
 
 # シリアルポートの設定
 PORT1 = "COM4"  # 最初のシリアルポート
-PORT2 = "COM5"  # 二番目のシリアルポート
+# PORT2 = "COM5"  # 二番目のシリアルポート
 BAUD_RATE = 9600  # ボーレート 9600
 TIMEOUT = 1  # タイムアウト時間
 
@@ -101,40 +101,40 @@ if __name__ == "__main__":
     try:        
         # シリアルポートに接続してスレッドを開始
         serial_conn1 = SerialConnection(PORT1, BAUD_RATE, TIMEOUT)  # 最初のシリアル接続オブジェクトを作成
-        serial_conn2 = SerialConnection(PORT2, BAUD_RATE, TIMEOUT)  # 二番目のシリアル接続オブジェクトを作成
+        # serial_conn2 = SerialConnection(PORT2, BAUD_RATE, TIMEOUT)  # 二番目のシリアル接続オブジェクトを作成
 
         serial_conn1.connect()  # 最初のシリアルポートに接続
-        serial_conn2.connect()  # 二番目のシリアルポートに接続
+        # serial_conn2.connect()  # 二番目のシリアルポートに接続
 
         input_thread = threading.Thread(target=input_thread)  # コマンド入力スレッドを作成
         input_thread.start()  # コマンド入力スレッドを開始
 
-        if serial_conn1.is_open and serial_conn2.is_open:  # 両方のシリアルポートが開かれている場合
+        if serial_conn1.is_open:  # 両方のシリアルポートが開かれている場合
             receive_thread1 = threading.Thread(target=serial_conn1.receive_data)  # 最初の受信スレッドを作成
             receive_thread1.start()  # 最初の受信スレッドを開始
 
-            receive_thread2 = threading.Thread(target=serial_conn2.receive_data)  # 二番目の受信スレッドを作成
-            receive_thread2.start()  # 二番目の受信スレッドを開始
+            # receive_thread2 = threading.Thread(target=serial_conn2.receive_data)  # 二番目の受信スレッドを作成
+            # receive_thread2.start()  # 二番目の受信スレッドを開始
 
             send_thread1 = threading.Thread(target=serial_conn1.send_data)  # 最初の送信スレッドを作成
-            send_thread2 = threading.Thread(target=serial_conn2.send_data)  # 二番目の送信スレッドを作成
+            # send_thread2 = threading.Thread(target=serial_conn2.send_data)  # 二番目の送信スレッドを作成
         
             send_thread1.start()  # 最初の送信スレッドを開始
-            send_thread2.start()  # 二番目の送信スレッドを開始
+            # send_thread2.start()  # 二番目の送信スレッドを開始
 
         while True:  # メインループ
             if command == "exit":  # コマンドがexitの場合
                 break  # ループを抜ける
             elif command:  # コマンドがある場合
                 serial_conn1.set_send_word(command)  # 最初のシリアルポートにコマンドを設定
-                serial_conn2.set_send_word(command)  # 二番目のシリアルポートにコマンドを設定
+                # serial_conn2.set_send_word(command)  # 二番目のシリアルポートにコマンドを設定
                 command = None  # コマンドをクリア
 
             data1 = serial_conn1.get_receive_word()  # 最初の受信データを取得
             if data1:  # データがある場合
                 print(f"data1 : {data1}")  # データを表示
                 data1 = ""
-            data2 = serial_conn2.get_receive_word()  # 二番目の受信データを取得
+            # data2 = serial_conn2.get_receive_word()  # 二番目の受信データを取得
             if data2:  # データがある場合
                 print(f"data2 : {data2}")  # データを表示
                 data2 = ""
@@ -143,17 +143,17 @@ if __name__ == "__main__":
         print("プログラムが中断されました.")  # 中断メッセージを表示
     finally:
         serial_conn1.shutdown_flag = True  # 最初のシリアル接続の終了フラグを設定
-        serial_conn2.shutdown_flag = True  # 二番目のシリアル接続の終了フラグを設定
+        # serial_conn2.shutdown_flag = True  # 二番目のシリアル接続の終了フラグを設定
 
         command_flag = True  # コマンドスレッドの終了フラグを設定
 
-        while receive_thread1.join() and receive_thread2.join():  # 受信スレッドの終了を待機
-            pass
-        print("受信スレッド終了")  # 受信スレッドの終了を表示
+        # while receive_thread1.join() and receive_thread2.join():  # 受信スレッドの終了を待機
+        #     pass
+        # print("受信スレッド終了")  # 受信スレッドの終了を表示
 
-        while send_thread1.join() and send_thread2.join():  # 送信スレッドの終了を待機
-            pass
-        print("送信スレッド終了")  # 送信スレッドの終了を表示
+        # while send_thread1.join() and send_thread2.join():  # 送信スレッドの終了を待機
+        #     pass
+        # print("送信スレッド終了")  # 送信スレッドの終了を表示
 
         print("何かしら入力してください")  # 入力待機メッセージを表示
         input_thread.join()  # コマンドスレッドの終了を待機
@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
         if serial_conn1.is_open:  # 最初のシリアルポートが開かれている場合
             serial_conn1.close()  # 最初のシリアルポートをクローズ
-        if serial_conn2.is_open:  # 二番目のシリアルポートが開かれている場合
-            serial_conn2.close()  # 二番目のシリアルポートをクローズ
+        # if serial_conn2.is_open:  # 二番目のシリアルポートが開かれている場合
+        #     serial_conn2.close()  # 二番目のシリアルポートをクローズ
 
         print("プログラムを終了します.")  # プログラム終了メッセージを表示
