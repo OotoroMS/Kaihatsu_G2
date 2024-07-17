@@ -1,6 +1,6 @@
-from serial_thread_2 import SerialConnection
+from SerialCommunication.serial_thread import SerialConnection
 import threading
-import meas_test
+import serial_digital_indicator
 import time
 
 # シリアル通信用定数
@@ -69,7 +69,7 @@ if __name__ == '__main__':
             data = serial_conn.get_receive_word()
             # 受信データ有
             if data:
-                meas_val = meas_test.chenge_byte_float(data)
+                meas_val = serial_digital_indicator.chenge_byte_float(data)
                 print("受信データ:", data, "測定値:", meas_val)
 
 
