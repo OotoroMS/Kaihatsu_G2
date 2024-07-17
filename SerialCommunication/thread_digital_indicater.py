@@ -1,11 +1,11 @@
-from SerialCommunication.serial_thread import SerialConnection
+from serial_thread import SerialConnection
 import threading
 import serial_digital_indicator
 import time
 
 # シリアル通信用定数
 PORT1 = "COM6"      # ポート番号
-PORT2 = ""
+PORT2 = "COM7"
 BAUD_RATE1 = 2400   # ボーレート 2400 インジケータ用
 BAUD_RATE2 = 9600   # ボーレート 9600 PLC用 
 TIMEOUT = 0.1       # タイムアウト時間
