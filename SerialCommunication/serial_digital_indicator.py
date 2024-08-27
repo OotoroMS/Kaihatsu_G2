@@ -20,7 +20,7 @@ NG         = False
 DATA_SND_MSG = 's'  #   取得命令
 
 #   シリアルポート
-COM = "COM8"
+COM = "COM3"
 
 #   シリアル通信プログラム(引数:通信先、送信データ 戻り値:測定値)
 def get_data(ser : serial, snd_msg : str) -> bytes:
