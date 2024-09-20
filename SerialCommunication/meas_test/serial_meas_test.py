@@ -4,11 +4,11 @@ import sys
 
 import Measurement as Meas
 
-COM = "COM3"
+COM = "COM4"
 
 #   シリアル通信プログラム(引数:通信先、送信データ 戻り値:測定値)
 def get_data(ser : serial, snd_msg : str) -> bytes:
-    print("serial test start!!")
+    #print("serial test start!!")
     try:
         ser.write(snd_msg.encode())     #   データ取得命令を送信
         rcv_msg = ser.read(13)          #   データを取得
@@ -32,6 +32,7 @@ def main():
             keyboard_input = input()
             if keyboard_input == "g":
                 data_rcv_msg = get_data(ser, "s")
+                #qprint(data_rcv_msg)
                 meas_val = meas.chenge_byte_float(data_rcv_msg)
                 meas_result = meas.judgment_size(meas_val)
                 if meas_result:
@@ -45,3 +46,6 @@ def main():
         print("main erorr:", e)
     finally:
         ser.close()
+
+if __name__ == "__main__":
+    main()
