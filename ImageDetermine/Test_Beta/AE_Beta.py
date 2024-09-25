@@ -18,7 +18,10 @@ class InferenceModel:
         return image_array
     
     def infer(self, image_path):
+<<<<<<< HEAD
         # 推論方法あってる？
+=======
+>>>>>>> 103242bb15ee9c58a0b37feed246b56949178c58
         """Perform inference on the input image."""
         image = self.preprocess_image(image_path)
         start_time = time.time()
