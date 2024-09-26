@@ -1,57 +1,94 @@
-### ƒƒCƒ“ƒvƒƒOƒ‰ƒ€ ###
-# DL, ED, PM‚ÌO‚Â‚ğ‘–‚ç‚¹A‚»‚ê‚¼‚ê‚ÌŒ‹‰Ê‚ğ‚à‚Æ‚É”»•Ê‚ğs‚¤
+import cv2
+import os
+from Dtrmn_DL import is_scratch_image
 
-# ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒ|[ƒg
+def cut_image(img, x, y, w, h):
+    height, width = img.shape[:2]
+    x = max(0, min(x, width))
+    y = max(0, min(y, height))
+    w = min(w, width - x)
+    h = min(h, height - y)
+    return img[y:y+h, x:x+w]
 
-# ƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒ|[ƒg
-import Dtrmn_DL # ƒfƒB[ƒvƒ‰[ƒjƒ“ƒO
-import Dtrmn_ED # ƒGƒbƒWŒŸo
-import Dtrmn_PM # ƒpƒ^[ƒ“ƒ}ƒbƒ`ƒ“ƒO
-
-# •Ï”İ’è
-SIZE_IMG = [640, 480] # ‘S‘Ì‚Åg—p‚·‚é‰æ‘œƒTƒCƒY
-
-'''
-Some things to do:
-'''
-
-# “KØ‚È”ÍˆÍ‚ÉØ‚èæ‚é
-def cut_image():
-    # ‰æ‘œ‚ğØ‚èæ‚éˆ—
-    print("cut_image")
-
-# PLC‚©‚ç‚ÌM†‚ğó‚¯æ‚é
-def get_signal():
-    # PLC‚©‚ç‚ÌM†‚ğó‚¯æ‚éˆ—
-    print("get_signal")
-
-# d‚İ•t‚«“Š•[
-def weighted_vote():
-    # d‚İ•t‚«“Š•[‚Ìˆ—
-    print("weighted_vote")
-
-# ƒƒCƒ“ˆ—
+# ãƒ¡ã‚¤ãƒ³å‡¦ç†
 def main():
-        ### ‰æ‘œˆ—ŠJn ###
-        # ƒJƒƒ‰‰æ‘œ‚ğæ“¾
-        # “KØ‚È”ÍˆÍ‚ÉØ‚èæ‚é
-        cut_image()  # ‰æ‘œ‚ğØ‚èæ‚éˆ—
-        # ‰æ‘œ‚ğSIZE_IMG‚ÉƒŠƒTƒCƒY
+    # ã‚¢ãƒ—ãƒ­ãƒ¼ãƒã®é¸æŠ
+    print("Select the approach for inference:")
+    print("2: Resize image to 1296x512")
+    print("3: Split image into 512x512 patches")
+    approach = input("Enter the approach number (2 or 3): ")
 
-        # ƒfƒB[ƒvƒ‰[ƒjƒ“ƒO
+    if approach == '2':
+        model_name = 'autoencoder_model_1296x512.h5'
+    elif approach == '3':
+        model_name = 'autoencoder_model_512x512.h5'
+    else:
+        print("Invalid selection. Exiting.")
+        return
+
+    # ç”»åƒå‡¦ç†é–‹å§‹
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944)
+
+    prev_image = None
+    prev_image_path = 'ImageDetermine/Test_Alpha/prev_image.jpg'
+    if os.path.exists(prev_image_path):
+        prev_image = cv2.imread(prev_image_path)
+
+    while True:
+        ret, current_image = cap.read()
+        if not ret:
+            print("Failed to capture image")
+            break
+
+        height, width = current_image.shape[:2]
+        print(f"Captured image resolution: {width}x{height}")
+
+        # ç”»åƒã®ã‚¯ãƒ­ãƒƒãƒ—
+        x, y, w, h = 0, 625, 2592, 1024
+        tmp_img = cut_image(current_image, x, y, w, h)
+
+        if approach == '2':
+            # ç”»åƒã‚’1/2ã«ãƒªã‚µã‚¤ã‚º (1296x512)
+            resized_img = cv2.resize(tmp_img, (1296, 512))
+
+            # ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã¨ã—ã¦ç”»åƒã‚’ä¿å­˜
+            tmp_img_path = 'tmp_img.jpg'
+            cv2.imwrite(tmp_img_path, resized_img)
+
+            # ç”»åƒã®å‚·ã®åˆ¤åˆ¥ã‚’è¡Œã†
+            is_scratch = is_scratch_image(tmp_img_path, model_name)
         
-        # ƒGƒbƒWŒŸo
+        elif approach == '3':
+            # ç”»åƒã‚’512x512ã®ãƒ‘ãƒƒãƒã«åˆ†å‰²ã—ã¦å‡¦ç†
+            patches = split_image_into_patches(tmp_img, patch_size=(512, 512))
+            is_scratch = any(is_scratch_image(patch, model_name) for patch in patches)
 
-        # ƒpƒ^[ƒ“ƒ}ƒbƒ`ƒ“ƒO
+        print(f'Scratch detected: {is_scratch}')
 
-        # ”»•Ê
-        #‚»‚ê‚¼‚ê‚ÌŒ‹‰Ê‚©‚çAd‚İ•t‚«“Š•[‚ğs‚¢A”»•Ê
-        weighted_vote()
+        # ç”»åƒã‚’ãƒªã‚µã‚¤ã‚ºã—ã¦è¡¨ç¤º
+        display_image = cv2.resize(tmp_img, (int(w/2), int(h/2)))
+        cv2.imshow("Result", display_image)
 
+        prev_image = current_image.copy()
+        cv2.imwrite(prev_image_path, prev_image)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+def split_image_into_patches(image, patch_size=(512, 512)):
+    patches = []
+    img_height, img_width = image.shape[:2]
+    for y in range(0, img_height, patch_size[1]):
+        for x in range(0, img_width, patch_size[0]):
+            patch = image[y:y+patch_size[1], x:x+patch_size[0]]
+            if patch.shape[:2] == patch_size:
+                patches.append(patch)
+    return patches
 
 if __name__ == "__main__":
-    while True:
-        if get_signal(): # ƒJƒƒ‰‚ªV‚µ‚­‰æ‘œ‚ğæ“¾‚µ‚½‚çA‚à‚µ‚­‚ÍPLC‚©‚çM†‚ª—ˆ‚½‚ç‰æ‘œˆ—
-            main()  # ƒƒCƒ“ˆ—
-        else:
-            pass    # ‰½‚à‚µ‚È‚¢
+    main()
