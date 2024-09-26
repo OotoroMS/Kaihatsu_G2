@@ -14,8 +14,7 @@ import DbCommunication as DMC
 class BaseFrame(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('test')
-        # フルスクリーンに設定
+        self.title('test')        
         self.attributes('-fullscreen', True)
         self.db = DMC.DbCommunication()                            
         self.update_vital_id = None  
@@ -29,18 +28,23 @@ class BaseFrame(tk.Tk):
 
     # これを呼んで実行
     def main(self):
+        # BaseFrameのインスタンス化
         app = BaseFrame()
+        # GUIの実行開始
         app.mainloop()       
 
+    # ウィジェットの作成
     def create_widgets(self):
         self.vital_text = tk.StringVar(value="稼働中")
         self.vital_color = tk.StringVar(value="red")
         self.vital_label = tk.Label(self, textvariable=self.vital_text, font=("", 30), relief=tk.SOLID)
 
+    # ウィジェットの配置
     def setup_widgets(self):
         self.vital_label.place(relx=0.81, rely=0.06, relwidth=0.15, relheight=0.1)
         self.vital_label.lift()
 
+    # 各フレームの作成
     def create_frame(self):
         self.main_frm = MainFrame(self, app=self)
         self.mode_frm = ModeFrame(self, app=self)
@@ -57,8 +61,8 @@ class BaseFrame(tk.Tk):
         self.current_frame = self.main_frm
         self.main_frm.pack(fill="both", expand=True)          
 
-    def show_frame(self, frame):
-        # 現在のフレームを非表示
+    # 引数に渡したフレームを表示
+    def show_frame(self, frame):        
         if self.current_frame is not None:
             self.current_frame.pack_forget()
 
@@ -66,14 +70,16 @@ class BaseFrame(tk.Tk):
         frame.pack(fill="both", expand=True)
         self.current_frame = frame
 
+        self.restart_after()
         self.vital_label.lift()
 
-        if isinstance(frame, GraphFrame):
-            self.after(1, frame.start_update_graph)
-        if isinstance(frame, TreeFrame):
-            self.after(1, frame.start_update_tree)
-        if isinstance(frame, VisionFrame):
-            self.after(1, frame.start_image_update)
+    def restart_after(self):
+        if isinstance(self.current_frame, GraphFrame):
+            self.after(1, self.current_frame.start_update_graph)
+        if isinstance(self.current_frame, TreeFrame):
+            self.after(1, self.current_frame.start_update_tree)
+        if isinstance(self.current_frame, VisionFrame):
+            self.after(1, self.current_frame.start_image_update)
 
     def quit_application(self):        
         self.quit()
