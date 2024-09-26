@@ -55,10 +55,10 @@ class PassFrame(tk.Frame):
         else:
              messagebox.showwarning("warning", "パスワードが間違っています。")
 
-    def show_main_frame(self):
-        # メインフレームに戻る処理
+    # メイン画面に移動
+    def show_main_frame(self):        
         self.app.show_frame(self.app.main_frm)
 
+    # 調査・動作確認画面に移動
     def show_ma_frame(self):
-        # メンテナスフレームに戻る処理
         self.app.show_frame(self.app.ma_frm)

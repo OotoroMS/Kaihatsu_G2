@@ -13,36 +13,33 @@ import DbCommunication as DMC
 
 class BaseFrame(tk.Tk):
     def __init__(self):
+        # コンストラクタ: フルスクリーンの初期設定とフレーム作成を行う
         super().__init__()
         self.title('test')        
-        self.attributes('-fullscreen', True)
-        self.db = DMC.DbCommunication()                            
+        self.attributes('-fullscreen', True)  
+        self.db = DMC.DbCommunication()  
         self.update_vital_id = None  
-        self.vital_label = None
-        self.current_frame = None           
+        self.vital_label = None  
+        self.current_frame = None  
 
-        self.create_frame()
-        self.create_widgets()
-        self.setup_widgets()
-        self.change_vital()       
+        self.create_frame()  # 各フレームの作成
+        self.create_widgets()  # ウィジェットの作成
+        self.setup_widgets()  # ウィジェットの配置
+        self.change_vital()  # 稼働状態の自動変更を開始
 
-    # これを呼んで実行
-    def main(self):
-        # BaseFrameのインスタンス化
-        app = BaseFrame()
-        # GUIの実行開始
-        app.mainloop()       
+    # これを実行する
+    def main(self, app):        
+        app.mainloop()  # GUIの実行開始
 
     # ウィジェットの作成
     def create_widgets(self):
-        self.vital_text = tk.StringVar(value="稼働中")
-        self.vital_color = tk.StringVar(value="red")
-        self.vital_label = tk.Label(self, textvariable=self.vital_text, font=("", 30), relief=tk.SOLID)
+        self.vital_text = tk.StringVar(value="稼働中")  
+        self.vital_color = tk.StringVar(value="red")  
+        self.vital_label = tk.Label(self, textvariable=self.vital_text, font=("", 30), relief=tk.SOLID)  
 
     # ウィジェットの配置
     def setup_widgets(self):
-        self.vital_label.place(relx=0.81, rely=0.06, relwidth=0.15, relheight=0.1)
-        self.vital_label.lift()
+        self.vital_label.place(relx=0.81, rely=0.06, relwidth=0.15, relheight=0.1)  
 
     # 各フレームの作成
     def create_frame(self):
@@ -57,22 +54,21 @@ class BaseFrame(tk.Tk):
         self.man_tra_frm = ManTRAFrame(self, app=self)
         self.ta01_frm = TA01Frame(self, app=self)  
 
-        # 初期状態でMainFrameを表示
         self.current_frame = self.main_frm
-        self.main_frm.pack(fill="both", expand=True)          
+        self.main_frm.pack(fill="both", expand=True)  
 
     # 引数に渡したフレームを表示
     def show_frame(self, frame):        
         if self.current_frame is not None:
             self.current_frame.pack_forget()
 
-        # 指定されたフレームを表示
         frame.pack(fill="both", expand=True)
         self.current_frame = frame
 
         self.restart_after()
         self.vital_label.lift()
 
+    # 各フレームの自動更新部分を再稼働
     def restart_after(self):
         if isinstance(self.current_frame, GraphFrame):
             self.after(1, self.current_frame.start_update_graph)
@@ -81,9 +77,11 @@ class BaseFrame(tk.Tk):
         if isinstance(self.current_frame, VisionFrame):
             self.after(1, self.current_frame.start_image_update)
 
+    # GUIの終了
     def quit_application(self):        
         self.quit()
 
+    # 稼働状態ラベルの自動変更(確認用)
     def change_vital(self):
         if self.update_vital_id is not None:
             self.after_cancel(self.update_vital_id)
@@ -95,10 +93,10 @@ class BaseFrame(tk.Tk):
         elif self.vital_text.get() == "停止中":
             self.vital_color.set("yellow green")            
             self.vital_text.set("稼働中")
-        self.vital_label.config(bg =self.vital_color.get())
+        self.vital_label.config(bg=self.vital_color.get())
 
         self.update_vital_id = self.after(5000, self.change_vital)
 
 if __name__ == "__main__":
-    app = BaseFrame()
-    app.mainloop()
+    app = BaseFrame()  # BaseFrameのインスタンスを作成
+    app.main(app)   # main関数を実行 インスタンスを渡す

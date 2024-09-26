@@ -34,7 +34,7 @@ class VisionFrame(tk.Frame):
             self.image_update_id = self.after(5000, self.start_image_update)        
 
     def update_image(self):
-        dir_path = Path("D:/kaihatu/test/UI_Class/img_file")
+        dir_path = Path("C:/Users/is2306/Documents/GitHub/Kaihatsu_G2/User Interface/img_file")
         files = list(dir_path.glob("*.jpg"))
         
         if files:
