@@ -1,14 +1,14 @@
 import tkinter as tk
-from G2_GUI_MainFrame import MainFrame
-from G2_GUI_ModeFrame import ModeFrame
-from G2_GUI_GraphFrame import GraphFrame
-from G2_GUI_TreeFrame import TreeFrame
-from G2_GUI_VisionFrame import VisionFrame
-from G2_GUI_PassFrame import PassFrame
-from G2_GUI_MAFrame import MAFrame
-from G2_GUI_ManTRAFrame import ManTRAFrame
-from G2_GUI_AutoTRAFrame import AutoTRAFrame
-from G2_GUI_TA01Frame import TA01Frame
+from Frames.G2_GUI_MainFrame import MainFrame
+from Frames.G2_GUI_ModeFrame import ModeFrame
+from Frames.G2_GUI_GraphFrame import GraphFrame
+from Frames.G2_GUI_TreeFrame import TreeFrame
+from Frames.G2_GUI_VisionFrame import VisionFrame
+from Frames.G2_GUI_PassFrame import PassFrame
+from Frames.G2_GUI_MAFrame import MAFrame
+from Frames.G2_GUI_ManTRAFrame import ManTRAFrame
+from Frames.G2_GUI_AutoTRAFrame import AutoTRAFrame
+from Frames.G2_GUI_TA01Frame import TA01Frame
 import DbCommunication as DMC
 
 class BaseFrame(tk.Tk):
@@ -25,7 +25,12 @@ class BaseFrame(tk.Tk):
         self.create_frame()
         self.create_widgets()
         self.setup_widgets()
-        self.change_vital()              
+        self.change_vital()       
+
+    # これを呼んで実行
+    def main(self):
+        app = BaseFrame()
+        app.mainloop()       
 
     def create_widgets(self):
         self.vital_text = tk.StringVar(value="稼働中")
@@ -87,10 +92,6 @@ class BaseFrame(tk.Tk):
         self.vital_label.config(bg =self.vital_color.get())
 
         self.update_vital_id = self.after(5000, self.change_vital)
-
-    def main(self):
-        app = BaseFrame()
-        app.mainloop()
 
 if __name__ == "__main__":
     app = BaseFrame()
