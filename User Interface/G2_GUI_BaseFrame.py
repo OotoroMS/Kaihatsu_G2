@@ -88,14 +88,27 @@ class BaseFrame(tk.Tk):
             self.update_vital_id = None
 
         if self.vital_text.get() == "稼働中":
-            self.vital_color.set("yellow")
             self.vital_text.set("停止中")
-        elif self.vital_text.get() == "停止中":
-            self.vital_color.set("yellow green")            
+        elif self.vital_text.get() == "停止中":           
             self.vital_text.set("稼働中")
+
+        self.set_vital_color()
+        self.update_vital_id = self.after(5000, self.change_vital)
+
+    # 引数をvital_labelに表示
+    def set_vital_text(self, text):
+        self.vital_text.set(text)    
+    
+    # vital_textに対応するvital_colorを設定
+    def set_vital_color(self):
+        if self.vital_text.get() == "稼働中":
+            self.vital_color.set("yellow green")
+        elif self.vital_text.get() == "停止中":
+            self.vital_color.set("yellow")
+        else:
+            self.vital_color.set("red")
         self.vital_label.config(bg=self.vital_color.get())
 
-        self.update_vital_id = self.after(5000, self.change_vital)
 
 if __name__ == "__main__":
     app = BaseFrame()  # BaseFrameのインスタンスを作成
