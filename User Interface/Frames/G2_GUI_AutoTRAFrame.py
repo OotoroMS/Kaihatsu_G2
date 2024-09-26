@@ -19,7 +19,6 @@ class AutoTRAFrame(tk.Frame):
         self.buttonM1 = tk.Button(self, text="RUN", font=("", 30))  
         self.buttonM2 = tk.Button(self, text="STOP", font=("", 30))  
         self.buttonR2 = tk.Button(self, text="戻る", font=("", 40), command=self.show_ma_frame)  
-        self.vital = self.app.vital_label  
 
     # ウィジェットの配置
     def setup_widgets(self):        
@@ -30,6 +29,6 @@ class AutoTRAFrame(tk.Frame):
         self.buttonM2.place(relx=0.36, rely=0.8, relwidth=0.1, relheight=0.1)  
         self.buttonR2.place(relx=0.85, rely=0.85, relwidth=0.1, relheight=0.1)  
 
-    # メンテナンスフレームに戻る
+    # MAFrameを表示
     def show_ma_frame(self):        
         self.app.show_frame(self.app.ma_frm)  

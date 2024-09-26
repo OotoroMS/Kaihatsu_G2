@@ -22,7 +22,6 @@ class MAFrame(tk.Frame):
 
     # ウィジェットの配置
     def setup_widgets(self):
-        #   部品配置
         self.text01.place(relx=0.3, rely=0.05, relwidth=0.2, relheight=0.1)
         self.buttonM1.place(relx=0.15, rely=0.25, relwidth=0.3, relheight=0.15)
         self.buttonM2.place(relx=0.15, rely=0.45, relwidth=0.3, relheight=0.15)
@@ -32,18 +31,18 @@ class MAFrame(tk.Frame):
         self.buttonM6.place(relx=0.55, rely=0.65, relwidth=0.3, relheight=0.15)
         self.buttonR1.place(relx=0.85, rely=0.85, relwidth=0.1, relheight=0.1)
 
-    # メインフレームに戻る処理
+    # MainFrameを表示
     def show_main_frame(self):
         self.app.show_frame(self.app.main_frm)
 
-    # 自動トレーニングフレームを表示
+    # AutoTRAFrameを表示
     def show_auto_tra_frame(self):
         self.app.show_frame(self.app.auto_tra_frm)
 
-    # 手動トレーニングフレームを表示
+    # ManTRAFrameを表示
     def show_man_tra_frame(self):
         self.app.show_frame(self.app.man_tra_frm)
     
-    # TA01フレームを表示
+    # TA01Frameを表示
     def show_ta01_frame(self):
         self.app.show_frame(self.app.ta01_frm)

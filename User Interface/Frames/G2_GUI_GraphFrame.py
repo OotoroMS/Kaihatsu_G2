@@ -27,8 +27,7 @@ class GraphFrame(tk.Frame):
     
     # ウィジェットの作成
     def create_widgets(self):
-        self.buttonR1 = tk.Button(self, text="戻る", font=("", 40), command=self.show_mode_frame)
-        self.vital = self.app.vital_label  # Appからvital_labelを取得        
+        self.buttonR1 = tk.Button(self, text="戻る", font=("", 40), command=self.show_mode_frame)       
         
     # ウィジェットの配置
     def setup_widgets(self):
@@ -78,6 +77,6 @@ class GraphFrame(tk.Frame):
         if self.winfo_ismapped():        
            self.graph_update_id = self.after(5000, self.start_update_graph)
     
-    # データ閲覧画面を表示する処理
+    # ModeFrameを表示
     def show_mode_frame(self):
         self.app.show_frame(self.app.mode_frm)

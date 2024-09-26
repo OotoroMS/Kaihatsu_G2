@@ -14,17 +14,17 @@ class VisionFrame(tk.Frame):
         self.setup_widgets()
         self.start_image_update()
 
+    # ウィジェットの作成
     def create_widgets(self):
-        # ウィジェットを生成
         self.buttonR1 = tk.Button(self, text="戻る", font=("", 40), command=self.show_mode_frame)        
-        self.canvas = tk.Canvas(self, bg="red")  # 画像を表示するキャンバスを作成
-        self.vital = self.app.vital_label  # Appからvital_labelを取得        
+        self.canvas = tk.Canvas(self, bg="red")  # 画像を表示するキャンバスを作成       
     
-    def setup_widgets(self):
-        # ウィジェットを配置
+    # ウィジェットの配置
+    def setup_widgets(self):        
         self.buttonR1.place(relx=0.85, rely=0.85, relwidth=0.1, relheight=0.1)
         self.canvas.place(relx=0.1, rely=0.1, relwidth=0.535, relheight=0.7)        
 
+    # 画像を定期的に更新
     def start_image_update(self):
         if self.image_update_id is not None:
             self.after_cancel(self.image_update_id)
@@ -33,6 +33,7 @@ class VisionFrame(tk.Frame):
         if self.winfo_ismapped():
             self.image_update_id = self.after(5000, self.start_image_update)        
 
+    # 画像のデータをもってきて表示
     def update_image(self):
         dir_path = Path("C:/Users/is2306/Documents/GitHub/Kaihatsu_G2/User Interface/img_file")
         files = list(dir_path.glob("*.jpg"))
@@ -47,6 +48,6 @@ class VisionFrame(tk.Frame):
             self.canvas.delete("all")
             self.canvas.create_text(500, 60, text="NO_image", fill="white", font=("", 70))
 
+    # ModeFrameを表示
     def show_mode_frame(self):
-        # モード画面に戻る処理
         self.app.show_frame(self.app.mode_frm)

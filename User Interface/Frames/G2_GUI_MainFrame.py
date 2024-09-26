@@ -9,7 +9,7 @@ class MainFrame(tk.Frame):
         self.create_widgets()
         self.setup_widgets()                
 
-    # ウィジェットの設定
+    # ウィジェットの作成
     def create_widgets(self):
         self.text01 = tk.Label(self, text="検査・蓄積収納装置", font=("", 70))
         self.text02 = tk.Label(self, text="・データ閲覧", relief=tk.SOLID, anchor=tk.NW, font=("", 60))
@@ -17,13 +17,10 @@ class MainFrame(tk.Frame):
         self.text04 = tk.Label(self, text="寸法検査ログ", anchor=tk.W, font=("", 50))
         self.text05 = tk.Label(self, text="外観検査ログ", anchor=tk.W, font=("", 50))
         self.text06 = tk.Label(self, text="・調査・動作確認", anchor=tk.W, font=("", 60))
-        
         self.button1 = tk.Button(self, text="データ閲覧", font=("", 50), command=self.show_mode_frame)
         self.button2 = tk.Button(self, text="調査・動作確認", font=("", 50), command=self.click_vital)
         self.buttonf = tk.Button(self, text="終了", font=("", 40), command=self.quit_application)
-
-        self.vital = self.app.vital_label  # Appからvital_labelを取得        
-
+       
     # ウィジェットの配置
     def setup_widgets(self):
         self.text01.place(relx=0.22, rely=0.05, relwidth=0.4, relheight=0.1)
@@ -41,15 +38,15 @@ class MainFrame(tk.Frame):
         if messagebox.askokcancel("確認", "終了しますか？"):
             self.app.quit_application()
     
-    # データ閲覧画面を表示する処理
+    # ModeFrameを表示
     def show_mode_frame(self):
         self.app.show_frame(self.app.mode_frm)
     
-    # パスワード画面を表示する処理
+    # PassFrameを表示
     def show_pass_frame(self):
         self.app.show_frame(self.app.pass_frm)
 
-    # Vitalメッセージの状態を確認し、必要に応じてパスワード画面に遷移
+    # vital_textを確認し停止中ならshow_pass_frameを実行
     def click_vital(self):
         if self.app.vital_text.get() != "停止中":            
             messagebox.showwarning("showwarning", "装置が安全な状態で再試行してください。")

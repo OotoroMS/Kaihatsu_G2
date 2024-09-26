@@ -20,25 +20,25 @@ class TreeFrame(tk.Frame):
         self.setup_widgets()
         self.start_update_tree(self.count_1log, 250)
 
+    # ウィジェットの作成
     def create_widgets(self):
-        # ウィジェットを作成
         self.label = tk.Label(self, text="カウントログ", font=("", 70))
-        self.tree = None  # TreeViewの初期化
+        self.tree = None
         self.error_tree = None
         self.button_cr_today = tk.Button(self, text="本日の記録", font=("", 30), command=lambda: self.start_update_tree(self.count_1log, 250))
         self.button_cr_7days = tk.Button(self, text="七日間の記録", font=("", 27), command=lambda: self.start_update_tree(self.count_7log, 725))
         self.button_cr_badtime = tk.Button(self, text="不良発生の記録", font=("",25), command=self.start_update_error_tree)
-        self.button_back = tk.Button(self, text="戻る", font=("", 40), command=self.show_mode_frame)        
-        self.vital = self.app.vital_label  # Appからvital_labelを取得        
-
+        self.button_back = tk.Button(self, text="戻る", font=("", 40), command=self.show_mode_frame)            
+    
+    # ウィジェットの配置
     def setup_widgets(self):
-        # ウィジェットを配置
         self.label.place(relx=0.25, rely=0.05, relwidth=0.5, relheight=0.1)
         self.button_cr_today.place(relx=0.02, rely=0.2, relwidth=0.12, relheight=0.12)
         self.button_cr_7days.place(relx=0.02, rely=0.34, relwidth=0.12, relheight=0.12)
         self.button_back.place(relx=0.85, rely=0.85, relwidth=0.1, relheight=0.1) 
         self.button_cr_badtime.place(relx=0.02,rely=0.48, relwidth=0.12, relheight=0.12)              
 
+    # treeの作成(Styleのみ)
     def create_tree(self):
         self.columns = ('days', 'NO', 'good_size', 'bad_size', 'good_vision', 'bad_vision')
         self.headers = ['日付', '総個数', '寸法良', '寸法不良', '外観良', '外観不良']  
@@ -51,6 +51,7 @@ class TreeFrame(tk.Frame):
         self.error_style.configure('Treeview.Heading',rowheight=40,font=("",40))
         self.error_style.configure('Treeview',rowheight=85,font=("",55))
 
+    # 表を更新する
     def update_tree(self):
         self.tree_destroy()
 
@@ -68,6 +69,7 @@ class TreeFrame(tk.Frame):
         self.tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.place(relx=0.99, rely=0.18, relheight=0.67, anchor=tk.N)
 
+    # 不良時間表を更新する
     def update_error_tree(self):
         self.tree_destroy()
 
@@ -85,6 +87,7 @@ class TreeFrame(tk.Frame):
         self.error_tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.place(relx=0.99, rely=0.18, relheight=0.67, anchor=tk.N)
 
+    # 表に表示するデータをtestdb_02から定期的に持ってくる
     def start_update_tree(self, text="select * from db_now", height=250):
         self.update_cnacel()
         self.query = text
@@ -96,6 +99,7 @@ class TreeFrame(tk.Frame):
             if self.winfo_ismapped():
                 self.tree_update_id = self.after(5000, self.start_update_tree)     
 
+    # 不良時間表に表示するデータをtestdb_02から定期的に持ってくる
     def start_update_error_tree(self):
         self.update_cnacel()
         self.query = self.error
@@ -106,7 +110,7 @@ class TreeFrame(tk.Frame):
         if self.winfo_ismapped():
             self.error_update_id = self.after(5000, self.start_update_error_tree)
 
-
+    # 更新を停止
     def update_cnacel(self):
         if self.tree_update_id is not None:
             self.after_cancel(self.tree_update_id)
@@ -115,6 +119,7 @@ class TreeFrame(tk.Frame):
             self.after_cancel(self.error_update_id)
             self.error_update_id = None
 
+    # treeを削除
     def tree_destroy(self):
         if self.error_tree:
             self.error_tree.destroy()
@@ -123,5 +128,6 @@ class TreeFrame(tk.Frame):
             self.tree.destroy()
             self.tree = None
 
+    # ModeFrameを表示
     def show_mode_frame(self):
         self.app.show_frame(self.app.mode_frm)
