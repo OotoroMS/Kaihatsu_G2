@@ -88,9 +88,11 @@ class BaseFrame(tk.Tk):
             self.update_vital_id = None
 
         if self.vital_text.get() == "稼働中":
-            self.vital_text.set("停止中")
+            self.set_vital_text("停止中")
         elif self.vital_text.get() == "停止中":           
-            self.vital_text.set("稼働中")
+            self.set_vital_text("稼働中")
+        else:
+            self.set_vital_text("稼働中")
 
         self.set_vital_color()
         self.update_vital_id = self.after(5000, self.change_vital)
