@@ -99,6 +99,8 @@ class ImgDtrmn:
 if __name__ == "__main__":
     # 画像処理クラスのインスタンス化
     img_dtrmn = ImgDtrmn(0.06, "./model/AE_model.keras")
+    # UIクラスのインスタンス化
+    # UI = UI.UI()
 
     # 時間計測
     start = time.time()
@@ -106,6 +108,10 @@ if __name__ == "__main__":
     # 画像処理の実行(スレッド化)
     thread = threading.Thread(target=img_dtrmn.main, args=("./DamagedImages/sample_image.png",))
     thread.start()
+
+    # UIの実行(スレッド化)
+    # thread2 = threading.Thread(target=UI.main, args=())
+    # thread2.start()
 
     # スレッドの終了待ち
     thread.join()
