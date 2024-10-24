@@ -2,9 +2,9 @@ import struct
 from queue import Queue
 
 class QueueManager:
-    def __init__(self, send_queue: Queue, receive_queue: Queue):
-        self.send_queue = send_queue        
-        self.receive_queue = receive_queue        
+    def __init__(self, queues):
+        self.send_queue = queues['send_queue']
+        self.receive_queue = queues['receive_queue']
 
     def get_from_queue(self, queue):
         if not queue.empty():

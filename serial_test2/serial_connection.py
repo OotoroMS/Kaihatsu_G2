@@ -5,10 +5,10 @@ from serial_communicator import SerialCommunicator
 from queue_manager import QueueManager
 
 class SerialConnection:
-    def __init__(self, port, baudrate, party, stopbits, timeout, snd_queue: Queue, rcv_queue: Queue):
-        self.queue_manager = QueueManager(snd_queue, rcv_queue)
+    def __init__(self, serial_params, queues):
+        self.queue_manager = QueueManager(queues)
         self.data_formatter = SerialDataFormatter()
-        self.serial_comm = SerialCommunicator(port, baudrate, party, stopbits, timeout)
+        self.serial_comm = SerialCommunicator(**serial_params)
         self.shutdown_flag = False
         self.wait_for_response = False
 
