@@ -1,61 +1,82 @@
-from serial_connection import SerialConnection
-from process_queue import QueueCreate
 import threading
 import serial
+from serial_connection import SerialConnection
+from process_queue import QueueCreate
+from typing import Dict, Any, Optional
 
 # シリアルポートの設定
-PORT1 = "COM5"
-BAUD_RATE = 9600
-TIMEOUT = 0.05
-PARTY = serial.PARITY_EVEN
-STOPBITS = serial.STOPBITS_ONE
+PORT1: str = "COM5"
+BAUD_RATE: int = 9600
+TIMEOUT: float = 0.05
+PARTY: int = serial.PARITY_EVEN
+STOPBITS: int = serial.STOPBITS_ONE
 
 # グローバル変数
-command = None
-command_flag = False
+command: Optional[str] = None
+command_flag: bool = False
 
 class Instance:
-    def __init__(self, params):
+    def __init__(self, params: Dict[str, Any]):
+        """
+        Instanceクラスのコンストラクタ。
+
+        引数:
+            params (Dict[str, Any]): シリアル通信の設定パラメータ
+        """
         # 各要素のインスタンス化
         queue_creator = QueueCreate()
         self.queues = queue_creator.get_communication_queues()
         self.serial_conn = SerialConnection(params, self.queues)
 
-    def main(self):
-        # メイン処理        
-        self.thread_start()
-        self.run_main_loop()
+    def main(self) -> None:
+        """
+        メイン処理を開始する。
+        """
+        self.thread_start()  # スレッドを開始
+        self.run_main_loop()  # メインループを実行
 
-    def thread_start(self):
-        # スレッドの作成と開始
-        if self.serial_conn.serial_comm.is_open:            
+    def thread_start(self) -> None:
+        """
+        スレッドの作成と開始を行う。
+        """
+        if self.serial_conn.serial_comm.is_open:
+            # 受信データを処理するスレッドの作成
             self.send_th = threading.Thread(target=self.serial_conn.process_received_data, daemon=True)
             self.send_th.start()
 
+            # 送信データを処理するスレッドの作成
             self.rcv_th = threading.Thread(target=self.serial_conn.process_send_data, daemon=True)
-            self.rcv_th.start()        
+            self.rcv_th.start()
+
+        # コマンド入力用のスレッドの作成
         self.cma_th = threading.Thread(target=input_thread, daemon=True)
         self.cma_th.start()
 
-    def run_main_loop(self):
+    def run_main_loop(self) -> None:
+        """
+        メインループを実行し、コマンドの入力とキューからのデータ処理を行う。
+        """
         global command
         snd_queue = self.queues['send_queue']
         rcv_queue = self.queues['receive_queue']
         
         while True:
             if command == "exit":
-                break
+                break  # "exit" コマンドでループを終了
 
             if command:
-                snd_queue.put(command)
+                snd_queue.put(command)  # コマンドを送信キューに追加
                 command = None
 
             if not rcv_queue.empty():
-                data = rcv_queue.get()
+                data = rcv_queue.get()  # 受信キューからデータを取得
                 if data != b'':
                     print(f"これが外部に渡すやつ: {data}")
 
-    def thread_stop(self):
+    def thread_stop(self) -> None:
+        """
+        スレッドを停止させ、接続を終了する。
+        """
         global command_flag
         self.serial_conn.end()    
         command_flag = True
@@ -66,14 +87,20 @@ class Instance:
         self.cma_th.join()
 
 
-def input_thread():    
+def input_thread() -> None:    
+    """
+    コマンド入力用のスレッドを実行する関数。
+    """
     global command
     while not command_flag:
         command = input("コマンドを入力してください (exitで終了): ")
         if command == "exit":
             break
 
-def main():    
+def main() -> None:    
+    """
+    プログラムのエントリーポイント。
+    """
     global command, command_flag
     try:
         serial_params = {
@@ -81,11 +108,11 @@ def main():
             "baudrate": BAUD_RATE,
             "party": PARTY,
             "stopbits": STOPBITS,
-            "timeout": TIMEOUT,         
+            "timeout": TIMEOUT,
         }
 
-        test = Instance(serial_params)
-        test.main()
+        test = Instance(serial_params)  # Instanceのインスタンスを作成
+        test.main()  # メイン処理を実行
 
     except KeyboardInterrupt:
         print("プログラムが中断されました.")
@@ -93,4 +120,4 @@ def main():
         pass
 
 if __name__ == "__main__":
-    main()
+    main()  # プログラムの実行
