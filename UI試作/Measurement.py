@@ -15,7 +15,7 @@ MINUS_JUDGMENT = -0.1
 OK         = True
 NG         = False
 
-class Meas:
+class Meas():#Measurement
      #   コンストラクタ
     def __init__(self):
         pass

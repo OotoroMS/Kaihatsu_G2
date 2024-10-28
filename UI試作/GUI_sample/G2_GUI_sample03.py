@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
-import DbCommunication as DMC #DB関係
+import DbCommunication_old as DMC #DB関係
 db=DMC.DbCommunication()
 
 def show_main_frm():

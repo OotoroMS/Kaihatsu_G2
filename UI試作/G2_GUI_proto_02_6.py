@@ -12,6 +12,7 @@ from pathlib import Path
 import os
 import os.path
 import time
+import shutil #ディレクトリ削除用
 
 import threading
 from SerialConnection import SerialConnection as Serial
@@ -466,12 +467,16 @@ class GUI():
 
     #   外観検査画像表示処理
     def vision_up(self):
-        dir_path = Path("D:/GitHub/Kaihatsu_G2/UI試作/真鍮_白黒画像")
+        dir_path = Path("D:/GitHub/Kaihatsu_G2/UI試作/テスト用_画像")
         #dir_path = Path("D:/kaihatu/test/UI/img_file")
         files = list(dir_path.glob("*.jpg"))
         print(len(files))
 
-        if len(files) > 0:
+        if len(files) > 12:#ファイルが多くなると一旦削除してから作り直す、
+            path = 'D:/GitHub/Kaihatsu_G2/UI試作/テスト用_画像'
+            shutil.rmtree(path)
+            os.mkdir(path)
+        elif len(files) > 0:
             list_date=[]
             for i in range(len(files)):
                 file_name, ext = os.path.splitext(files[i].name)
@@ -482,7 +487,7 @@ class GUI():
             list_date_sort=sorted(list_date,reverse=True)
             list_date_new=list_date_sort[0]
             print(list_date_new)
-            img1=Image.open("D:/GitHub/Kaihatsu_G2/UI試作/真鍮_白黒画像/"f"/{list_date_new}.jpg")
+            img1=Image.open("D:/GitHub/Kaihatsu_G2/UI試作/テスト用_画像/"f"/{list_date_new}.jpg")
             #img1=Image.open("D:/kaihatu/test/UI/img_file/"f"/{list_date_new}.jpg")
             w_size = int(img1.width/2.5)
             h_size = int(img1.height/2.5)

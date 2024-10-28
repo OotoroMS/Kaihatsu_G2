@@ -4,7 +4,7 @@ from tkinter import messagebox
 import tkinter as ttk
 from PIL import Image,ImageTk #jpgに対応するため
 #import pathlib #画像取得のfile関係()
-import DbCommunication as DMC #DB関係
+import DbCommunication_old as DMC #DB関係
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg,NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt

@@ -1,4 +1,4 @@
-import DbCommunication as DMC #DB関係
+import DbCommunication_old as DMC #DB関係
 db=DMC.DbCommunication()
 
 result = db.table_data_get('testdb_02',"select * from DB_now")
