@@ -1,60 +1,70 @@
 import serial
 import threading
+from time import perf_counter
 from typing import Optional
+
+SERIALPORT_STATUS = {
+    "serial_open": True,
+    "serial_close": False
+}
+
+OPERATION_STATUS = {
+    "success": True,
+    "failure": False
+}
+
 
 class SerialCommunicator:
     def __init__(self, port: str, baudrate: int, parity: str, stopbits: int, timeout: Optional[float]):
-        """
-        初期化メソッド。シリアル通信の設定を行い、ロックオブジェクトを初期化する。
-
-        引数:
-            port (str): シリアルポートの名前
-            baudrate (int): ボーレート（通信速度）
-            parity (str): パリティ設定（例: 'N', 'E', 'O'）
-            stopbits (int): ストップビットの設定
-            timeout (Optional[float]): タイムアウトの設定（秒）
-        """
-        self.serial = serial.Serial(port, baudrate, bytesize=serial.EIGHTBITS,
-                                    parity=parity, stopbits=stopbits, timeout=timeout)
+        self.serial = serial.Serial(
+            port=port,
+            baudrate=baudrate,
+            bytesize=serial.EIGHTBITS,
+            parity=parity,
+            stopbits=stopbits,
+            timeout=timeout
+        )
         self.lock = threading.Lock()
-        self.is_open: bool = True  # シリアル接続が開かれているかのフラグ
+        self.is_open: bool = SERIALPORT_STATUS["serial_open"]
 
-    def write(self, data: bytes) -> None:
-        """
-        シリアルポートにデータを送信する。スレッドセーフな操作のためにロックを使用。
-        
-        引数:
-            data (bytes): 送信するデータ（バイト列）
-        """
+    def serial_write(self, data: bytes) -> bool:
         with self.lock:
+            print(f"[Thread-{threading.get_ident()}] Lock serial_write")
+            start_time = perf_counter()  # 計測開始
             try:
                 self.serial.write(data)
-                print(f"Data sent: {data}")
+                elapsed_time = perf_counter() - start_time  # 経過時間
+                print(f"[Thread-{threading.get_ident()}] Data sent: {data} (Time taken: {elapsed_time:.9f} seconds)")
+                return OPERATION_STATUS["success"]
             except serial.SerialException as e:
-                print(f"Error sending data via serial: {e}")
+                print(f"[Thread-{threading.get_ident()}] Error sending data via serial: {e}")
+                return OPERATION_STATUS["failure"]
+            finally:
+                print(f"[Thread-{threading.get_ident()}] Unlock serial_write")
 
-    def read(self) -> bytes:
-        """
-        シリアルポートからデータを受信する。スレッドセーフな操作のためにロックを使用。
-
-        戻り値:
-            bytes: 受信したデータ（バイト列）。エラーが発生した場合は空のバイト列を返す。
-        """
+    def serial_read(self) -> bytes:
         with self.lock:
+            print(f"[Thread-{threading.get_ident()}] Lock serial_read")
+            start_time = perf_counter()  # 計測開始
             try:
                 data = self.serial.readline()
-                if data != b'':  # データが存在する場合のみ表示
-                    print(f"Data received: {data}")
+                elapsed_time = perf_counter() - start_time  # 経過時間
+                if data:
+                    print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
                 return data
             except serial.SerialException as e:
-                print(f"Error receiving data via serial port: {e}")
-                return b''  # エラー発生時には空のバイト列を返す
-    
-    def close(self) -> None:
-        """
-        シリアルポートを閉じ、接続状態フラグを更新。
-        """
+                print(f"[Thread-{threading.get_ident()}] Error receiving data via serial port: {e}")
+                return b''
+            finally:
+                print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
+
+    def serial_close(self) -> bool:
         if self.serial.is_open:
-            print(f"Closing serial port: {self.serial.name}")
-            self.serial.close()
-            self.is_open = False
+            try:
+                print(f"Closing serial port: {self.serial.name}")
+                self.serial.close()
+                self.is_open = SERIALPORT_STATUS["serial_close"]
+                return OPERATION_STATUS["success"]
+            except serial.SerialException as e:
+                print(f"Error closing serial port: {e}")
+                return OPERATION_STATUS["failure"]
