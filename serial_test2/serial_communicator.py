@@ -2,59 +2,88 @@ import serial
 import threading
 from typing import Optional
 
+SERIALPORT_STATUS = {
+    "open": True,
+    "close": False
+}
+
+OPERATION_STATUS = {
+    "success": True,
+    "failure": False
+}
+
+
 class SerialCommunicator:
     def __init__(self, port: str, baudrate: int, parity: str, stopbits: int, timeout: Optional[float]):
         """
-        初期化メソッド。シリアル通信の設定を行い、ロックオブジェクトを初期化する。
-
-        引数:
-            port (str): シリアルポートの名前
-            baudrate (int): ボーレート（通信速度）
-            parity (str): パリティ設定（例: 'N', 'E', 'O'）
-            stopbits (int): ストップビットの設定
-            timeout (Optional[float]): タイムアウトの設定（秒）
+        シリアル通信の設定を初期化し、スレッドロックをセットアップ。
         """
-        self.serial = serial.Serial(port, baudrate, bytesize=serial.EIGHTBITS,
-                                    parity=parity, stopbits=stopbits, timeout=timeout)
+        self.serial = serial.Serial(
+            port=port,
+            baudrate=baudrate,
+            bytesize=serial.EIGHTBITS,
+            parity=parity,
+            stopbits=stopbits,
+            timeout=timeout
+        )
         self.lock = threading.Lock()
-        self.is_open: bool = True  # シリアル接続が開かれているかのフラグ
+        self.is_open: bool = SERIALPORT_STATUS["open"]
 
-    def write(self, data: bytes) -> None:
+    def write(self, data: bytes) -> bool:
         """
-        シリアルポートにデータを送信する。スレッドセーフな操作のためにロックを使用。
+        シリアルポートにデータを送信。スレッドセーフな操作のためロックを使用。
         
         引数:
             data (bytes): 送信するデータ（バイト列）
+        
+        戻り値:
+            bool: 送信が成功したかどうか
         """
         with self.lock:
+            print("Lock write")
             try:
                 self.serial.write(data)
                 print(f"Data sent: {data}")
+                return OPERATION_STATUS["success"]
             except serial.SerialException as e:
                 print(f"Error sending data via serial: {e}")
+                return OPERATION_STATUS["failure"]
+            finally:
+                print("Unlock write")
 
     def read(self) -> bytes:
         """
-        シリアルポートからデータを受信する。スレッドセーフな操作のためにロックを使用。
-
+        シリアルポートからデータを受信。スレッドセーフな操作のためロックを使用。
+        
         戻り値:
-            bytes: 受信したデータ（バイト列）。エラーが発生した場合は空のバイト列を返す。
+            bytes: 受信したデータ（バイト列）、エラー時は空のバイト列を返す
         """
         with self.lock:
+            print("Lock read")
             try:
                 data = self.serial.readline()
-                if data != b'':  # データが存在する場合のみ表示
+                if data:
                     print(f"Data received: {data}")
                 return data
             except serial.SerialException as e:
                 print(f"Error receiving data via serial port: {e}")
-                return b''  # エラー発生時には空のバイト列を返す
-    
-    def close(self) -> None:
+                return b''
+            finally:
+                print("Unlock read")
+
+    def close(self) -> bool:
         """
-        シリアルポートを閉じ、接続状態フラグを更新。
+        シリアルポートを閉じ、接続状態を更新。
+        
+        戻り値:
+            bool: シリアルポートが正常に閉じられたかどうか
         """
         if self.serial.is_open:
-            print(f"Closing serial port: {self.serial.name}")
-            self.serial.close()
-            self.is_open = False
+            try:
+                print(f"Closing serial port: {self.serial.name}")
+                self.serial.close()
+                self.is_open = SERIALPORT_STATUS["close"]
+                return OPERATION_STATUS["success"]
+            except serial.SerialException as e:
+                print(f"Error closing serial port: {e}")
+                return OPERATION_STATUS["failure"]        
