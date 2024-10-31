@@ -3,8 +3,8 @@ import serial
 from serial_communicator import SerialCommunicator
 
 # シリアルポートの設定
-PORT1 = "COM5"  # 適切なポートに変更してください
-PORT2 = "COM3"  # 適切なポートに変更してください
+PORT1 = "COM8"  # 適切なポートに変更してください
+PORT2 = "COM4"  # 適切なポートに変更してください
 BAUD_RATE = 9600
 TIMEOUT = 0.08
 PARITY = serial.PARITY_EVEN
@@ -32,7 +32,7 @@ class SerialTest:
         for i in range(5):
             data = b'\x00\x01\x01'
             if append_newline:
-                data += LINEENDING.encode()  # 改行コードを追加
+                data += LINEENDING  # 改行コードを追加
 
             port.serial_write(data)  # データを送信
 

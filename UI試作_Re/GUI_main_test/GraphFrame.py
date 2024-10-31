@@ -8,17 +8,17 @@ from Picture import Picture
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
-PATH = "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\graph.png"
+PATH = ".\\image\\graph.png"
 
 class GraphFrame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.create_flg = True
         self.buttons = {
-            Button(self.screen, 0, 960, 330, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\back.png", self.move_data)
+            Button(self.screen, 0, 960, 330, 120, ".\\image\\button\\back.png", self.move_data)
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\title\\pic18.png")
+            Picture(self.screen, 0, 0, 750, 200, ".\\image\\title\\pic18.png")
         }
     
     #   画面描画処理

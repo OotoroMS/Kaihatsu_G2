@@ -20,22 +20,22 @@ class PassFrame(BaseFrame):
         self.flg_veiw_popup = False
         # self.popup_different_pass = BasePopup(self.screen, font, POPUPMSSEGE)  
         self.buttons = {
-            Button(self.screen, 0, 960, 330, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\back.png",  self.move_main),
-            Button(self.screen, 910,  690, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic20.png", self.num_0),
-            Button(self.screen, 810,  390, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic21.png", self.num_1),
-            Button(self.screen, 910,  390, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic22.png", self.num_2),
-            Button(self.screen, 1010, 390, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic23.png", self.num_3),
-            Button(self.screen, 810,  490, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic24.png", self.num_4),
-            Button(self.screen, 910,  490, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic25.png", self.num_5),
-            Button(self.screen, 1010, 490, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic26.png", self.num_6),
-            Button(self.screen, 810,  590, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic27.png", self.num_7),
-            Button(self.screen, 910,  590, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic28.png", self.num_8),
-            Button(self.screen, 1010, 590, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic29.png", self.num_9),
-            Button(self.screen, 1110, 390, 100, 100, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic30.png", self.num_clr),
-            Button(self.screen, 1110, 490, 100, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic31.png", self.num_check)
+            Button(self.screen, 0, 960, 330, 120, ".\\image\\button\\back.png",  self.move_main),
+            Button(self.screen, 910,  690, 100, 100, ".\\image\\button\\pic20.png", self.num_0),
+            Button(self.screen, 810,  390, 100, 100, ".\\image\\button\\pic21.png", self.num_1),
+            Button(self.screen, 910,  390, 100, 100, ".\\image\\button\\pic22.png", self.num_2),
+            Button(self.screen, 1010, 390, 100, 100, ".\\image\\button\\pic23.png", self.num_3),
+            Button(self.screen, 810,  490, 100, 100, ".\\image\\button\\pic24.png", self.num_4),
+            Button(self.screen, 910,  490, 100, 100, ".\\image\\button\\pic25.png", self.num_5),
+            Button(self.screen, 1010, 490, 100, 100, ".\\image\\button\\pic26.png", self.num_6),
+            Button(self.screen, 810,  590, 100, 100, ".\\image\\button\\pic27.png", self.num_7),
+            Button(self.screen, 910,  590, 100, 100, ".\\image\\button\\pic28.png", self.num_8),
+            Button(self.screen, 1010, 590, 100, 100, ".\\image\\button\\pic29.png", self.num_9),
+            Button(self.screen, 1110, 390, 100, 100, ".\\image\\button\\pic30.png", self.num_clr),
+            Button(self.screen, 1110, 490, 100, 200, ".\\image\\button\\pic31.png", self.num_check)
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\title\\pic71.png")
+            Picture(self.screen, 0, 0, 750, 200, ".\\image\\title\\pic71.png")
         }
     
     #   ボタン及びテキストの描画処理を記述

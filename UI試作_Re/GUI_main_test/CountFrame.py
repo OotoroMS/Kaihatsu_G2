@@ -22,19 +22,19 @@ class CountFrame(BaseFrame):
     
     def setting_buttons(self):
         self.buttons = {
-            Button(self.screen, 20, 280, 360, 140, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic11.png", self.move_today),#当日
-            Button(self.screen, 20, 470, 360, 140, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic09.png", self.move_seven),#7
-            Button(self.screen, 20, 660, 360, 140, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic10.png", self.move_error),#不良
-            Button(self.screen, 0, 960, 330, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\back.png", self.move_data)
+            Button(self.screen, 20, 280, 360, 140, ".\\image\\button\\pic11.png", self.move_today),#当日
+            Button(self.screen, 20, 470, 360, 140, ".\\image\\button\\pic09.png", self.move_seven),#7
+            Button(self.screen, 20, 660, 360, 140, ".\\image\\button\\pic10.png", self.move_error),#不良
+            Button(self.screen, 0, 960, 330, 120, ".\\image\\button\\back.png", self.move_data)
         }
         self.scrol_buttons = {
-            Button(self.screen, 1570, 280, 220, 160, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic14.png", self.table_full_up),
-            Button(self.screen, 1590, 480, 180, 120,"D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic15.png", self.table_up),
-            Button(self.screen, 1590, 640, 180, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic16.png", self.table_down),
-            Button(self.screen, 1570, 810, 220, 160, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic17.png", self.table_full_down)
+            Button(self.screen, 1570, 280, 220, 160, ".\\image\\button\\pic14.png", self.table_full_up),
+            Button(self.screen, 1590, 480, 180, 120, ".\\image\\button\\pic15.png", self.table_up),
+            Button(self.screen, 1590, 640, 180, 120, ".\\image\\button\\pic16.png", self.table_down),
+            Button(self.screen, 1570, 810, 220, 160, ".\\image\\button\\pic17.png", self.table_full_down)
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\title\\pic07.png")
+            Picture(self.screen, 0, 0, 750, 200, ".\\image\\title\\pic07.png")
         }
 
     #   画面描画処理

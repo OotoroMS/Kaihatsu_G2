@@ -47,7 +47,7 @@ class SerialCommunicator:
     def serial_read(self) -> bytes:        
         print(f"[Thread-{threading.get_ident()}] Lock serial_read")
         start_time = perf_counter()  # 計測開始
-        elapsed_time = 0.0
+        elapsed_time = 0.0        
         with self.lock:       
             try:
                 data = self.serial.readline()

@@ -19,8 +19,8 @@ GRAY  = ((200,200,200))
 OPERATION = "pass"
 #   背景画像
 BACKGROUND_IMAGE = {
-    "main" : "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\background\\back01.jpg",
-    "pass" : "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\background\\back02.jpg"
+    "main" : "image\\background\\back01.jpg",
+    "pass" : "image\\background\\back02.jpg"
 }
 POPUPMSG = "装置を停止してください"
 
