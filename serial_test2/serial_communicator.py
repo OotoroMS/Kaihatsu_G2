@@ -2,6 +2,7 @@ import serial
 import threading
 from time import perf_counter
 from typing import Optional
+import time
 
 SERIALPORT_STATUS = {
     "serial_open": True,
@@ -12,6 +13,8 @@ OPERATION_STATUS = {
     "success": True,
     "failure": False
 }
+
+WAIT_TIME = 0.01
 
 
 class SerialCommunicator:
@@ -41,6 +44,7 @@ class SerialCommunicator:
                 result =  OPERATION_STATUS["failure"]
         print(f"[Thread-{threading.get_ident()}] Data sent: {data} (Time taken: {elapsed_time:.9f} seconds)")
         print(f"[Thread-{threading.get_ident()}] Unlock serial_write")
+        time.sleep(WAIT_TIME)
 
         return result
 
@@ -59,6 +63,7 @@ class SerialCommunicator:
         if data:
             print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
         print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
+        time.sleep(WAIT_TIME)
 
         return result
 
