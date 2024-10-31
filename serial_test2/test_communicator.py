@@ -34,24 +34,13 @@ class SerialTest:
             if append_newline:
                 data += LINEENDING.encode()  # 改行コードを追加
 
-            success = port.serial_write(data)  # データを送信
+            port.serial_write(data)  # データを送信
 
-            thread_id = threading.get_ident()  # スレッドIDを取得
-            if success:
-                print(f"[Thread-{thread_id}] Sent: {data}")
-            else:
-                print(f"[Thread-{thread_id}] Failed to send data.")
 
     def receive_test(self, port):
         for i in range(5):
-            data = port.serial_read()  # データを受信
-
-            thread_id = threading.get_ident()  # スレッドIDを取得
-            if data:
-                print(f"[Thread-{thread_id}] Received: {data}")
-            else:
-                print(f"[Thread-{thread_id}] Failed to receive data.")
-
+            port.serial_read()  # データを受信
+            
     def run_tests(self, ports, operation, append_newline=NEWLINE_OPTION["n"]):
         threads = []
         
@@ -115,6 +104,6 @@ if __name__ == "__main__":
         append_newline = NEWLINE_OPTION.get(newline_option.lower(), False)  # 'y'または'n'を確認
         test.run_tests(port, "both", append_newline)  # 送受信両方
     else:
-        print("Invalid choice. Please select 1, 2, or 3.")        
+        print("Invalid choice. Please select 1, 2, or 3.")    
     
     test.close_connections()  # 接続を閉じる
