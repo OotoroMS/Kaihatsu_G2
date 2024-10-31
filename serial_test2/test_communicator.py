@@ -120,6 +120,6 @@ if __name__ == "__main__":
         append_newline = NEWLINE_OPTION.get(newline_option.lower(), False)  # 'y'または'n'を確認
         test.run_tests(port, "both", append_newline)  # 送受信両方
     else:
-        print("Invalid choice. Please select 1, 2, or 3.")
+        print("Invalid choice. Please select 1, 2, or 3.")        
     
     test.close_connections()  # 接続を閉じる
