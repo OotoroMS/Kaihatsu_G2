@@ -15,8 +15,8 @@ class TestFrame(BaseFrame):
         super().__init__(screen, font)
         self.text_title = self.font_title.render("機能テスト", True, BLACK)
         self.buttons = {
-            Button(self.screen, 150, 200, 700, 200, "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\count.png", self.change_color),
-            Button(self.screen, 1570, 930, 330, 120, "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\return.png", self.move_main)
+            Button(self.screen, 150, 200, 700, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\count.png", self.change_color),
+            Button(self.screen, 1570, 930, 330, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\return.png", self.move_main)
         }
         self.lamps = list((
             Lamp(self.screen, 865, 200, YEROW),

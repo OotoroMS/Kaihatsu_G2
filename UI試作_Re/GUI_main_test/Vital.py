@@ -14,7 +14,7 @@ BLACK = ((0,0,0))
 
 def setting_vital(vital, font):
     vital = font.render(vital, True, BLACK)
-    rect = pygame.rect.Rect(1610, 10, 300, 80)
+    rect = pygame.rect.Rect(1410, 10, 500, 160)
     vital_point = vital.get_rect(center=rect.center)
     return vital, rect, vital_point
 
@@ -25,7 +25,7 @@ def draw_vital(screen, vital, vital_point, rect ,font):
     screen.blit(view_vital, vital_point)
 
 def update_vital(tcnt,vital):
-    if tcnt == 60:
+    if tcnt == 120:
         tcnt = 0
         vital = vital_test(vital)
     else:
