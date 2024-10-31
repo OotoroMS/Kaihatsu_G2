@@ -23,7 +23,7 @@ class SerialTest:
                 data += "\r\n"  # 改行コードを追加
             data = data.encode()  # 送信するデータをバイト列に変換
             start_time = time.perf_counter()  # 経過時間の測定開始
-            success = self.serial_comm1.write(data)  # データを送信
+            success = self.serial_comm1.serial_write(data)  # データを送信
             elapsed_time = time.perf_counter() - start_time  # 経過時間の測定
             if success:
                 print(f"Sent: {data} (Time taken: {elapsed_time:.6f} seconds)")
@@ -33,7 +33,7 @@ class SerialTest:
     def receive_test(self):
         for i in range(5):
             start_time = time.perf_counter()  # 経過時間の測定開始
-            data = self.serial_comm2.read()  # データを受信
+            data = self.serial_comm2.serial_read()  # データを受信
             elapsed_time = time.perf_counter() - start_time  # 経過時間の測定
             if data:
                 print(f"Received: {data} (Time taken: {elapsed_time:.6f} seconds)")
@@ -57,8 +57,8 @@ class SerialTest:
             receive_thread.join()
 
     def close_connections(self):
-        self.serial_comm1.close()
-        self.serial_comm2.close()
+        self.serial_comm1.serial_close()
+        self.serial_comm2.serial_close()
 
 if __name__ == "__main__":
     test = SerialTest()

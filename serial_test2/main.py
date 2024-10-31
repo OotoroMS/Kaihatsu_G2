@@ -1,7 +1,7 @@
 import threading
 import serial
 from serial_connection import SerialConnection
-from process_queue import QueueCreate
+from serial_test2.queue_create import QueueCreate
 from typing import Dict, Any, Optional
 
 # シリアルポートの設定

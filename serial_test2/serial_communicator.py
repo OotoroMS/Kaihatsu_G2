@@ -3,8 +3,8 @@ import threading
 from typing import Optional
 
 SERIALPORT_STATUS = {
-    "open": True,
-    "close": False
+    "serial_open": True,
+    "serial_close": False
 }
 
 OPERATION_STATUS = {
@@ -27,9 +27,9 @@ class SerialCommunicator:
             timeout=timeout
         )
         self.lock = threading.Lock()
-        self.is_open: bool = SERIALPORT_STATUS["open"]
+        self.is_open: bool = SERIALPORT_STATUS["serial_open"]
 
-    def write(self, data: bytes) -> bool:
+    def serial_write(self, data: bytes) -> bool:
         """
         シリアルポートにデータを送信。スレッドセーフな操作のためロックを使用。
         
@@ -40,7 +40,7 @@ class SerialCommunicator:
             bool: 送信が成功したかどうか
         """
         with self.lock:
-            print("Lock write")
+            print("Lock serial_write")
             try:
                 self.serial.write(data)
                 print(f"Data sent: {data}")
@@ -49,9 +49,9 @@ class SerialCommunicator:
                 print(f"Error sending data via serial: {e}")
                 return OPERATION_STATUS["failure"]
             finally:
-                print("Unlock write")
+                print("Unlock serial_write")
 
-    def read(self) -> bytes:
+    def serial_read(self) -> bytes:
         """
         シリアルポートからデータを受信。スレッドセーフな操作のためロックを使用。
         
@@ -59,7 +59,7 @@ class SerialCommunicator:
             bytes: 受信したデータ（バイト列）、エラー時は空のバイト列を返す
         """
         with self.lock:
-            print("Lock read")
+            print("Lock serial_read")
             try:
                 data = self.serial.readline()
                 if data:
@@ -69,9 +69,9 @@ class SerialCommunicator:
                 print(f"Error receiving data via serial port: {e}")
                 return b''
             finally:
-                print("Unlock read")
+                print("Unlock serial_read")
 
-    def close(self) -> bool:
+    def serial_close(self) -> bool:
         """
         シリアルポートを閉じ、接続状態を更新。
         
@@ -82,7 +82,7 @@ class SerialCommunicator:
             try:
                 print(f"Closing serial port: {self.serial.name}")
                 self.serial.close()
-                self.is_open = SERIALPORT_STATUS["close"]
+                self.is_open = SERIALPORT_STATUS["serial_close"]
                 return OPERATION_STATUS["success"]
             except serial.SerialException as e:
                 print(f"Error closing serial port: {e}")

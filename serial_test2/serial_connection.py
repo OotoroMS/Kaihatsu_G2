@@ -1,112 +1,195 @@
 import time
 from queue import Queue
-from serial_data_formatter import SerialDataFormatter
 from serial_communicator import SerialCommunicator
 from queue_manager import QueueManager
+from typing import Optional
+
+FARST = 2
+LAST = 3
+
+SHUTDOWN_STATUS = {
+    "active": True,
+    "inactive": False
+}
+
+RESPONSE_STATUS = {
+    "waiting": True,
+    "not_waiting": False
+}
+
+DATA_PREFIX = {
+    "ack": b'\x00\x02',
+    "data_in": b'\x00\x01'
+}
+
+LINE_ENDING = b'\r\n'
+
 
 class SerialConnection:
     def __init__(self, serial_params: dict, queues: dict):
         """
-        初期化メソッド。シリアル通信、キューマネージャー、およびデータフォーマッターを設定。
+        シリアル通信、キューマネージャー、および初期フラグの設定を行う。
 
         引数:
             serial_params (dict): シリアル通信のパラメータ（ポート、ボーレート、パリティなど）
-            queues (dict): キューの辞書（送信・受信用）
+            queues (dict): 送信および受信用のキュー辞書
         """
         self.queue_manager = QueueManager(queues)
-        self.data_formatter = SerialDataFormatter()
         self.serial_comm = SerialCommunicator(**serial_params)
-        self.shutdown_flag: bool = False  # 通信終了フラグ
-        self.wait_for_response: bool = False  # レスポンス待機中フラグ
+        self.send_queue = self.queue_manager.send_queue
+        self.rcv_queue = self.queue_manager.receive_queue
+        self.shutdown_flag: bool = SHUTDOWN_STATUS["inactive"]
+        self.wait_for_response: bool = RESPONSE_STATUS["not_waiting"]
 
     def process_send_data(self) -> None:
         """
-        送信処理を行うメインループ。shutdown_flag が立つまで、キューからデータを取得し、
-        シリアル通信で送信する。
+        送信処理のメインループ。終了フラグが立つまでキューからデータを取得し、シリアル通信で送信。
+
+        戻り値:
+            None
         """
         while not self.shutdown_flag:
             try:
                 if self.serial_comm.is_open and not self.wait_for_response:
                     self.send_data_and_process()
-                time.sleep(0.01)  # 待機時間
+                time.sleep(0.01)
             except Exception as e:
                 print(f"Send unexpected error: {e}")
 
     def send_data_and_process(self) -> None:
         """
-        送信キューからデータを取得し、シリアル送信処理を行う。データをバイト形式に変換し、
-        フォーマット後に送信する。
+        キューからデータを取得し、フォーマット後にシリアル送信。
+
+        戻り値:
+            None
         """
-        byte = self.queue_manager.send_queue_item()
-        if byte is not None:
-            self.queue_manager.put_in_queue(self.queue_manager.send_queue, byte)
-            data = self.data_formatter.format_send(byte)
-            self.serial_comm.write(data)
-            self.wait_for_response = True  # レスポンス待機に設定
+        byte = self.retrieve_data_from_queue()
+        if byte:
+            formatted_data = self.format_data_for_send(byte)
+            self.send_formatted_data(formatted_data)
+
+    def retrieve_data_from_queue(self) -> Optional[bytes]:
+        """
+        送信キューからデータを取得。データがない場合は None を返す。
+
+        戻り値:
+            Optional[bytes]: キューから取得したデータ（存在しない場合 None）
+        """
+        queue_item = self.queue_manager.send_queue_item()
+        if queue_item:
+            self.queue_manager.put_in_queue(self.send_queue, queue_item)
+        return queue_item
+
+    def format_data_for_send(self, byte: bytes) -> bytes:
+        """
+        送信データをフォーマットする。
+
+        引数:
+            byte (bytes): キューから取得したデータ
+
+        戻り値:
+            bytes: フォーマットされたデータ
+        """
+        format_data = self.format_send(byte)
+        return format_data
+
+    def send_formatted_data(self, data: bytes) -> None:
+        """
+        フォーマット済みデータをシリアル通信で送信。
+
+        引数:
+            data (bytes): 送信するデータ
+        """
+        self.serial_comm.serial_write(data)
+        self.wait_for_response = RESPONSE_STATUS["waiting"]  # レスポンス待機を有効化
 
     def process_received_data(self) -> None:
         """
-        受信処理を行うメインループ。shutdown_flag が立つまでシリアルポートからデータを受信し、
-        処理を行う。
+        受信処理のメインループ。終了フラグが立つまでシリアルポートからデータを受信。
+
+        戻り値:
+            None
         """
         while not self.shutdown_flag:
             try:
                 if self.serial_comm.is_open:
                     self.receive_data_and_process()
-                time.sleep(0.01)  # 待機時間
+                time.sleep(0.01)
             except Exception as e:
                 print(f"Receive unexpected error: {e}")
 
     def receive_data_and_process(self) -> None:
         """
-        シリアルポートからデータを受信し、受信データの比較処理を行う。
+        受信データを取得し、比較処理を実行。
+
+        戻り値:
+            None
         """
-        data = self.serial_comm.read()
+        data = self.serial_comm.serial_read()
         self.compare_recive_data(data)
 
     def compare_recive_data(self, data: bytes) -> None:
         """
-        受信したデータの先頭バイトに基づき、処理を分岐する。
+        受信データの接頭語に基づき処理を分岐。
 
         引数:
-            data (bytes): 受信データ
+            data (bytes): 受信したデータ
         """
-        if data.startswith(b'\x00\x01'):
+        if data.startswith(DATA_PREFIX["data_in"]):
             print("Received data")
-            self.queue_manager.put_in_queue(self.queue_manager.receive_queue, data[2:3])
-            self.send_response(data[2:3])
-        elif data.startswith(b'\x00\x02'):
+            self.queue_manager.put_in_queue(self.rcv_queue, data[FARST:LAST])
+            self.send_response(data[FARST:LAST])
+        elif data.startswith(DATA_PREFIX["ack"]):
             print("Response data")
             self.compare_data(data)
 
     def send_response(self, response_data: bytes) -> None:
         """
-        レスポンスデータを送信する。レスポンスフォーマットを整え、シリアルポート経由で送信。
+        レスポンスデータを送信する。フォーマット後にシリアル送信。
 
         引数:
-            response_data (bytes): 送信するレスポンスデータ
+            response_data (bytes): レスポンスデータ
         """
-        response = b'\x00\x02' + response_data + b'\r\n'
-        self.serial_comm.write(response)
+        response = DATA_PREFIX["ack"] + response_data + LINE_ENDING
+        self.serial_comm.serial_write(response)
 
     def compare_data(self, data: bytes) -> None:
         """
-        受信データと送信キュー内のデータを比較する。データが一致しない場合、再送信を行う。
+        受信データと送信キュー内データを比較し、一致しない場合は再送信。
 
         引数:
             data (bytes): 受信データ
         """
-        send_data = self.queue_manager.get_from_queue(self.queue_manager.send_queue)
+        send_data = self.queue_manager.get_from_queue(self.send_queue)
         if data[2:3] == send_data:
             print("Data matches")
         else:
             print("Data does not match, resending")
-            self.queue_manager.put_in_queue(self.queue_manager.send_queue, data)
-        self.wait_for_response = False  # 応答待ちを解除d
+            self.queue_manager.put_in_queue(self.send_queue, data)
+        self.wait_for_response = RESPONSE_STATUS["not_waiting"]
+
+    def format_send(self, byte: bytes) -> Optional[bytes]:
+        """
+        送信データをフォーマットし、接頭語と改行コードを付与。
+
+        引数:
+            byte (bytes): 送信するバイトデータ
+
+        戻り値:
+            Optional[bytes]: フォーマット済みデータ（失敗時 None）
+        """
+        if byte:
+            format_byte = DATA_PREFIX["data_in"] + byte + LINE_ENDING
+            return format_byte
+        else:
+            return None
 
     def end(self) -> None:
         """
-        接続終了処理を行う。shutdown_flag を立てて送受信ループを終了し、シリアルポートを閉じる。
+        終了処理を実行し、送受信ループを停止後シリアル接続を閉じる。
+
+        戻り値:
+            None
         """
-        self.shutdown_flag = True
-        self.serial_comm.close()
+        self.shutdown_flag = SHUTDOWN_STATUS["active"]
+        self.serial_comm.serial_close()
