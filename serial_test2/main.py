@@ -1,6 +1,6 @@
 import threading
 import serial
-from serial_connection import SerialConnection
+from serial_test2.serial_manager import SerialManager
 from serial_test2.queue_create import QueueCreate
 from typing import Dict, Any, Optional
 
@@ -26,7 +26,7 @@ class Instance:
         # 各要素のインスタンス化
         queue_creator = QueueCreate()
         self.queues = queue_creator.get_communication_queues()
-        self.serial_conn = SerialConnection(params, self.queues)
+        self.serial_conn = SerialManager(params, self.queues)
 
     def main(self) -> None:
         """
