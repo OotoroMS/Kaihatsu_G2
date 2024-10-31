@@ -75,15 +75,17 @@ class SerialTest:
             thread.join()
 
     def close_connections(self):
+        print("Closing serial connections...")
         self.serial_comm1.serial_close()
         self.serial_comm2.serial_close()
+        print("Serial connections closed.")
 
 if __name__ == "__main__":
     test = SerialTest()
 
     SERIAL_PORTS = {
-        test.serial_comm1: "COM5",
-        test.serial_comm2: "COM3"    
+        test.serial_comm1: PORT1,
+        test.serial_comm2: PORT2    
     }
     
     # ユーザーにテストの種類を選ばせる
