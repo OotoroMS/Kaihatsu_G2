@@ -1,4 +1,3 @@
-import time
 import threading
 import serial
 from serial_communicator import SerialCommunicator
@@ -35,27 +34,23 @@ class SerialTest:
             if append_newline:
                 data += LINEENDING.encode()  # 改行コードを追加
 
-            start_time = time.perf_counter()  # 経過時間の測定開始
             success = port.serial_write(data)  # データを送信
-            elapsed_time = time.perf_counter() - start_time  # 経過時間の測定
 
             thread_id = threading.get_ident()  # スレッドIDを取得
             if success:
-                print(f"[Thread-{thread_id}] Sent: {data} (Time taken: {elapsed_time:.6f} seconds)")
+                print(f"[Thread-{thread_id}] Sent: {data}")
             else:
                 print(f"[Thread-{thread_id}] Failed to send data.")
 
     def receive_test(self, port):
         for i in range(5):
-            start_time = time.perf_counter()  # 経過時間の測定開始
             data = port.serial_read()  # データを受信
-            elapsed_time = time.perf_counter() - start_time  # 経過時間の測定
 
             thread_id = threading.get_ident()  # スレッドIDを取得
             if data:
-                print(f"[Thread-{thread_id}] Received: {data} (Time taken: {elapsed_time:.6f} seconds)")
+                print(f"[Thread-{thread_id}] Received: {data}")
             else:
-                print(f"[Thread-{thread_id}] Failed to receive data (Time taken: {elapsed_time:.6f} seconds).")
+                print(f"[Thread-{thread_id}] Failed to receive data.")
 
     def run_tests(self, ports, operation, append_newline=NEWLINE_OPTION["n"]):
         threads = []
