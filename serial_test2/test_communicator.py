@@ -15,7 +15,7 @@ SERIAL_STATUS = {
     "inactive": False
 }
 
-LINEENDING = "\r\n"
+LINEENDING = b"\r\n"
 
 # y/nのマッピング辞書
 NEWLINE_OPTION = {
@@ -30,7 +30,7 @@ class SerialTest:
 
     def send_test(self, port, append_newline=NEWLINE_OPTION["n"]):
         for i in range(5):
-            data = f"Message {i} from {SERIAL_PORTS[port]}".encode()  # 送信するデータをバイト列に変換
+            data = b'\x00\x01\x01'
             if append_newline:
                 data += LINEENDING.encode()  # 改行コードを追加
 
