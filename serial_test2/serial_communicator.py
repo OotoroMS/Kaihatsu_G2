@@ -40,16 +40,18 @@ class SerialCommunicator:
             bool: 送信が成功したかどうか
         """
         with self.lock:
-            print("Lock serial_write")
+            # スレッドロックが正常にかかっているか確認する  実稼働の時はコメントアウトさせておくこと
+            print(f"[Thread-{threading.get_ident()}] Lock serial_write")
             try:
                 self.serial.write(data)
-                print(f"Data sent: {data}")
+                print(f"[Thread-{threading.get_ident()}] Data sent: {data}")
                 return OPERATION_STATUS["success"]
             except serial.SerialException as e:
-                print(f"Error sending data via serial: {e}")
+                print(f"[Thread-{threading.get_ident()}] Error sending data via serial: {e}")
                 return OPERATION_STATUS["failure"]
+            # スレッドロックが正常にかかっているか確認する  実稼働の時はコメントアウトさせておくこと(finallyごと)
             finally:
-                print("Unlock serial_write")
+                print(f"[Thread-{threading.get_ident()}] Unlock serial_write")
 
     def serial_read(self) -> bytes:
         """
@@ -59,17 +61,19 @@ class SerialCommunicator:
             bytes: 受信したデータ（バイト列）、エラー時は空のバイト列を返す
         """
         with self.lock:
-            print("Lock serial_read")
+            # スレッドロックが正常にかかっているか確認する  実稼働の時はコメントアウトさせておくこと
+            print(f"[Thread-{threading.get_ident()}] Lock serial_read")
             try:
                 data = self.serial.readline()
                 if data:
-                    print(f"Data received: {data}")
+                    print(f"[Thread-{threading.get_ident()}] Data received: {data}")
                 return data
             except serial.SerialException as e:
-                print(f"Error receiving data via serial port: {e}")
+                print(f"[Thread-{threading.get_ident()}] Error receiving data via serial port: {e}")
                 return b''
+            # スレッドロックが正常にかかっているか確認する  実稼働の時はコメントアウトさせておくこと(finallyごと)
             finally:
-                print("Unlock serial_read")
+                print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
 
     def serial_close(self) -> bool:
         """
@@ -86,4 +90,4 @@ class SerialCommunicator:
                 return OPERATION_STATUS["success"]
             except serial.SerialException as e:
                 print(f"Error closing serial port: {e}")
-                return OPERATION_STATUS["failure"]        
+                return OPERATION_STATUS["failure"]

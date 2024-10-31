@@ -31,27 +31,31 @@ class SerialTest:
 
     def send_test(self, port, append_newline=NEWLINE_OPTION["n"]):
         for i in range(5):
-            data = f"Message {i} from {SERIAL_PORTS[port]}"
+            data = f"Message {i} from {SERIAL_PORTS[port]}".encode()  # 送信するデータをバイト列に変換
             if append_newline:
-                data += LINEENDING  # 改行コードを追加
-            data = data.encode()  # 送信するデータをバイト列に変換
+                data += LINEENDING.encode()  # 改行コードを追加
+
             start_time = time.perf_counter()  # 経過時間の測定開始
             success = port.serial_write(data)  # データを送信
             elapsed_time = time.perf_counter() - start_time  # 経過時間の測定
+
+            thread_id = threading.get_ident()  # スレッドIDを取得
             if success:
-                print(f"Sent: {data} (Time taken: {elapsed_time:.6f} seconds)")
+                print(f"[Thread-{thread_id}] Sent: {data} (Time taken: {elapsed_time:.6f} seconds)")
             else:
-                print("Failed to send data.")
+                print(f"[Thread-{thread_id}] Failed to send data.")
 
     def receive_test(self, port):
         for i in range(5):
             start_time = time.perf_counter()  # 経過時間の測定開始
             data = port.serial_read()  # データを受信
             elapsed_time = time.perf_counter() - start_time  # 経過時間の測定
+
+            thread_id = threading.get_ident()  # スレッドIDを取得
             if data:
-                print(f"Received: {data} (Time taken: {elapsed_time:.6f} seconds)")
+                print(f"[Thread-{thread_id}] Received: {data} (Time taken: {elapsed_time:.6f} seconds)")
             else:
-                print(f"Failed to receive data (Time taken: {elapsed_time:.6f} seconds).")
+                print(f"[Thread-{thread_id}] Failed to receive data (Time taken: {elapsed_time:.6f} seconds).")
 
     def run_tests(self, ports, operation, append_newline=NEWLINE_OPTION["n"]):
         threads = []
@@ -78,8 +82,8 @@ if __name__ == "__main__":
     test = SerialTest()
 
     SERIAL_PORTS = {
-        test.serial_comm1   :   "COM5",
-        test.serial_comm2   :   "COM3"    
+        test.serial_comm1: "COM5",
+        test.serial_comm2: "COM3"    
     }
     
     # ユーザーにテストの種類を選ばせる
