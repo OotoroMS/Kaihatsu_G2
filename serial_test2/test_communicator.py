@@ -6,7 +6,7 @@ from serial_communicator import SerialCommunicator
 PORT1 = "COM5"  # 適切なポートに変更してください
 PORT2 = "COM3"  # 適切なポートに変更してください
 BAUD_RATE = 9600
-TIMEOUT = 0.01
+TIMEOUT = 0.015
 PARITY = serial.PARITY_EVEN
 STOPBITS = serial.STOPBITS_ONE
 

@@ -27,36 +27,40 @@ class SerialCommunicator:
         self.lock = threading.Lock()
         self.is_open: bool = SERIALPORT_STATUS["serial_open"]
 
-    def serial_write(self, data: bytes) -> bool:
+    def serial_write(self, data: bytes) -> bool:        
+        print(f"[Thread-{threading.get_ident()}] Lock serial_write")
+        start_time = perf_counter()  # 計測開始
+        elapsed_time = 0.0
         with self.lock:
-            print(f"[Thread-{threading.get_ident()}] Lock serial_write")
-            start_time = perf_counter()  # 計測開始
             try:
                 self.serial.write(data)
                 elapsed_time = perf_counter() - start_time  # 経過時間
-                print(f"[Thread-{threading.get_ident()}] Data sent: {data} (Time taken: {elapsed_time:.9f} seconds)")
-                return OPERATION_STATUS["success"]
+                result = OPERATION_STATUS["success"]
             except serial.SerialException as e:
                 print(f"[Thread-{threading.get_ident()}] Error sending data via serial: {e}")
-                return OPERATION_STATUS["failure"]
-            finally:
-                print(f"[Thread-{threading.get_ident()}] Unlock serial_write")
+                result =  OPERATION_STATUS["failure"]
+        print(f"[Thread-{threading.get_ident()}] Data sent: {data} (Time taken: {elapsed_time:.9f} seconds)")
+        print(f"[Thread-{threading.get_ident()}] Unlock serial_write")
 
-    def serial_read(self) -> bytes:
-        with self.lock:
-            print(f"[Thread-{threading.get_ident()}] Lock serial_read")
-            start_time = perf_counter()  # 計測開始
+        return result
+
+    def serial_read(self) -> bytes:        
+        print(f"[Thread-{threading.get_ident()}] Lock serial_read")
+        start_time = perf_counter()  # 計測開始
+        elapsed_time = 0.0
+        with self.lock:       
             try:
                 data = self.serial.readline()
-                elapsed_time = perf_counter() - start_time  # 経過時間
-                if data:
-                    print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
-                return data
+                elapsed_time = perf_counter() - start_time  # 経過時間                
+                result = data
             except serial.SerialException as e:
                 print(f"[Thread-{threading.get_ident()}] Error receiving data via serial port: {e}")
-                return b''
-            finally:
-                print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
+                result = b''            
+        if data:
+            print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
+        print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
+
+        return result
 
     def serial_close(self) -> bool:
         if self.serial.is_open:
