@@ -7,7 +7,7 @@ from serial_communicator import SerialCommunicator
 PORT1 = "COM5"  # 適切なポートに変更してください
 PORT2 = "COM3"  # 適切なポートに変更してください
 BAUD_RATE = 9600
-TIMEOUT = 0.1
+TIMEOUT = 0.01
 PARITY = serial.PARITY_EVEN
 STOPBITS = serial.STOPBITS_ONE
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     choice = input("Enter your choice (1/2/3): ")
     
     # 使用するポートの選択
-    port_choice = input("Select the port (1 for COM5, 2 for COM3, 3 for both): ")
+    port_choice = input(f"Select the port (1 for {PORT1}, 2 for {PORT2}, 3 for both): ")
 
     if port_choice == "1":
         port = [test.serial_comm1]  # COM5
