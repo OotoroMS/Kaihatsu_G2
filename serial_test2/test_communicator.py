@@ -32,7 +32,7 @@ class SerialTest:
         for i in range(5):
             data = b'\x00\x01\x01'
             if append_newline:
-                data += LINEENDING.encode()  # 改行コードを追加
+                data += LINEENDING
 
             port.serial_write(data)  # データを送信
 
