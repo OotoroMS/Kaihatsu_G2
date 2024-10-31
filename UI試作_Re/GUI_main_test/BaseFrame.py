@@ -1,17 +1,20 @@
 import pygame
 from pygame.locals import *
 from Button import Button
+from Picture import Picture
 
 BRACK = ((0,0,0))
 GRAY  = ((200,200,200))
-FONT = "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\data.png"
+FONT = "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic01.png"
+BASETITLE="D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic03.png"
 
 class BaseFrame():
     def __init__(self, screen, font=None):
         self.screen = screen
         self.font = font
-        self.font_title = pygame.font.Font(self.font, 60)
-        self.text_title = self.font_title.render("テスト", True, BRACK)
+        self.images = {
+            Picture(self.screen, 0, 0, 750, 200, BASETITLE)
+        }
         self.buttons = {
             Button(self.screen, 141, 50, 200, 100, FONT, self.test),
             
@@ -30,7 +33,8 @@ class BaseFrame():
 
     #   ボタン及びテキストの描画処理を記述
     def draw(self):
-        self.screen.blit(self.text_title,(200,10))
+        for image in self.images:
+            image.draw()
         for button in self.buttons:
             button.draw()
 

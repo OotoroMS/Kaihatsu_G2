@@ -1,8 +1,8 @@
 import pygame
 
 #   暗転用
-DARK_COLOR = (255, 255, 255)
-DARKEN_DURATION = 5  # 暗くするフレーム数
+DARK_COLOR = (0,0,0)
+DARKEN_DURATION = 3  # 暗くするフレーム数
 
 #   暗転処理
 def brackout_screen(screen, image, draw_func):

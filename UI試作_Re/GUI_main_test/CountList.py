@@ -8,24 +8,24 @@ SQL = {
     "error" : "select * from db_timelog order by id DESC limit 50"
 }
 TODAY = {
-    "px" : 300,
-    "py" : 100,
-    "x"  : 4,
+    "px" : 420,#配置
+    "py" : 200,
+    "x"  : 4,#個数
     "y"  : 2,
-    "w"  : 350,
+    "w"  : 350,#サイズ
     "h"  : 250
 }
 SEVEN = {
-    "px" : 300,
-    "py" : 100,
+    "px" : 420,
+    "py" : 200,
     "x" : 4,
     "y" : 8,
     "w" : 350,
     "h" : 100
 }
 ERROR = {
-    "px" : 300,
-    "py" : 100,
+    "px" : 420,
+    "py" : 200,
     "x" : 2,
     "y" : 8,
     "w" : 525,

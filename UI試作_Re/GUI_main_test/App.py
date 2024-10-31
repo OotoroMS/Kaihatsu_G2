@@ -7,8 +7,8 @@ from DataFrame import DataFrame
 from PassFrame import PassFrame
 from GraphFrame import GraphFrame
 from CountFrame import CountFrame
-from BasePopup import BasePopup
-from TestFrame import TestFrame
+# from BasePopup import BasePopup
+# from TestFrame import TestFrame
 
 import BrackOut
 
@@ -19,8 +19,8 @@ GRAY  = ((200,200,200))
 OPERATION = "pass"
 #   背景画像
 BACKGROUND_IMAGE = {
-    "main" : "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\watercolor_00685.jpg",
-    "pass" : "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\pass.jpg"
+    "main" : "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\background\\back01.jpg",
+    "pass" : "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\background\\back02.jpg"
 }
 POPUPMSG = "装置を停止してください"
 
@@ -48,8 +48,8 @@ class App:
             "pass"  :   PassFrame(self.screen, self.font),
             "graph" :   GraphFrame(self.screen, self.font),
             "count" :   CountFrame(self.screen, self.font),
-            "test"  :   TestFrame(self.screen, self.font),
-            "move_popup"   :   BasePopup(self.screen,self.font, POPUPMSG)
+            # "test"  :   TestFrame(self.screen, self.font),
+            # "move_popup"   :   BasePopup(self.screen,self.font, POPUPMSG)
         }
 
     #   背景の設定
@@ -63,7 +63,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.clock.tick(120)
         self.tcnt = 0
-        self.fps = 60
+        self.fps = 120
     
     #   稼働状況の初期設定
     def setting_vital(self):
@@ -98,15 +98,16 @@ class App:
     #   動作処理
     def run(self):
         while self.running:                                 #   動作フラグが真(ON)の間
+            self.clock.tick(120)
             if self.current_screen != self.previous_screen:
                 self.brackout()
             screen = self.screens[self.current_screen]      #   表示する画面を呼び出す
             self.setting_background()
             self.screen.blit(self.backgroud_image, (0,0))
             screen.draw()                                   #   画面を描画
-            if self.veiw_popup:
-                self.screens["move_popup"].draw()
-                self.veiw_popup = self.screens["move_popup"].update()
+            # if self.veiw_popup:
+            #     self.screens["move_popup"].draw()
+            #     self.veiw_popup = self.screens["move_popup"].update()
             self.text_vital, self.tcnt = Vital.update_vital(self.tcnt, self.text_vital)
             Vital.draw_vital(self.screen, self.text_vital,  self.point_vital, self.rect_vital,self.font_vital)
             action = screen.update()                        #   ボタンなどの処理を実行

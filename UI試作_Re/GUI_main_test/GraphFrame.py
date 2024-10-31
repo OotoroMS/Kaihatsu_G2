@@ -1,28 +1,32 @@
-
+#寸法検査ログ
 import pygame
 import os
 import Graph
 from BaseFrame import BaseFrame
 from Button import Button
+from Picture import Picture
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
-PATH = "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\graph.png"
+PATH = "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\graph.png"
 
 class GraphFrame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.create_flg = True
-        self.text_title = self.font_title.render("寸法検査ログ", True, BLACK)
         self.buttons = {
-            Button(self.screen, 1570, 930, 330, 120, "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\return.png", self.move_data)
+            Button(self.screen, 0, 960, 330, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\back.png", self.move_data)
+        }
+        self.images = {
+            Picture(self.screen, 0, 0, 750, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\title\\pic18.png")
         }
     
     #   画面描画処理
     def draw(self):
-        self.screen.blit(self.text_title,(200,50))
+        for image in self.images:
+            image.draw()
         self.draw_graph()
-        self.screen.blit(self.graph, (100,120))
+        self.screen.blit(self.graph, (270,190))
         for button in self.buttons:
             button.draw()
     

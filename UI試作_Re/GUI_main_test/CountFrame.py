@@ -1,10 +1,10 @@
-
+#良否カウントログ
 import pygame
 import CountList
 import DrawTable
 from BaseFrame import BaseFrame
 from Button import Button
-from NumButton import NumButton
+from Picture import Picture
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
@@ -13,7 +13,6 @@ FONT = "C:\\Windows\\Fonts\\msgothic.ttc"
 class CountFrame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
-        self.text_title = self.font_title.render("寸法検査ログ", True, BLACK)
         self.table_font = pygame.font.Font(FONT,size=110)
         self.bad_view = 0
         self.bad_cnt = 0
@@ -23,21 +22,25 @@ class CountFrame(BaseFrame):
     
     def setting_buttons(self):
         self.buttons = {
-            NumButton(self.screen, 50, 100, 220, 100, GRAY, "本日", 50, self.move_today),
-            NumButton(self.screen, 50, 250, 220, 100, GRAY, "七日間", 50, self.move_seven),
-            NumButton(self.screen, 50, 400, 220, 100, GRAY, "不良一覧", 50, self.move_error),
-            Button(self.screen, 1570, 930, 330, 120, "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\return.png", self.move_data)
+            Button(self.screen, 20, 280, 360, 140, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic11.png", self.move_today),#当日
+            Button(self.screen, 20, 470, 360, 140, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic09.png", self.move_seven),#7
+            Button(self.screen, 20, 660, 360, 140, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic10.png", self.move_error),#不良
+            Button(self.screen, 0, 960, 330, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\back.png", self.move_data)
         }
         self.scrol_buttons = {
-            NumButton(self.screen, 1450, 435, 220, 100, GRAY, "　△　", 50, self.table_up),
-            NumButton(self.screen, 1450, 545, 220, 100, GRAY, "　▽　", 50, self.table_down),
-            NumButton(self.screen, 1450, 380, 220, 50, GRAY, "△△△", 50, self.table_full_up),
-            NumButton(self.screen, 1450, 650, 220, 50, GRAY, "▽▽▽", 50, self.table_full_down)
+            Button(self.screen, 1570, 280, 220, 160, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic14.png", self.table_full_up),
+            Button(self.screen, 1590, 480, 180, 120,"D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic15.png", self.table_up),
+            Button(self.screen, 1590, 640, 180, 120, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic16.png", self.table_down),
+            Button(self.screen, 1570, 810, 220, 160, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\button\\pic17.png", self.table_full_down)
+        }
+        self.images = {
+            Picture(self.screen, 0, 0, 750, 200, "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\title\\pic07.png")
         }
 
     #   画面描画処理
     def draw(self):
-        self.screen.blit(self.text_title,(200,10))
+        for image in self.images:
+            image.draw()
         self.draw_buttons()
         DrawTable.draw_table(self.screen, self.view, self.bad_view, self.table_font)
 

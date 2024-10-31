@@ -4,11 +4,11 @@ from SQLCommunication_main import SQLCommunication as SQL
 
 matplotlib.use('Agg')
 
-SIZE = (10,8)
+SIZE = (13,7.5)
 DB = "testdb_main.db"
 QUERY = "select * from DB_sizelog order by id desc limit 20"
 FONT = 'HGMaruGothicMPRO'
-PATH = "D:\\Kaihatsu\\VScode\\GUI\\GUI_main_test\\image\\graph.png"
+PATH = "D:\\GitHub\\Kaihatsu_G2\\UI試作_Re\\GUI_main_test\\image\\graph.png"
 
 #   データベースからデータを取得
 def get_data():
