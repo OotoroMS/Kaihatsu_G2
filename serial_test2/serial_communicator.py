@@ -28,9 +28,9 @@ class SerialCommunicator:
             timeout=timeout
         )
         self.lock = threading.Lock()
-        self.is_open: bool = SERIALPORT_STATUS["serial_open"]
+        self.is_open = self.serialport_status("serial_open")
 
-    def serial_write(self, data: bytes) -> bool:        
+    def serial_write(self, data: bytes) -> bool:            
         print(f"[Thread-{threading.get_ident()}] Lock serial_write")
         start_time = perf_counter()  # 計測開始
         elapsed_time = 0.0
@@ -38,13 +38,13 @@ class SerialCommunicator:
             try:
                 self.serial.write(data)
                 elapsed_time = perf_counter() - start_time  # 経過時間
-                result = OPERATION_STATUS["success"]
+                result = self.result("success")
             except serial.SerialException as e:
                 print(f"[Thread-{threading.get_ident()}] Error sending data via serial: {e}")
-                result =  OPERATION_STATUS["failure"]
+                result = self.result("failure")
         print(f"[Thread-{threading.get_ident()}] Data sent: {data} (Time taken: {elapsed_time:.9f} seconds)")
         print(f"[Thread-{threading.get_ident()}] Unlock serial_write")
-        time.sleep(WAIT_TIME)
+        self.wait_time()
 
         return result
 
@@ -63,7 +63,7 @@ class SerialCommunicator:
         if data:
             print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
         print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
-        time.sleep(WAIT_TIME)
+        self.wait_time()
 
         return result
 
@@ -72,8 +72,20 @@ class SerialCommunicator:
             try:
                 print(f"Closing serial port: {self.serial.name}")
                 self.serial.close()
-                self.is_open = SERIALPORT_STATUS["serial_close"]
-                return OPERATION_STATUS["success"]
+                self.is_open = self.serialport_status("serial_close")
+                return self.result("success")
             except serial.SerialException as e:
                 print(f"Error closing serial port: {e}")
-                return OPERATION_STATUS["failure"]
+                return self.result("failure")
+        
+    def wait_time(self):
+        time.sleep(WAIT_TIME)
+
+    def result(self, msg: str):
+        result = OPERATION_STATUS[msg]
+        return result
+    
+    def serialport_status(self, msg: str):
+        result = SERIALPORT_STATUS[msg]
+        return result
+
