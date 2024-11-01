@@ -14,7 +14,7 @@ OPERATION_STATUS = {
     "failure": False
 }
 
-WAIT_TIME = 0.01
+WAIT_TIME = 0.005
 
 
 class SerialCommunicator:
