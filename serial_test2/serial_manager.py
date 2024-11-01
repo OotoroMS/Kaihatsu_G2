@@ -24,9 +24,6 @@ DATA_PREFIX = {
 
 LINE_ENDING = b'\r\n'
 
-WAIT_TIME = 0.01
-
-
 class SerialManager:
     def __init__(self, serial_params: dict, queues: dict):
         """
@@ -57,8 +54,7 @@ class SerialManager:
             try:                
                 # 応答待ちの間は送信ができないようになっている
                 if self.serial_comm.is_open and self.wait_for_response:
-                    self.send_data_and_process()
-                time.sleep(WAIT_TIME)
+                    self.send_data_and_process()                
             except Exception as e:
                 print(f"Send unexpected error: {e}")
 
@@ -120,8 +116,7 @@ class SerialManager:
         while self.shutdown_flag:
             try:
                 if self.serial_comm.is_open:  # シリアルポートがオープンであればデータを受信
-                    self.receive_data_and_process()
-                time.sleep(WAIT_TIME)  # 一定の待機時間を設ける
+                    self.receive_data_and_process()                
             except Exception as e:
                 print(f"Receive unexpected error: {e}")
 
