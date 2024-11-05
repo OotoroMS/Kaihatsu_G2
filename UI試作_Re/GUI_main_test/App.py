@@ -9,6 +9,11 @@ from GraphFrame import GraphFrame
 from CountFrame import CountFrame
 # from BasePopup import BasePopup
 # from TestFrame import TestFrame
+from MotionTestFrame import MotionTestFrame
+from Test01Frame import Test01Frame
+from Test02Frame import Test02Frame
+from Test03Frame import Test03Frame
+from Test04Frame import Test04Frame
 
 import BrackOut
 
@@ -19,8 +24,9 @@ GRAY  = ((200,200,200))
 OPERATION = "pass"
 #   背景画像
 BACKGROUND_IMAGE = {
-    "main" : "image\\background\\back01.jpg",
-    "pass" : "image\\background\\back02.jpg"
+    "main" : "GUI_main_test\\image\\background\\back01.jpg",
+    "pass" : "GUI_main_test\\image\\background\\back02.jpg",
+    "motiontest" : "GUI_main_test\\image\\background\\back01.jpg"
 }
 POPUPMSG = "装置を停止してください"
 
@@ -50,6 +56,11 @@ class App:
             "count" :   CountFrame(self.screen, self.font),
             # "test"  :   TestFrame(self.screen, self.font),
             # "move_popup"   :   BasePopup(self.screen,self.font, POPUPMSG)
+            "motiontest" :   MotionTestFrame(self.screen, self.font),
+            "test01" :   Test01Frame(self.screen, self.font),
+            "test02" :   Test02Frame(self.screen, self.font),
+            "test03" :   Test03Frame(self.screen, self.font),
+            "test04" :   Test04Frame(self.screen, self.font)
         }
 
     #   背景の設定
@@ -57,13 +68,16 @@ class App:
         if self.current_screen == "main" or self.current_screen == "pass":
             backgroud_image = pygame.image.load(BACKGROUND_IMAGE[self.current_screen])
             self.backgroud_image = pygame.transform.scale(backgroud_image, (1980, 1080))
+        elif self.current_screen == "motiontest":
+            backgroud_image = pygame.image.load(BACKGROUND_IMAGE[self.current_screen])
+            self.backgroud_image = pygame.transform.scale(backgroud_image, (1980, 1080))
 
     #   フレームレート設定      後でコメントをかく
     def setting_fps(self):
         self.clock = pygame.time.Clock()
-        self.clock.tick(120)
+        self.clock.tick(60)
         self.tcnt = 0
-        self.fps = 120
+        self.fps = 60
     
     #   稼働状況の初期設定
     def setting_vital(self):
@@ -98,7 +112,7 @@ class App:
     #   動作処理
     def run(self):
         while self.running:                                 #   動作フラグが真(ON)の間
-            self.clock.tick(120)
+            self.clock.tick(60)
             if self.current_screen != self.previous_screen:
                 self.brackout()
             screen = self.screens[self.current_screen]      #   表示する画面を呼び出す

@@ -25,7 +25,7 @@ def draw_vital(screen, vital, vital_point, rect ,font):
     screen.blit(view_vital, vital_point)
 
 def update_vital(tcnt,vital):
-    if tcnt == 120:
+    if tcnt == 60:
         tcnt = 0
         vital = vital_test(vital)
     else:
