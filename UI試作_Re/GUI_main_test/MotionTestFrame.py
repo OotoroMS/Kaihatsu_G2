@@ -2,6 +2,7 @@
 from BaseFrame import BaseFrame
 from Button import Button
 from Picture import Picture
+import pygame
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
@@ -24,6 +25,11 @@ class MotionTestFrame(BaseFrame):
             Picture(self.screen, 250, 210, 1300, 740, "GUI_main_test\\image\\exptxt\\pic32.png")
         }
     
+        pygame.draw.line(self.screen,(0,0,0),(215,680),(420,560),8)
+        pygame.draw.line(self.screen,(0,0,0),(700,270),(640,500),8)
+        pygame.draw.line(self.screen,(0,0,0),(880,950),(500,500),8)
+        pygame.draw.line(self.screen,(0,0,0),(1260,240),(500,500),8)
+
     #   動作確認ボタン押下処理
     def move_test01(self):
         return "test01"

@@ -1,3 +1,4 @@
+#動作確認のランプ
 import pygame
 from typing import Tuple, Optional
 YEROW = ((255,255,0))
@@ -6,34 +7,37 @@ RED   = ((255,0,0))
 
 # 赤の円（塗りつぶし）
 # pygame.draw.circle(描画画面, 色(塗り潰し), 中心座標, 半径)
+# 四角形
+# pygame.draw.rect(描画画面, 色(塗り潰し), 図形の形(左上のx,y,横幅,立幅),線の幅)
 # 線の太さ指定
 # pygame.draw.circle(screen, (255,0,0), (320,240), 100, 5)
 
 
 class Lamp():
-    #   必要に応じて半径も引数に入れたほうがいいと思われる
-    def __init__(self, screen : pygame.Surface, x : int, y : int, color : Tuple[int, int, int]) -> None:
+    
+    def __init__(self, screen : pygame.Surface, x : int, y : int, w : int, h : int, color : Tuple[int, int, int]) -> None:
         """
-        円の描画処理を管理するクラス。
+        矩形の描画処理を管理するクラス。
         動作確認画面で、各機構の動作状況を表示するランプとして使用する。
 
         Prameters:
         screen (Surface)    :   描画する画面
-        x (int) :   中心のx座標
-        y (int) :   中心のy座標
-        color (Tuple[int, int, int]) :   円を塗りつぶす色（RGB）
+        x (int) :   左上のx座標
+        y (int) :   左上のy座標
+        w (int) :   横幅
+        h (int) :   立幅
+        color (Tuple[int, int, int]) :  塗りつぶす色（RGB）
         """
         self.screen = screen
-        self.coordinate = (x, y)
+        self.coordinate = (x, y, w, h)
         self.color = color
     
-
     def draw(self) -> None:
         """
-        円を描画する関数。
+        矩形を描画する関数。
         画面更新時に実行する。
         """
-        pygame.draw.circle(self.screen, self.color, self.coordinate, 10)
+        pygame.draw.rect(self.screen, self.color, self.coordinate,0)
 
     def confirmation_color(self, color : Tuple[int,int,int]) -> bool:
         """
@@ -53,7 +57,7 @@ class Lamp():
     
     def update_color(self, color) -> None:
         """
-        円を塗りつぶす色を更新するモジュール。
+        矩形を塗りつぶす色を更新するモジュール。
         色が規定の範囲内のときのみ更新する。
         
         Parameters:

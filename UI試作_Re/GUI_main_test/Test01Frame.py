@@ -2,7 +2,15 @@
 from BaseFrame import BaseFrame
 from Button import Button
 from Picture import Picture
+from Lamp import Lamp
 
+BLACK = ((0,0,0))
+GRAY  = ((200,200,200))
+
+YEROW = ((255,255,0)) 
+GREEN = ((0,255,0))
+
+COLOR = ((GRAY))
 MAINTITLE="GUI_main_test\\image\\title\\pic63.png"
 #   メイン画面描画・処理クラス
 class Test01Frame(BaseFrame):
@@ -21,7 +29,29 @@ class Test01Frame(BaseFrame):
             Picture(self.screen, 50, 220, 400, 200, "GUI_main_test\\image\\button\\pic38.png"),
             Picture(self.screen, 500, 220, 400, 200, "GUI_main_test\\image\\button\\pic39.png")
         }
-    
+        self.lamps = list((
+            Lamp(self.screen, 380, 295,50,50, GRAY),
+            Lamp(self.screen, 825, 295,50,50, GRAY)
+        ))
+        self.color = GRAY
+
+    #   ボタン及びテキストの描画処理を記述
+    def draw(self):
+        for image in self.images:
+            image.draw()
+        for button in self.buttons:
+            button.draw()
+        for lamp in self.lamps:
+            lamp.draw()
+
+    def change_color(self):
+        if self.color == YEROW:
+            self.color = GREEN
+        else:
+            self.color = YEROW
+        
+        self.lamps[0].update_color(self.color)
+
     #   動作確認ボタン押下処理
     def try01(self):
         return "try01"
