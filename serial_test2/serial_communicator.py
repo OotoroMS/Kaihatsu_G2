@@ -54,14 +54,17 @@ class SerialCommunicator:
         elapsed_time = 0.0        
         with self.lock:       
             try:
-                data = self.serial.readline()
-                elapsed_time = perf_counter() - start_time  # 経過時間                
+                if self.serial.in_waiting > 0:    # データが無しならとっとと次の処理に行く
+                    data = self.serial.readline()
+                    elapsed_time = perf_counter() - start_time  # 経過時間                                    
+                else:
+                    data = b''
+                    elapsed_time = perf_counter() - start_time  # 経過時間                                    
                 result = data
             except serial.SerialException as e:
                 print(f"[Thread-{threading.get_ident()}] Error receiving data via serial port: {e}")
-                result = b''            
-        if data:
-            print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
+                result = b''                    
+        print(f"[Thread-{threading.get_ident()}] Data received: {data} (Time taken: {elapsed_time:.9f} seconds)")
         print(f"[Thread-{threading.get_ident()}] Unlock serial_read")
         self.wait_time()
 
