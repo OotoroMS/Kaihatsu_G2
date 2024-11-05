@@ -5,8 +5,8 @@ from Picture import Picture
 
 BRACK = ((0,0,0))
 GRAY  = ((200,200,200))
-FONT = ".\\image\\button\\pic01.png"
-BASETITLE=".\\image\\title\\pic03.png"
+FONT = "GUI_main_test\\image\\button\\pic01.png"
+BASETITLE="GUI_main_test\\image\\title\\pic03.png"
 
 class BaseFrame():
     def __init__(self, screen, font=None):

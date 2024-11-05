@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 def calculate_popup_size(base_width : int, base_height : int) -> Tuple[int, int]:
     """
     popup画面のサイズを計算するモジュール。
-    縦横ともに、100引いた値を返す。
+    縦横ともに、200引いた値を返す。
 
     Parameters:
     base_width (int) :  基準画面の横幅

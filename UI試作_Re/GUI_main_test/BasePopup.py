@@ -8,7 +8,7 @@ GRAY = ((200,200,200))      #   カラーコード(灰色)
 BLACK = ((255,255,255))     #   カラーコード(黒)
 WHITE = ((0,0,0))           #   カラーコード(白)
 BASEMSSEGE = "BASE POPUP"
-BACKFRAME = ".\\image\\button\\back.png"
+BACKFRAME = "GUI_main_test\\image\\button\\back.png"
 
 class BasePopup(BaseFrame):
     def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):
