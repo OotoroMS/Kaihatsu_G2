@@ -6,6 +6,10 @@ import pygame
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
+RED  = ((255,0,0))#RGB
+GREEN  = ((0,255,0))
+BLUE  = ((0,0,255))
+YELLOW  = ((255,255,0))
 MAINTITLE="GUI_main_test\\image\\title\\pic62.png"
 #   メイン画面描画・処理クラス
 class MotionTestFrame(BaseFrame):
@@ -24,11 +28,16 @@ class MotionTestFrame(BaseFrame):
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
             Picture(self.screen, 250, 210, 1300, 740, "GUI_main_test\\image\\exptxt\\pic32.png")
         }
-    
-        pygame.draw.line(self.screen,(0,0,0),(215,680),(420,560),8)
-        pygame.draw.line(self.screen,(0,0,0),(700,270),(640,500),8)
-        pygame.draw.line(self.screen,(0,0,0),(880,950),(500,500),8)
-        pygame.draw.line(self.screen,(0,0,0),(1260,240),(500,500),8)
+
+    def draw(self):
+        for image in self.images:
+            image.draw()
+        pygame.draw.line(self.screen,RED,(215,680),(400,560),8)#01
+        pygame.draw.line(self.screen,YELLOW,(750,260),(660,410),8)#02
+        pygame.draw.line(self.screen,GREEN,(880,950),(780,670),8)#03
+        pygame.draw.line(self.screen,BLUE,(1260,410),(1000,550),8)#04
+        for button in self.buttons:
+            button.draw()
 
     #   動作確認ボタン押下処理
     def move_test01(self):

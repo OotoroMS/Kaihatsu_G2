@@ -37,6 +37,7 @@ class BaseFrame():
             image.draw()
         for button in self.buttons:
             button.draw()
+        
 
     def test(self):
         print("test")

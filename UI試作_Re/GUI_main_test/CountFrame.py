@@ -42,7 +42,21 @@ class CountFrame(BaseFrame):
         for image in self.images:
             image.draw()
         self.draw_buttons()
-        DrawTable.draw_table(self.screen, self.view, self.bad_view, self.table_font)
+        self.bad_cnt = DrawTable.draw_table(self.screen, self.view, self.bad_view, self.table_font)
+
+        #   イベント処理を記述
+    def update(self):
+        move = None
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for button in self.buttons:
+                    move = button.is_clicked(event)
+                    if move:
+                        break
+                for button in self.scrol_buttons:
+                    button.is_clicked(event)
+                return move
+
 
     def draw_buttons(self):
         for button in self.buttons:

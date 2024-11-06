@@ -2,6 +2,12 @@
 from BaseFrame import BaseFrame
 from Button import Button
 from Picture import Picture
+from Lamp import Lamp
+
+BLACK = ((0,0,0))
+GRAY  = ((200,200,200))
+YEROW = ((255,255,0)) 
+GREEN = ((0,255,0))
 
 MAINTITLE="GUI_main_test\\image\\title\\pic64.png"
 #   メイン画面描画・処理クラス
@@ -20,7 +26,22 @@ class Test02Frame(BaseFrame):
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
             Picture(self.screen, 1100, 200, 550, 240, "GUI_main_test\\image\\button\\pic46.png")
         }
+        self.lamps = list((
+            Lamp(self.screen, 1550, 295,50,50, GRAY),#一個だけだと動かない
+            Lamp(self.screen, 1550, 495,50,50, GRAY),
+        ))
+        self.color = GRAY
     
+        #   ボタン及びテキストの描画処理を記述
+    def draw(self):
+        for image in self.images:
+            image.draw()
+        for button in self.buttons:
+            button.draw()
+        for lamp in self.lamps:
+            lamp.draw()
+
+
     #   動作確認ボタン押下処理
     def try06(self):
         return "try06"

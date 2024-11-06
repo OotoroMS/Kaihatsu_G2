@@ -35,7 +35,8 @@ class PassFrame(BaseFrame):
             Button(self.screen, 1211, 570, 212, 360, "GUI_main_test\\image\\button\\pic31.png", self.num_check)
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "GUI_main_test\\image\\title\\pic71.png")
+            Picture(self.screen, 0, 0, 750, 200, "GUI_main_test\\image\\title\\pic71.png"),
+            Picture(self.screen, 410, 200, 180, 180, "GUI_main_test\\image\\button\\pic19.png")
         }
     
     #   ボタン及びテキストの描画処理を記述

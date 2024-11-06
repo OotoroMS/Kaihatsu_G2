@@ -6,7 +6,6 @@ from Lamp import Lamp
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
-
 YEROW = ((255,255,0)) 
 GREEN = ((0,255,0))
 
