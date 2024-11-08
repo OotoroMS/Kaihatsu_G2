@@ -109,7 +109,7 @@ class App:
     #   動作処理
     def run(self):
         while self.running:                                 #   動作フラグが真(ON)の間
-            self.clock.tick(60)
+            self.clock.tick(15)
             if self.current_screen != self.previous_screen:
                 self.brackout()
             screen = self.screens[self.current_screen]      #   表示する画面を呼び出す
