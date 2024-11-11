@@ -16,21 +16,23 @@ class Test01Frame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.buttons = {
-            Button(self.screen, 1100, 190, 550, 250, "GUI_main_test\\image\\button\\pic40.png", self.try01),
-            Button(self.screen, 350, 490, 550, 250, "GUI_main_test\\image\\button\\pic41.png", self.try02),
-            Button(self.screen, 1100, 490, 550, 250, "GUI_main_test\\image\\button\\pic42.png", self.try03),
-            Button(self.screen, 350, 790, 550, 250, "GUI_main_test\\image\\button\\pic43.png", self.try04),
-            Button(self.screen, 1100, 790, 550, 250, "GUI_main_test\\image\\button\\pic44.png", self.try05),
+            Button(self.screen, 1100, 190, 550, 250, "GUI_main_test\\image\\button\\pic40.png", self.try01),#偏心モータ回転
+            Button(self.screen, 350, 490, 550, 250, "GUI_main_test\\image\\button\\pic41.png", self.try02),#押出シリンダ前進
+            Button(self.screen, 1100, 490, 550, 250, "GUI_main_test\\image\\button\\pic42.png", self.try03),#押出シリンダ後退
+            Button(self.screen, 350, 790, 550, 250, "GUI_main_test\\image\\button\\pic43.png", self.try04),#ポンプ
+            Button(self.screen, 1100, 790, 550, 250, "GUI_main_test\\image\\button\\pic44.png", self.try05),#エアブロー
             Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
-            Picture(self.screen, 50, 220, 400, 200, "GUI_main_test\\image\\button\\pic38.png"),
-            Picture(self.screen, 500, 220, 400, 200, "GUI_main_test\\image\\button\\pic39.png")
+            Picture(self.screen, 50, 220, 400, 200, "GUI_main_test\\image\\button\\pic38.png"),#引っかかり検知
+            Picture(self.screen, 500, 220, 400, 200, "GUI_main_test\\image\\button\\pic39.png")#ワーク検知
         }
         self.lamps = list((
-            Lamp(self.screen, 380, 295,50,50, GRAY),
-            Lamp(self.screen, 825, 295,50,50, GRAY)
+            Lamp(self.screen, 380, 295,50,50, GRAY),#引っかかり検知
+            Lamp(self.screen, 820, 295,50,50, GRAY),#ワーク検知
+            Lamp(self.screen, 800, 580,60,60, GRAY),#押出シリンダ前進
+            Lamp(self.screen, 1550, 580,60,60, GRAY)#押出シリンダ後退
         ))
         self.color = GRAY
 

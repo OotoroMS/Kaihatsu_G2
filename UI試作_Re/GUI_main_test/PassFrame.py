@@ -3,7 +3,7 @@ import pygame
 from BaseFrame import BaseFrame
 from Button import Button
 from NumButton import NumButton
-# from BasePopup import BasePopup
+from PassPopup import PassPopup
 from Picture import Picture
 
 BLACK = ((0,0,0))
@@ -18,7 +18,7 @@ class PassFrame(BaseFrame):
         self.pass_rect = pygame.rect.Rect(660, 200, 600, 170)
         self.set_pass = ""
         self.flg_veiw_popup = False
-        # self.popup_different_pass = BasePopup(self.screen, font, POPUPMSSEGE)  
+        self.popup_different_pass = PassPopup(self.screen, font, POPUPMSSEGE)  
         self.buttons = {
             Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png",  self.move_main),
             Button(self.screen, 660,  915, 370, 200, "GUI_main_test\\image\\button\\pic20.png", self.num_0),
@@ -46,9 +46,9 @@ class PassFrame(BaseFrame):
         self.draw_pass()
         for button in self.buttons:
             button.draw()
-        # if self.flg_veiw_popup:
-        #     self.popup_different_pass.draw()
-        #     self.flg_veiw_popup = self.popup_different_pass.update()
+        if self.flg_veiw_popup:
+            self.popup_different_pass.draw()
+            self.flg_veiw_popup = self.popup_different_pass.update()
 
     def draw_pass(self):
         self.passward = self.pass_font.render(self.set_pass, True, BLACK)
@@ -101,4 +101,4 @@ class PassFrame(BaseFrame):
             return "motiontest"
         else:
             self.set_pass = ""
-            # self.flg_veiw_popup = True
+            self.flg_veiw_popup = True

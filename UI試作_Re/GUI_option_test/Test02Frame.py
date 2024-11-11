@@ -13,8 +13,8 @@ class Test02Frame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.buttons = {
-            Button(self.screen, 200, 400, 650, 320, "GUI_option_test\\image\\button\\pic45.png", self.try06),
-            Button(self.screen, 1000, 400, 650, 320, "GUI_option_test\\image\\button\\pic46.png", self.try07),
+            Button(self.screen, 200, 400, 650, 320, "GUI_option_test\\image\\button\\pic45.png", self.try06),#ソレノイド前進
+            Button(self.screen, 1000, 400, 650, 320, "GUI_option_test\\image\\button\\pic46.png", self.try07),#ステッピングモータ回転
             Button(self.screen, 0, 960, 300, 120, "GUI_option_test\\image\\button\\back.png", self.move_motiontest)
         }
     

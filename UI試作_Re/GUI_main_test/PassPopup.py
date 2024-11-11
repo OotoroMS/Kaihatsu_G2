@@ -12,16 +12,18 @@ BASEMSSEGE = "BASE POPUP"
 BACKFRAME = "GUI_main_test\\image\\button\\back.png"
 BASEPASH = "GUI_main_test\\image\\exptxt\\pic75.png"
 
-class BasePopup(BaseFrame):
+class PassPopup(BaseFrame):
     def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):
         super().__init__(screen, font)
         self.text_font = pygame.font.Font(font, 100)
         self.rect = self.create_popup_rect()
         self.text = text
         self.text_message = self.text_font.render(self.text, True, WHITE)
+        self.images  = {
+            Picture(self.screen, (self.width // 2) - (self.width // 8), self.pos_y , self.width // 4,self.height//4, BASEPASH)
+        }
         self.buttons = {
-            Button(self.screen, (self.width // 2) - (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.YES),     
-            Button(self.screen, (self.width // 2) + (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.NO)
+            Button(self.screen, (self.width // 2) - (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.back)      
         }
 
     def create_popup_rect(self) -> Optional[pygame.rect.Rect]:
@@ -42,9 +44,9 @@ class BasePopup(BaseFrame):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button in self.buttons:
                     move = button.is_clicked(event)
-                    if move:
+                    if move == False:
                         return move
-        return move
+        return True
 
     def draw(self):
         """
@@ -54,13 +56,12 @@ class BasePopup(BaseFrame):
             pygame.draw.rect(self.screen, GRAY, self.rect)
             pygame.draw.rect(self.screen, BLACK, self.rect, 2)
             self.screen.blit(self.text_message, (((self.width // 4), self.height // 2)))
+            for image in self.images:
+                image.draw()
             for button in self.buttons:
                 button.draw()
         else:
             print("失敗")              
     
-    def YES(self):
-        return "YES"
-    
-    def NO(self):
-        return "NO"
+    def back(self):
+        return False

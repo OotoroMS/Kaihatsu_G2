@@ -7,7 +7,8 @@ from DataFrame import DataFrame
 from PassFrame import PassFrame
 from GraphFrame import GraphFrame
 from CountFrame import CountFrame
-# from BasePopup import BasePopup
+from BasePopup import BasePopup
+from PassPopup import PassPopup
 # from TestFrame import TestFrame
 from MotionTestFrame import MotionTestFrame
 from Test01Frame import Test01Frame
@@ -55,7 +56,7 @@ class App:
             "graph" :   GraphFrame(self.screen, self.font),
             "count" :   CountFrame(self.screen, self.font),
             # "test"  :   TestFrame(self.screen, self.font),
-            # "move_popup"   :   BasePopup(self.screen,self.font, POPUPMSG)
+            "move_popup"   :   PassPopup(self.screen,self.font, POPUPMSG),
             "motiontest" :   MotionTestFrame(self.screen, self.font),
             "test01" :   Test01Frame(self.screen, self.font),
             "test02" :   Test02Frame(self.screen, self.font),

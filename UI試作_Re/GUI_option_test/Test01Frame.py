@@ -18,26 +18,30 @@ class Test01Frame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.buttons = {
-            Button(self.screen, 160, 350, 400, 200, "GUI_option_test\\image\\button\\pic38.png", self.try01),
-            Button(self.screen, 750, 350, 400, 200, "GUI_option_test\\image\\button\\pic39.png", self.try02),
-            Button(self.screen, 160, 600, 550, 200, "GUI_option_test\\image\\button\\pic41.png", self.try03),
-            Button(self.screen, 750, 600, 550, 200, "GUI_option_test\\image\\button\\pic42.png", self.try04),
-            Button(self.screen, 750, 850, 550, 200, "GUI_option_test\\image\\button\\pic44.png", self.try05),
+            Button(self.screen, 160, 350, 400, 200, "GUI_option_test\\image\\button\\pic38.png", self.try01),#モータ正転
+            Button(self.screen, 750, 350, 400, 200, "GUI_option_test\\image\\button\\pic39.png", self.try02),#逆転
+            Button(self.screen, 160, 600, 550, 200, "GUI_option_test\\image\\button\\pic41.png", self.try03),#上下シリンダ上昇
+            Button(self.screen, 750, 600, 550, 200, "GUI_option_test\\image\\button\\pic42.png", self.try04),#下降
+            Button(self.screen, 750, 850, 550, 200, "GUI_option_test\\image\\button\\pic44.png", self.try05),#吸着ON
             Button(self.screen, 0, 960, 300, 120, "GUI_option_test\\image\\button\\back.png", self.move_motiontest)
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
-            Picture(self.screen, 90,180,1150,400, "GUI_option_test\\image\\exptxt\\pic76.png"),
-            Picture(self.screen, 1350, 360, 400, 170, "GUI_option_test\\image\\exptxt\\pic40.png"),
-            Picture(self.screen, 1350, 610, 400, 170, "GUI_option_test\\image\\exptxt\\pic43.png")
+            Picture(self.screen, 90,180,1150,400, "GUI_option_test\\image\\exptxt\\pic76.png"),#背景の水色
+            Picture(self.screen, 1350, 360, 400, 170, "GUI_option_test\\image\\exptxt\\pic40.png"),#入口ワーク検知
+            Picture(self.screen, 1350, 610, 400, 170, "GUI_option_test\\image\\exptxt\\pic43.png")#出口ワーク検知
         }
         self.lamps = list((
-            Lamp(self.screen, 240, 220,70,70, RED),
+            Lamp(self.screen, 240, 220,70,70, RED),#モーター
             Lamp(self.screen, 390, 220,70,70, YELLOW),
             Lamp(self.screen, 540, 220,70,70, YELLOW),
             Lamp(self.screen, 690, 220,70,70, YELLOW),
             Lamp(self.screen, 840, 220,70,70, YELLOW),
-            Lamp(self.screen, 990, 220,70,70, RED)
+            Lamp(self.screen, 990, 220,70,70, RED),#モーター
+            Lamp(self.screen, 610, 670,60,60, YELLOW),#上下シリンダ上昇
+            Lamp(self.screen, 1200, 670,60,60, YELLOW),#上下シリンダ下降
+            Lamp(self.screen, 1680, 420,50,50, YELLOW),#入口ワーク検知
+            Lamp(self.screen, 1680, 670,50,50, YELLOW)#出口ワーク検知
         ))
         self.color = GRAY
 
