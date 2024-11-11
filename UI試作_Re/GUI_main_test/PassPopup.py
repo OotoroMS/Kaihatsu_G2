@@ -1,3 +1,4 @@
+#パスワードが間違っていた際のポップアップ
 import pygame
 from typing import Tuple, Optional
 from CaluclatePopup import *
@@ -20,10 +21,10 @@ class PassPopup(BaseFrame):
         self.text = text
         self.text_message = self.text_font.render(self.text, True, WHITE)
         self.images  = {
-            Picture(self.screen, (self.width // 2) - (self.width // 8), self.pos_y , self.width // 4,self.height//4, BASEPASH)
+            Picture(self.screen, (self.width // 2) - (self.width // 8), self.pos_y , self.width // 3,self.height//3, BASEPASH)
         }
         self.buttons = {
-            Button(self.screen, (self.width // 2) - (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.back)      
+            Button(self.screen, (self.width // 2) - (self.width // 15), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.back)      
         }
 
     def create_popup_rect(self) -> Optional[pygame.rect.Rect]:

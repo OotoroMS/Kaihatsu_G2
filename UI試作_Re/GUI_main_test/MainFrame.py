@@ -7,7 +7,7 @@ import pygame
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
 MAINTITLE="GUI_main_test\\image\\title\\pic03.png"
-POPUPMSSEGE = "パスワードが違います" 
+POPUPMSSEGE = "終了しますか？" 
 #   メイン画面描画・処理クラス
 class MainFrame(BaseFrame):
     def __init__(self, screen, font=None):

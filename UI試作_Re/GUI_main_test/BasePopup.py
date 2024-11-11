@@ -1,3 +1,4 @@
+#メインメニューの終了確認ポップアップ
 import pygame
 from typing import Tuple, Optional
 from CaluclatePopup import *
@@ -10,6 +11,8 @@ BLACK = ((255,255,255))     #   カラーコード(黒)
 WHITE = ((0,0,0))           #   カラーコード(白)
 BASEMSSEGE = "BASE POPUP"
 BACKFRAME = "GUI_main_test\\image\\button\\back.png"
+BUTTONYES = "GUI_main_test\\image\\button\\pic76.png"
+BUTTONNO = "GUI_main_test\\image\\button\\pic77.png"
 BASEPASH = "GUI_main_test\\image\\exptxt\\pic75.png"
 
 class BasePopup(BaseFrame):
@@ -20,8 +23,8 @@ class BasePopup(BaseFrame):
         self.text = text
         self.text_message = self.text_font.render(self.text, True, WHITE)
         self.buttons = {
-            Button(self.screen, (self.width // 2) - (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.YES),     
-            Button(self.screen, (self.width // 2) + (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.NO)
+            Button(self.screen, (self.width // 2) - (self.width // 5), self.height - (self.height // 4) , self.width // 4,self.height//4, BUTTONYES, self.YES),     
+            Button(self.screen, (self.width // 2) + (self.width // 7), self.height - (self.height // 4) , self.width // 4,self.height//4, BUTTONNO, self.NO)
         }
 
     def create_popup_rect(self) -> Optional[pygame.rect.Rect]:
