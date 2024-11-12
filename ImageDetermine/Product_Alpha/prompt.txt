@@ -1,0 +1,31 @@
+対象のワーク切り替えに対応します。
+「determine_config.json」に対象のワークなどの情報を記述します。
+このファイルに書きたい内容は以下の通りです。
+・対象のワークの名称
+・回転度数、回転の回数
+・モデル情報に関する設定ファイル名([ワークの名称].jsonに記述されている)
+
+[ワークの名称].jsonの例
+# 2024Sample.json
+{
+  "model_name": "ae_advanced",
+  "input_shape": [
+    640,
+    2112,
+    1
+  ],
+  "output_shape": [
+    640,
+    2112,
+    1
+  ],
+  "work_name": "TrainData_Sample2024",
+  "crop_ranges": {
+    "x_start": 300,
+    "x_end": 2462,
+    "y_start": 760,
+    "y_end": 1400
+  }
+}
+
+determine_config.jsonファイルの指示に沿ってプログラム全体を動作させるようにします。
