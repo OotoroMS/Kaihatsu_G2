@@ -1,0 +1,33 @@
+importするプログラムファイル
+pc_comands.py
+plc_pc.py
+
+直接使う関数たち(全部pc_comands.py内にある)
+write_serial(data)
+引数あり
+返り値なし
+引数に渡したbyteを送信する。
+read()
+引数なし
+返り値あり
+データを受信して、対応した文字列を返している
+get_msg()
+引数なし
+返り値あり
+read()はスレッド化するのでreadで得た文字列をread()を動かすことなく所得するためのもの
+監視するならこれ！
+
+テスト用のプログラムがplc_test.pyなのでわからないことはそこをみるといいかも？
+
+シリアル通信のパラメータ(辞書型で定義してほしい)
+serial_params1 = {
+    "port": PORT1,
+    "baudrate": BAUD_RATE,
+    "parity": PARITY,
+    "stopbits": STOPBITS,
+    "timeout": TIMEOUT,
+}
+
+インスタンス化の順番はこれ。
+self.serial_comm1 = SerialManager(serial_params1)
+self.serial_test = PCManager(self.serial_comm1)

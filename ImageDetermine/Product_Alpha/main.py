@@ -13,7 +13,9 @@ from datetime import datetime  # 追加
 # 自作ライブラリのインポート
 import ImageDetermine.Product_Alpha.ImgDtrmn_Lib as ImgDtrmn_Lib
 import ImageDetermine.Product_Alpha.Cmr_Lib as Cmr_Lib
-import ImageDetermine.Product_Alpha.PLC_Lib as PLC_Lib
+import serial_communicator as PLC_Lib
+from pc_comands import PCManager
+
 
 # グローバル変数
 COM_PLC = "COM1"        # PLCのCOMポート
@@ -32,6 +34,7 @@ JUDGE = {               # 判定結果
 PLC_SND_CMD = {         # PLC送信コマンド
     "OK": "OK",
     "NG": "NG",
+    "ROTATE": "ROTATE",
 }
 
 THRESHOLD = 0.003        # 判別閾値
@@ -70,6 +73,19 @@ def load_config():
 
     return crop_ranges
 
+# 傷ありの結果保存
+def save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path):
+    result_json = {
+        'timestamp': timestamp,
+        'infered_accuracy': infered_accuracy,
+        'image_path': image_path,
+        'diff_image_path': diff_image_path
+    }
+    json_filename = f'result_{timestamp}.json'
+    json_path = os.path.join('results', 'json', json_filename)
+    with open(json_path, 'w') as json_file:
+        json.dump(result_json, json_file, indent=4)
+
 # 撮影、回転処理
 def getPctr_and_rotate(cmr, plc):
     global captured_image
@@ -79,14 +95,14 @@ def getPctr_and_rotate(cmr, plc):
     if captured_image is None:
         print("!ERR! 画像の取得に失敗しました。")
         return False
-    # 必要に応じて前処理をここで行う
     # ---回転命令送信---
-    plc.send_data("ROTATE")
+    plc.send_data(PLC_SND_CMD["ROTATE"])
     # PLCから回転完了の信号を受信
     while True:
         data = plc.get_data()
         if data == "ROTATED":
             break
+        # 本当は回転済み信号を受け取るまで待つ
         time.sleep(0.1)
     return True
 
@@ -131,7 +147,21 @@ def main():
     print("---[OK]")
     # PLCの初期化
     print("    [CMT] PLCの初期化を行います...", end="")
-    plc = PLC_Lib.PLC_Lib(port=COM_PLC)
+    port     = input("      [IPT]PLCのCOMポートを入力してください(入力例: COM1): ")
+    baudrate = input("      [IPT]PLCのボーレートを入力してください(入力例: 9600): ")
+    parity   = input("      [IPT]パリティを入力してください(入力例: serial.PARITY_NONE): ")
+    stopbits = input("      [IPT]ストップビットを入力してください(入力例: serial.STOPBITS_ONE): ")
+    timeout  = input("      [IPT]タイムアウト時間を入力してください(入力例: 0.1): ")
+    serial_setting = {
+        "port": port,
+        "baudrate": baudrate,
+        "parity": parity,
+        "stopbits": stopbits,
+        "timeout": timeout
+    }
+    serial_comm = PLC_Lib.SerialCommunicator(serial_setting)
+    plc = PCManager(serial_comm)
+
     print("---[OK]")
     # 初期状態の背景画像を取得
     print("  [CMT] 初期状態の背景画像を取得します...")
@@ -140,7 +170,7 @@ def main():
     if init_image is None:
         print("!ERR! 初期状態の背景画像の取得に失敗しました。")
         cmr.release()
-        plc.release()
+        #plc.release()
         exit()
     print("  [CMT] 背景画像の取得が完了しました。")
     # 変数の初期化
@@ -180,7 +210,7 @@ def main():
     try:
         while True:
             # PLCからの動作開始を待つ
-            data = plc.get_data()
+            data = plc.read()
             if data == PLC_Lib.STATE["START"]:
                 # 現在の画像を取得
                 current_image = cmr.get_frame()
@@ -191,9 +221,9 @@ def main():
                 # 存在判定を行う
                 is_exist = cmr.detect_exist(current_image, init_image)
                 if is_exist:
-                    plc.send_data(PLC_SND_CMD["OK"])  # 存在している場合、PLCにOKを送信
+                    plc.write_serial(PLC_SND_CMD["OK"])  # 存在している場合、PLCにOKを送信
                 else:
-                    plc.send_data(PLC_SND_CMD["NG"])  # 存在していない場合、PLCにNGを送信
+                    plc.write_serial(PLC_SND_CMD["NG"])  # 存在していない場合、PLCにNGを送信
                     continue   # 次のループへ
 
                 ##### 判別処理 #####
@@ -215,27 +245,18 @@ def main():
                         cv2.imwrite(image_path, captured_image)
                         # 差分画像を生成して傷をマーク
                         diff_image = img_dtrmn.mark_defects(preprocessed_img, infered_image)
-                        diff_image_filename = f'defective_diff_{timestamp}.png'
+                        diff_image_filename = f'defective_diff_{timestamp}.jpg'
                         diff_image_path = os.path.join(defective_images_dir, diff_image_filename)
                         cv2.imwrite(diff_image_path, diff_image)
                         # JSONファイルを作成
-                        result_json = {
-                            'timestamp': timestamp,
-                            'infered_accuracy': infered_accuracy,
-                            'image_path': image_path,
-                            'diff_image_path': diff_image_path
-                        }
-                        json_filename = f'result_{timestamp}.json'
-                        json_path = os.path.join(json_dir, json_filename)
-                        with open(json_path, 'w') as json_file:
-                            json.dump(result_json, json_file, indent=4)
+                        save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path)
                         break  # 不良を検出したらループを抜ける
 
                 # 判別結果送信
                 if flg_judge == JUDGE["OK"]:
-                    plc.send_data(PLC_SND_CMD["OK"])
+                    plc.write_serial(PLC_SND_CMD["OK"])
                 else:
-                    plc.send_data(PLC_SND_CMD["NG"])
+                    plc.write_serial(PLC_SND_CMD["NG"])
                 ##### 判別処理 #####
 
             time.sleep(0.1)  # CPU負荷を下げるためにスリープ
@@ -250,7 +271,7 @@ def main():
     finally:
         # リソースの解放
         cmr.release()
-        plc.release()
+        #plc.release()
 
 if __name__ == "__main__":
     main()
