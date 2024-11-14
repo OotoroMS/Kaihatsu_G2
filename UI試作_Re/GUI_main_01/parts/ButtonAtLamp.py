@@ -6,7 +6,7 @@ LAMPSIZE  = {
                "x" : 40,
                "y" : 40
             }
-XDISTANCE = 30 + LAMPSIZE["x"]
+XDISTANCE = 60 + LAMPSIZE["x"]
 YDISTANCE = LAMPSIZE["y"] // 2
 
 COLOR = {

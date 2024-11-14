@@ -17,9 +17,9 @@ class Test03Frame(BaseFrame):
         self.buttons = {
             Button(self.screen, 20, 490, 360, 250, "GUI_main_test\\image\\button\\pic51.png", self.deset),#デジタルインジケータ基準値変更
             Button(self.screen, 500, 190, 550, 250, "GUI_main_test\\image\\button\\pic52.png", self.try11),#寸法壁押出シリンダ前進
-            Button(self.screen, 500, 490, 550, 250, "GUI_main_test\\image\\button\\pic56.png", self.try12),#分別押出シリンダ前進
-            Button(self.screen, 1150, 490, 550, 250, "GUI_main_test\\image\\button\\pic57.png", self.try13),#寸法上下シリンダ上昇
-            Button(self.screen, 500, 790, 550, 250, "GUI_main_test\\image\\button\\pic54.png", self.try14),#寸法上下シリンダ下降
+            Button(self.screen, 500, 490, 550, 250, "GUI_main_test\\image\\button\\pic56.png", self.try12),#寸法上下シリンダ上昇
+            Button(self.screen, 1150, 490, 550, 250, "GUI_main_test\\image\\button\\pic57.png", self.try13),#寸法上下シリンダ下降
+            Button(self.screen, 500, 790, 550, 250, "GUI_main_test\\image\\button\\pic54.png", self.try14),#分別押出シリンダ前進
             Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)#戻る
         }
         self.images = {
@@ -30,10 +30,10 @@ class Test03Frame(BaseFrame):
     
         self.lamps = list((
             Lamp(self.screen, 1590, 290,60,60, GRAY),#寸法壁押出シリンダ後退
-            Lamp(self.screen, 940, 585,60,60, GRAY),#分別押出シリンダ前進
-            Lamp(self.screen, 1570, 590,60,60, GRAY),#分別押出シリンダ後退
+            Lamp(self.screen, 940, 585,60,60, GRAY),#寸法上下シリンダ上昇
+            Lamp(self.screen, 1570, 590,60,60, GRAY),#寸法上下シリンダ下降
             Lamp(self.screen, 945, 890,60,60, GRAY),#分別押出シリンダ前進
-            Lamp(self.screen, 1590, 890,60,60, GRAY)#下降
+            Lamp(self.screen, 1590, 890,60,60, GRAY)#後退
         ))
 
     #   ボタン及びテキストの描画処理を記述

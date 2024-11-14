@@ -5,7 +5,7 @@ import datetime
 import SQLCommunication_main as SQc
 import Measurement as Meas
 
-DB_NAME = "testdb_option.db"
+DB_NAME = "testdb_main.db"
 
 #   ダミーデータ生成
 def data_rand():

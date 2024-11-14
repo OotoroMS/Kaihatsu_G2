@@ -1,3 +1,4 @@
+#カウントの表を表示する設定
 import pygame
 import CountList
 

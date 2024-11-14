@@ -1,3 +1,4 @@
+#パスワード変更画面
 from screen.PassFrame import PassFrame
 from parts.SQLCommunication_main import SQLCommunication
 from parts.Picture import Picture
