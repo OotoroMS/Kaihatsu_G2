@@ -20,7 +20,7 @@ class Test03Frame(BaseFrame):
             Button(self.screen, 500, 490, 550, 250, "GUI_main_test\\image\\button\\pic56.png", self.try12),#分別押出シリンダ前進
             Button(self.screen, 1150, 490, 550, 250, "GUI_main_test\\image\\button\\pic57.png", self.try13),#寸法上下シリンダ上昇
             Button(self.screen, 500, 790, 550, 250, "GUI_main_test\\image\\button\\pic54.png", self.try14),#寸法上下シリンダ下降
-            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)
+            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)#戻る
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),

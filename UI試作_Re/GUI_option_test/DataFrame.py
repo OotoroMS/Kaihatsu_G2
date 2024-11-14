@@ -1,4 +1,4 @@
-#データ閲覧
+#データ閲覧画面
 from BaseFrame import BaseFrame
 from Button import Button
 from Picture import Picture
@@ -11,14 +11,14 @@ class DataFrame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.buttons = {
-            Button(self.screen, 150, 300, 700, 350, "GUI_option_test\\image\\button\\pic05.png", self.move_count),
-            Button(self.screen, 1000, 300, 700, 350, "GUI_option_test\\image\\button\\pic06.png", self.move_graph),
+            Button(self.screen, 150, 300, 700, 350, "GUI_option_test\\image\\button\\pic05.png", self.move_count),#良否カウントログ
+            Button(self.screen, 1000, 300, 700, 350, "GUI_option_test\\image\\button\\pic06.png", self.move_graph),#外観検査表示
             Button(self.screen, 0, 960, 330, 120, "GUI_option_test\\image\\button\\back.png", self.move_main)
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "GUI_option_test\\image\\title\\pic61.png"),
-            Picture(self.screen, 175, 600, 650, 350, "GUI_option_test\\image\\exptxt\\pic69.png"),
-            Picture(self.screen, 1025, 600, 650, 350, "GUI_option_test\\image\\exptxt\\pic70.png")
+            Picture(self.screen, 0, 0, 750, 200, "GUI_option_test\\image\\title\\pic61.png"),#データ閲覧
+            Picture(self.screen, 175, 600, 650, 350, "GUI_option_test\\image\\exptxt\\pic69.png"),#カウントログの説明
+            Picture(self.screen, 1025, 600, 650, 350, "GUI_option_test\\image\\exptxt\\pic70.png")#外観検査表示の説明
         }
     
     #   カウントログボタン押下処理

@@ -1,3 +1,4 @@
+#カウントログ関係の設定
 import pygame
 from pygame.locals import *
 from SQLCommunication_main import SQLCommunication as DC

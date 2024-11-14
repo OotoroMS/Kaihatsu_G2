@@ -1,3 +1,4 @@
+#昔パスワード画面で使用していた,現在は不使用
 import pygame
 
 pygame.init()

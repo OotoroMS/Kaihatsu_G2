@@ -10,10 +10,10 @@ GRAY = ((200,200,200))      #   カラーコード(灰色)
 BLACK = ((255,255,255))     #   カラーコード(黒)
 WHITE = ((0,0,0))           #   カラーコード(白)
 BASEMSSEGE = "BASE POPUP"
-BACKFRAME = "GUI_main_test\\image\\button\\back.png"
-BUTTONYES = "GUI_main_test\\image\\button\\pic76.png"
-BUTTONNO = "GUI_main_test\\image\\button\\pic77.png"
-BASEPASH = "GUI_main_test\\image\\exptxt\\pic75.png"
+BACKFRAME = "GUI_main_test\\image\\button\\back.png"#戻るボタン
+BUTTONYES = "GUI_main_test\\image\\button\\pic76.png"#はい
+BUTTONNO = "GUI_main_test\\image\\button\\pic77.png"#いいえ
+BASEPASH = "GUI_main_test\\image\\exptxt\\pic75.png"#'FAIL'アイコン
 
 class BasePopup(BaseFrame):
     def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):
@@ -38,7 +38,8 @@ class BasePopup(BaseFrame):
             return pygame.rect.Rect(self.pos_x, self.pos_y, self.width, self.height)
         else:
             return None
-    
+        
+    #使用時の工夫で消せる
     def update(self):
         move = True
         for event in pygame.event.get():

@@ -1,3 +1,4 @@
+# 画面の設定を置いておく場所
 #   画面サイズ  1024x600
 import pygame
 import Vital

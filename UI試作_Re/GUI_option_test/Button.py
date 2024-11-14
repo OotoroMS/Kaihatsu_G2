@@ -1,3 +1,4 @@
+#   ボタンを表示する設定
 import pygame
 
 pygame.init()
@@ -22,7 +23,8 @@ class Button():
     def draw(self):
         self.hover_button()
         self.screen.blit(self.image, self.rect) #   テキストを描画
-    
+
+    #触れられた時の少し大きいボタン
     def expansion_button(self):
         x = self.x - (self.width * (self.hover_scale - 1)) // 2
         y = self.y - (self.height * (self.hover_scale - 1)) // 2
@@ -33,6 +35,7 @@ class Button():
         rect.topleft = (x, y)
         self.rect = rect
     
+    #通常時の大きさのボタン
     def default_button(self):
         self.image = pygame.transform.scale(self.base_image,(self.width, self.height))
         self.base_rect = self.image.get_rect()

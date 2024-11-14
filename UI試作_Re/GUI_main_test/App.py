@@ -1,3 +1,4 @@
+#　画面の設定を置いておく場所
 #   画面サイズ  1024x600
 import pygame
 import Vital
@@ -50,14 +51,14 @@ class App:
     def setting_screen(self):
         #   表示する画面を代入
         self.screens = {
-            "main"  :   MainFrame(self.screen, self.font),
-            "data"  :   DataFrame(self.screen, self.font),
-            "pass"  :   PassFrame(self.screen, self.font),
-            "graph" :   GraphFrame(self.screen, self.font),
-            "count" :   CountFrame(self.screen, self.font),
+            "main"  :   MainFrame(self.screen, self.font),#メインメニュー
+            "data"  :   DataFrame(self.screen, self.font),#データ閲覧
+            "pass"  :   PassFrame(self.screen, self.font),#パスワード
+            "graph" :   GraphFrame(self.screen, self.font),#寸法グラフ
+            "count" :   CountFrame(self.screen, self.font),#カウントログ
             # "test"  :   TestFrame(self.screen, self.font),
             "move_popup"   :   PassPopup(self.screen,self.font, POPUPMSG),
-            "motiontest" :   MotionTestFrame(self.screen, self.font),
+            "motiontest" :   MotionTestFrame(self.screen, self.font),#動作確認画面
             "test01" :   Test01Frame(self.screen, self.font),
             "test02" :   Test02Frame(self.screen, self.font),
             "test03" :   Test03Frame(self.screen, self.font),

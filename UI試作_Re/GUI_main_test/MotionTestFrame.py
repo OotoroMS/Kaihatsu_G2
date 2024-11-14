@@ -16,17 +16,17 @@ class MotionTestFrame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.buttons = {
-            Button(self.screen, 50, 650, 330, 150, "GUI_main_test\\image\\button\\pic33.png", self.move_test01),
-            Button(self.screen, 570, 170, 330, 150, "GUI_main_test\\image\\button\\pic34.png", self.move_test02),
-            Button(self.screen, 670, 850, 330, 150, "GUI_main_test\\image\\button\\pic35.png", self.move_test03),
-            Button(self.screen, 1100, 270, 330, 150, "GUI_main_test\\image\\button\\pic36.png", self.move_test04),
-            Button(self.screen, 1570, 710, 330, 150, "GUI_main_test\\image\\button\\pic74.png", self.dbreset),
-            Button(self.screen, 1570, 900, 330, 150, "GUI_main_test\\image\\button\\pic37.png", self.move_changepass),
-            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png", self.move_main)
+            Button(self.screen, 50, 650, 330, 150, "GUI_main_test\\image\\button\\pic33.png", self.move_test01),#投入･洗浄部
+            Button(self.screen, 570, 170, 330, 150, "GUI_main_test\\image\\button\\pic34.png", self.move_test02),#移動部
+            Button(self.screen, 670, 850, 330, 150, "GUI_main_test\\image\\button\\pic35.png", self.move_test03),#寸法･分別部
+            Button(self.screen, 1100, 270, 330, 150, "GUI_main_test\\image\\button\\pic36.png", self.move_test04),#蓄積部
+            Button(self.screen, 1570, 710, 330, 150, "GUI_main_test\\image\\button\\pic74.png", self.dbreset),#DBリセット
+            Button(self.screen, 1570, 900, 330, 150, "GUI_main_test\\image\\button\\pic37.png", self.move_changepass),#パスワード変更
+            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png", self.move_main)#戻る
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
-            Picture(self.screen, 250, 210, 1300, 740, "GUI_main_test\\image\\exptxt\\pic32.png")
+            Picture(self.screen, 250, 210, 1300, 740, "GUI_main_test\\image\\exptxt\\pic32.png")#装置の3D図
         }
 
     def draw(self):
@@ -51,12 +51,12 @@ class MotionTestFrame(BaseFrame):
     
     def move_test04(self):
         return "test04"
-
+    #データベースリセット
     def dbreset(self):
         return "dbreset"    
-
+    #パスワード変更
     def move_changepass(self):
         return "changepass"
-
+    #メインメニューに戻る
     def move_main(self):
         return "main"

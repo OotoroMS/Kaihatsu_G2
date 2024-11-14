@@ -1,3 +1,4 @@
+#メインメニューの終了確認ポップアップ
 import pygame
 from typing import Tuple, Optional
 from CaluclatePopup import *
@@ -8,7 +9,7 @@ GRAY = ((200,200,200))      #   カラーコード(灰色)
 BLACK = ((255,255,255))     #   カラーコード(黒)
 WHITE = ((0,0,0))           #   カラーコード(白)
 BASEMSSEGE = "BASE POPUP"
-BACKFRAME = "GUI_option_test\\image\\button\\back.png"
+BACKFRAME = "GUI_option_test\\image\\button\\back.png"#戻るボタン
 
 class BasePopup(BaseFrame):
     def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):

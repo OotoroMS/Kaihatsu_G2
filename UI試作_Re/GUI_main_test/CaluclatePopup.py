@@ -1,3 +1,4 @@
+#ポップアップに関する設定
 from typing import Tuple, Optional
 
 def calculate_popup_size(base_width : int, base_height : int) -> Tuple[int, int]:

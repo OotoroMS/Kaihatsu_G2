@@ -1,3 +1,4 @@
+#グラフ表示のための設定
 import matplotlib
 import matplotlib.pyplot as plt
 from SQLCommunication_main import SQLCommunication as SQL

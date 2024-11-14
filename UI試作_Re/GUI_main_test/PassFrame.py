@@ -20,8 +20,8 @@ class PassFrame(BaseFrame):
         self.flg_veiw_popup = False
         self.popup_different_pass = PassPopup(self.screen, font, POPUPMSSEGE)  
         self.buttons = {
-            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png",  self.move_main),
-            Button(self.screen, 660,  915, 370, 200, "GUI_main_test\\image\\button\\pic20.png", self.num_0),
+            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png",  self.move_main),#戻る
+            Button(self.screen, 660,  915, 370, 200, "GUI_main_test\\image\\button\\pic20.png", self.num_0),#数字ボタン
             Button(self.screen, 660,  750, 180, 180, "GUI_main_test\\image\\button\\pic21.png", self.num_1),
             Button(self.screen, 850,  750, 180, 180, "GUI_main_test\\image\\button\\pic22.png", self.num_2),
             Button(self.screen, 1040, 750, 180, 180, "GUI_main_test\\image\\button\\pic23.png", self.num_3),
@@ -31,12 +31,12 @@ class PassFrame(BaseFrame):
             Button(self.screen, 660,  390, 180, 180, "GUI_main_test\\image\\button\\pic27.png", self.num_7),
             Button(self.screen, 850,  390, 180, 180, "GUI_main_test\\image\\button\\pic28.png", self.num_8),
             Button(self.screen, 1040, 390, 180, 180, "GUI_main_test\\image\\button\\pic29.png", self.num_9),
-            Button(self.screen, 1230, 390, 175, 173, "GUI_main_test\\image\\button\\pic30.png", self.num_clr),
-            Button(self.screen, 1211, 570, 212, 360, "GUI_main_test\\image\\button\\pic31.png", self.num_check)
+            Button(self.screen, 1230, 390, 175, 173, "GUI_main_test\\image\\button\\pic30.png", self.num_clr),#リセット
+            Button(self.screen, 1211, 570, 212, 360, "GUI_main_test\\image\\button\\pic31.png", self.num_check)#エンター
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "GUI_main_test\\image\\title\\pic71.png"),
-            Picture(self.screen, 410, 200, 180, 180, "GUI_main_test\\image\\button\\pic19.png")
+            Picture(self.screen, 0, 0, 750, 200, "GUI_main_test\\image\\title\\pic71.png"),#パスワード入力
+            Picture(self.screen, 410, 200, 180, 180, "GUI_main_test\\image\\button\\pic19.png")#鍵マーク
         }
     
     #   ボタン及びテキストの描画処理を記述
@@ -56,11 +56,11 @@ class PassFrame(BaseFrame):
         pygame.draw.rect(self.screen, (255,255,255), self. pass_rect)   #   稼働状況更新の領域を確保
         pygame.draw.rect(self.screen, BLACK, self.pass_rect, 5)         #   外枠を描画
         self.screen.blit(self.passward,self.pass_center)
-
+    #メインメニューに戻る
     def move_main(self):
         self.set_pass = ""
         return "main"
-    
+    #番号が押された時
     def num_0(self):
         if len(self.set_pass) <= PASSINPUTMAX:
             self.set_pass += "0"
@@ -91,14 +91,14 @@ class PassFrame(BaseFrame):
     def num_9(self):
         if len(self.set_pass) <= PASSINPUTMAX:
             self.set_pass += "9"
-    
+    #入力内容リセット
     def num_clr(self):
         self.set_pass = ""
-    
+    #パスワードが正しいか確認
     def num_check(self):
         if self.set_pass == "2024":
             self.set_pass = ""
-            return "motiontest"
+            return "motiontest"         #正しければ動作確認画面へ
         else:
             self.set_pass = ""
             self.flg_veiw_popup = True

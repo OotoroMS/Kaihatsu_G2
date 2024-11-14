@@ -21,7 +21,7 @@ class Test01Frame(BaseFrame):
             Button(self.screen, 1100, 490, 550, 250, "GUI_main_test\\image\\button\\pic42.png", self.try03),#押出シリンダ後退
             Button(self.screen, 350, 790, 550, 250, "GUI_main_test\\image\\button\\pic43.png", self.try04),#ポンプ
             Button(self.screen, 1100, 790, 550, 250, "GUI_main_test\\image\\button\\pic44.png", self.try05),#エアブロー
-            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)
+            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)#戻る
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),

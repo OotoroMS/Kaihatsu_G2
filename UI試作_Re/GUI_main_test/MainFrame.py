@@ -15,14 +15,14 @@ class MainFrame(BaseFrame):
         self.flg_veiw_popup = False
         self.popup_different_pass = BasePopup(self.screen, font, POPUPMSSEGE)
         self.buttons = {
-            Button(self.screen, 150, 300, 700, 350, "GUI_main_test\\image\\button\\pic01.png", self.move_data),
-            Button(self.screen, 1000, 300, 700, 350, "GUI_main_test\\image\\button\\pic02.png", self.move_pass),
-            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\pic04.png", self.end_app)
+            Button(self.screen, 150, 300, 700, 350, "GUI_main_test\\image\\button\\pic01.png", self.move_data),#データ閲覧
+            Button(self.screen, 1000, 300, 700, 350, "GUI_main_test\\image\\button\\pic02.png", self.move_pass),#動作確認
+            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\pic04.png", self.end_app)#終了
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
-            Picture(self.screen, 175, 600, 650, 350, "GUI_main_test\\image\\exptxt\\pic67.png"),
-            Picture(self.screen, 1025, 600, 650, 350, "GUI_main_test\\image\\exptxt\\pic68.png")
+            Picture(self.screen, 175, 600, 650, 350, "GUI_main_test\\image\\exptxt\\pic67.png"),#良否カウントログ,寸法検査ログ
+            Picture(self.screen, 1025, 600, 650, 350, "GUI_main_test\\image\\exptxt\\pic68.png")#アクチュエータの単体動作確認
         }
     
     #   ボタン及びテキストの描画処理を記述
@@ -45,7 +45,7 @@ class MainFrame(BaseFrame):
     def move_pass(self):
         print("return pass")
         return "pass"
-    
+    #終了画面
     def end_app(self):
         print("return end")
         while 1:

@@ -1,3 +1,4 @@
+#装置の稼働状態表示
 import pygame
 
 BACKCOLOR = {

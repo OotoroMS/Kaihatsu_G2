@@ -1,4 +1,4 @@
-#寸法検査ログ
+#寸法検査ログ(グラフ表示)
 import pygame
 import os
 import Graph
@@ -15,10 +15,10 @@ class GraphFrame(BaseFrame):
         super().__init__(screen, font)
         self.create_flg = True
         self.buttons = {
-            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png", self.move_data)
+            Button(self.screen, 0, 960, 330, 120, "GUI_main_test\\image\\button\\back.png", self.move_data)#戻る
         }
         self.images = {
-            Picture(self.screen, 0, 0, 750, 200, "GUI_main_test\\image\\title\\pic18.png")
+            Picture(self.screen, 0, 0, 750, 200, "GUI_main_test\\image\\title\\pic18.png")#寸法検査ログ
         }
     
     #   画面描画処理

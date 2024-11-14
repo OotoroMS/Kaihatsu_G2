@@ -1,3 +1,4 @@
+#プログラムを実行
 import pygame
 import App
 

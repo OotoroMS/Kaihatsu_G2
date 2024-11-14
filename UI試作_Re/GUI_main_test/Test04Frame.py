@@ -16,7 +16,7 @@ class Test04Frame(BaseFrame):
         super().__init__(screen, font)
         self.buttons = {
             Button(self.screen, 1000, 510, 600, 280, "GUI_main_test\\image\\button\\pic60.png", self.try15),#上下シリンダ下降
-            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)
+            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)#戻る
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),

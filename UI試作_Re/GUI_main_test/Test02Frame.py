@@ -20,7 +20,7 @@ class Test02Frame(BaseFrame):
             Button(self.screen, 1100, 490, 550, 250, "GUI_main_test\\image\\button\\pic48.png", self.try08),#下降
             Button(self.screen, 350, 790, 550, 250, "GUI_main_test\\image\\button\\pic49.png", self.try09),#移動モータ正転
             Button(self.screen, 1100, 790, 550, 250, "GUI_main_test\\image\\button\\pic50.png", self.try10),#逆転
-            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)
+            Button(self.screen, 0, 960, 300, 120, "GUI_main_test\\image\\button\\back.png", self.move_motiontest)#戻る
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
