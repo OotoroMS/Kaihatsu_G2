@@ -4,6 +4,7 @@ from popup.CaluclatePopup import *
 from screen.BaseFrame import BaseFrame
 from parts.Button import Button
 from filepath import *
+from parts.SQLCommunication_main import SQLCommunication
 
 GRAY = ((200,200,200))      #   カラーコード(灰色)
 BLACK = ((255,255,255))     #   カラーコード(黒)
@@ -13,7 +14,16 @@ BACKFRAME = IMAGEFILEPATH + "button\\back.png"#戻る
 ENDFRAME  = IMAGEFILEPATH + "button\\pic04.png"#04終了
 BASEPASH = IMAGEFILEPATH + "exptxt\\pic75.png"#FAILアイコン
 
-class EndPopup(BaseFrame):
+DBNAME = "testdb_main.db" 
+QUERY = "DELETE FROM %s"
+TARGETTABLE = [
+    "db_now",
+    "db_countlog",
+    "db_timelog",
+    "db_sizelog"
+]
+
+class DBresetPopup(BaseFrame):
     def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):
         super().__init__(screen, font)
         self.text_font = pygame.font.Font(font, 100)
@@ -24,6 +34,8 @@ class EndPopup(BaseFrame):
             Button(self.screen, (self.width // 2) - (self.width // 4), self.height - (self.height // 4) , self.width // 4,self.height//4, ENDFRAME,  self.YES),     
             Button(self.screen, (self.width // 2) + (self.width // 8), self.height - (self.height // 4) , self.width // 4,self.height//4, BACKFRAME, self.NO)
         }
+        self.db = SQLCommunication()
+        self.db.set_db_name(DBNAME)
 
     def create_popup_rect(self) -> Optional[pygame.rect.Rect]:
         """
@@ -60,8 +72,17 @@ class EndPopup(BaseFrame):
         else:
             print("失敗")              
     
-    def YES(self):
-        return "yes"
+    def YES(self):#実際は削除するがテストでは消さない
+        # for table in TARGETTABLE:
+        #     delete_query = QUERY % table
+        #     print("変更前")
+        #     self.db.table_data_list_display(table_name=table)
+        #     self.db.db_query_execution(query=delete_query)
+        #     print("変更後")
+        #     self.db.table_data_list_display(table_name=table)
+        print("db_reset")
+        return "reset_complete"
     
     def NO(self):
+        print("db_reset_cancel")
         return "no"

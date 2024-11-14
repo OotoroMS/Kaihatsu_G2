@@ -14,8 +14,8 @@ import pygame
 GETPASSWORD = "SELECT num FROM pass_num"
 CHANGEPASSWORD = "UPDATE pass_num SET num = "
 # 使用画像のファイルパス
-NEWPASSWORDTEXT = IMAGEFILEPATH + "exptxt\\pic72.png"
-RETRYPASSWORDTEXT = IMAGEFILEPATH + "exptxt\\pic73.png"
+RETRYPASSWORDTEXT = IMAGEFILEPATH + "exptxt\\pic72.png"
+NEWPASSWORDTEXT = IMAGEFILEPATH + "exptxt\\pic73.png"
 
 RETRYPOPUPMSG = "再入力されたパスワードが違います"
 NOTPASSWORDMSG = "新しいパスワードを入力してください"
@@ -30,9 +30,13 @@ class ChangePassScreen(PassFrame):
         self.new_password = ""
         self.old_pass = self.acpuisition_pass()
         self.buttons[0] = Button(self.screen, 0, 960, 330, 120, IMAGEFILEPATH + "button\\back.png",  self.move_motiontest)
+        self.images = {
+            Picture(self.screen, 0, 0, 600, 200, IMAGEFILEPATH + "title\\pic78.png"),
+            Picture(self.screen, 410, 200, 180, 180, IMAGEFILEPATH + "button\\pic19.png")
+        }
         self.gaid_images = {
-            "new_password" : Picture(self.screen, 585, 150, 750, 200, NEWPASSWORDTEXT),
-            "retry_password" : Picture(self.screen, 585, 150, 750, 200, RETRYPASSWORDTEXT)
+            "new_password" : Picture(self.screen, 590, 40, 850, 200, NEWPASSWORDTEXT),
+            "retry_password" : Picture(self.screen, 635, 40, 750, 200, RETRYPASSWORDTEXT)
         }
         self.popups = {
             "retry"   : PassErrorPopup(self.screen, font, "reset"),
@@ -82,6 +86,8 @@ class ChangePassScreen(PassFrame):
                 query = CHANGEPASSWORD + self.new_password
                 self.db.db_query_execution("testdb_main.db", query)
                 self.update_popup()
+                self.flag_retry = False
+                self.set_pass = ""
                 return "motiontest"
             else:
                 self.flag_popup = "retry"
@@ -98,4 +104,6 @@ class ChangePassScreen(PassFrame):
             self.flg_veiw_popup = True
     
     def move_motiontest(self):
+        self.flag_retry = False
+        self.set_pass = ""
         return "motiontest"

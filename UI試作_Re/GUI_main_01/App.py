@@ -2,6 +2,7 @@
 import pygame
 import parts.Vital as Vital
 #   自作のクラス
+#from popup import DBResetPopup
 from screen.MainFrame        import MainFrame
 from screen.DataFrame        import DataFrame
 from screen.PassFrame        import PassFrame
@@ -18,6 +19,7 @@ from popup.EndPopup          import EndPopup
 from popup.WarningPopup      import WorningPopup
 from popup.ErrorPopup        import ErrorPopup
 from popup.PassErrorPopup    import PassErrorPopup
+from popup.DBresetPopup    import DBresetPopup
 from filepath                import *
 from comunication.pc_comands import *
 import Blackout
@@ -32,10 +34,12 @@ OPERATION = "pass"
 BACKGROUND_IMAGE = {
     "main" : IMAGEFILEPATH + "background\\back01.jpg",
     "pass" : IMAGEFILEPATH + "background\\back02.jpg",
-    "motiontest" : IMAGEFILEPATH + "background\\back01.jpg"
+    "motiontest" : IMAGEFILEPATH + "background\\back01.jpg",
+    "changepass" : IMAGEFILEPATH + "background\\back02.jpg"
 }
 POPUPMSG = "装置を停止してください"
 ENDPOPUP = "終了しますか？"
+DBRESETPOPUP = "DBをリセットしますか？"
 END      = "end"
 
 class App:
@@ -78,13 +82,14 @@ class App:
             "pass_stop"  : WorningPopup(self.screen, self.font),
             "error"      : ErrorPopup(self.screen, self.font),
             "not_pass"   : PassErrorPopup(self.screen, self.font, "retry"),
-            "db_reset"   : BasePopup(self.screen, self.font, "データを削除しました"),
+            "db_reset"   : DBresetPopup(self.screen, self.font, DBRESETPOPUP),
+            "reset_complete" : BasePopup(self.screen, self.font, "リセット完了しました"),
             "none_data"  : BasePopup(self.screen, self.font, "データが存在しません")
         }
 
     #   背景の設定
     def setting_background(self):
-        if self.current_screen == "main" or self.current_screen == "pass":
+        if self.current_screen == "main" or self.current_screen == "pass" or self.current_screen == "changepass":
             backgroud_image = pygame.image.load(BACKGROUND_IMAGE[self.current_screen])
             self.backgroud_image = pygame.transform.scale(backgroud_image, (1980, 1080))
         elif self.current_screen == "motiontest":
@@ -135,7 +140,9 @@ class App:
         while self.popup_flg:
             self.popups[self.veiw_popup].draw()
             button_lespons = self.popups[self.veiw_popup].update()
-            if button_lespons != None:
+            if button_lespons == "reset_complet":
+                self.veiw_popup = button_lespons
+            elif button_lespons != None:
                 self.popup_flg = False
             pygame.display.update()
         if action == END and button_lespons == "yes":
