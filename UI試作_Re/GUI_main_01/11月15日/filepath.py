@@ -1,0 +1,2 @@
+IMAGEFILEPATH = "image\\"
+DBFILEPATH = "DB\\"

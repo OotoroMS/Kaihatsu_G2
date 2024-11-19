@@ -11,9 +11,9 @@ from filepath import *
 WHITE          = ((0,0,0))           #   カラーコード(白)
 GRAY           = ((200,200,200))      #   カラーコード(灰色)
 BLACK          = ((255,255,255))     #   カラーコード(黒)
-IMAGESIZE      = (550, 300)
+IMAGESIZE      = (250, 150)
 IMAGEDISTANSE  = 50
-TEXTDISTANSE   = 320
+TEXTDISTANSE   = 200
 BACKFRAME      = IMAGEFILEPATH + "button\\back.png"
 FAILIMAGE      = IMAGEFILEPATH + "exptxt\\pic75.png"
 MAINTEXT       = "パスワードが違います"

@@ -67,6 +67,13 @@ class MotionTestFrame(BaseFrame):
         return "test04"
 
     def dbreset(self):
+        for table in TARGETTABLE:
+            delete_query = QUERY % table
+            print("変更前")
+            self.db.table_data_list_display(table_name=table)
+            self.db.db_query_execution(query=delete_query)
+            print("変更後")
+            self.db.table_data_list_display(table_name=table)
         return "db_reset"
 
 

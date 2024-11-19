@@ -3,10 +3,10 @@ from parts.Button import Button
 from parts.Lamp   import Lamp
 
 LAMPSIZE  = {
-               "x" : 50,
-               "y" : 50
+               "x" : 40,
+               "y" : 40
             }
-XDISTANCE = 50 + LAMPSIZE["x"]
+XDISTANCE = 30 + LAMPSIZE["x"]
 YDISTANCE = LAMPSIZE["y"] // 2
 
 COLOR = {

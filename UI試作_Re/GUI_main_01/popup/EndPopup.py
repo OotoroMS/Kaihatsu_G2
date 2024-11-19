@@ -9,9 +9,9 @@ GRAY = ((200,200,200))      #   カラーコード(灰色)
 BLACK = ((255,255,255))     #   カラーコード(黒)
 WHITE = ((0,0,0))           #   カラーコード(白)
 BASEMSSEGE = "BASE POPUP"
-BACKFRAME = IMAGEFILEPATH + "button\\back.png"#戻る
-ENDFRAME  = IMAGEFILEPATH + "button\\pic04.png"#04終了
-BASEPASH = IMAGEFILEPATH + "exptxt\\pic75.png"#FAILアイコン
+BACKFRAME = IMAGEFILEPATH + "button\\back.png"
+ENDFRAME  = IMAGEFILEPATH + "button\\pic04.png"
+BASEPASH  = IMAGEFILEPATH + "exptxt\\pic75.png"
 
 class EndPopup(BaseFrame):
     def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):

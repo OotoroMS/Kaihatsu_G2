@@ -13,29 +13,29 @@ YEROW = ((255,255,0))
 GREEN = ((0,255,0))
 
 COLOR = ((GRAY))
-MAINTITLE=IMAGEFILEPATH + "title\\pic63.png"#投入･洗浄部
+MAINTITLE=IMAGEFILEPATH + "title\\pic63.png"
 #   メイン画面描画・処理クラス
 class Test01Frame(BaseFrame):
     def __init__(self, screen, font=None):
         super().__init__(screen, font)
         self.buttons = {
-            Button(self.screen, 1100, 190, 550, 250, IMAGEFILEPATH + "button\\pic40.png", self.try01),#偏心モータ回転
-            Button(self.screen, 350, 790, 550, 250, IMAGEFILEPATH + "button\\pic43.png", self.try04),#ポンプ
-            Button(self.screen, 1100, 790, 550, 250, IMAGEFILEPATH + "button\\pic44.png", self.try05),#エアブロー
             Button(self.screen, 0, 960, 300, 120, IMAGEFILEPATH + "button\\back.png", self.move_motiontest)
         }
         self.lamp_buttons = {
-            ButtonAtLamp(self.screen, 350, 490, 550, 250, IMAGEFILEPATH + "button\\pic41.png", self.try02),#押出シリンダ前進
-            ButtonAtLamp(self.screen, 1100, 490, 550, 250, IMAGEFILEPATH + "button\\pic42.png", self.try03)#押出シリンダ後退
+            ButtonAtLamp(self.screen, 1100, 190, 550, 250, IMAGEFILEPATH + "button\\pic40.png", self.try01),
+            ButtonAtLamp(self.screen, 350, 490, 550, 250, IMAGEFILEPATH + "button\\pic41.png", self.try02),
+            ButtonAtLamp(self.screen, 1100, 490, 550, 250, IMAGEFILEPATH + "button\\pic42.png", self.try03),
+            ButtonAtLamp(self.screen, 350, 790, 550, 250, IMAGEFILEPATH + "button\\pic43.png", self.try04),
+            ButtonAtLamp(self.screen, 1100, 790, 550, 250, IMAGEFILEPATH + "button\\pic44.png", self.try05)
         }
         self.images = {
             Picture(self.screen, 0, 0, 750, 200, MAINTITLE),
-            Picture(self.screen, 50, 220, 400, 200, IMAGEFILEPATH + "button\\pic38.png"),#引っかかり検知
-            Picture(self.screen, 500, 220, 400, 200, IMAGEFILEPATH + "button\\pic39.png")#ワーク検知
+            Picture(self.screen, 50, 220, 400, 200, IMAGEFILEPATH + "button\\pic38.png"),
+            Picture(self.screen, 500, 220, 400, 200, IMAGEFILEPATH + "button\\pic39.png")
         }
         self.lamps = list((
-            Lamp(self.screen, 380, 295,50,50, GRAY),#引っかかり検知
-            Lamp(self.screen, 825, 295,50,50, GRAY)#ワーク検知
+            Lamp(self.screen, 380, 295,50,50, GRAY),
+            Lamp(self.screen, 825, 295,50,50, GRAY)
         ))
         self.color = GRAY
 

@@ -12,12 +12,14 @@ DBNAME =  "testdb_main.db"
 
 BLACK = ((0,0,0))
 GRAY  = ((200,200,200))
+TODAY = "today"
+SEVEN = "seven"
+ERROR = "error"
 FONT  = "C:\\Windows\\Fonts\\msgothic.ttc"
 QUERY = {
-    "seven" : "select * from db_countlog order by id DESC limit 7",
-    "error" : "select * from db_timelog order by id DESC limit 50"
+    SEVEN : "select * from db_countlog order by id DESC limit 7",
+    ERROR : "select * from db_timelog order by id DESC limit 50"
 }
-
 
 class CountFrame(BaseFrame):
     def __init__(self, screen, font=None):
@@ -28,23 +30,31 @@ class CountFrame(BaseFrame):
         self.bad_cnt = 0
         self.view = "today"
         self.scrol = False
-        self.setting_buttons() 
+        self.setting_buttons()
+        self.images        = {
+            Picture(self.screen, 0, 0, 750, 200, IMAGEFILEPATH + "title\\pic07.png")
+        }
+        self.select_images = {
+            TODAY : Picture(self.screen, 20 - (360 * (1.1 - 1)) // 2, 280 - (140 * (1.1 - 1)) // 2, 360*1.1, 140*1.1, IMAGEFILEPATH + "button\\pic08.png"),
+            SEVEN : Picture(self.screen, 20 - (360 * (1.1 - 1)) // 2, 470 - (140 * (1.1 - 1)) // 2, 360*1.1, 140*1.1, IMAGEFILEPATH + "button\\pic12.png"),
+            ERROR : Picture(self.screen, 20 - (360 * (1.1 - 1)) // 2, 660 - (140 * (1.1 - 1)) // 2, 360*1.1, 140*1.1, IMAGEFILEPATH + "button\\pic13.png")
+        }
+
     
     def setting_buttons(self):
-        self.buttons = {
-            Button(self.screen, 20, 280, 360, 140, IMAGEFILEPATH + "button\\pic11.png", self.move_today),#当日
-            Button(self.screen, 20, 470, 360, 140, IMAGEFILEPATH + "button\\pic09.png", self.move_seven),#7
-            Button(self.screen, 20, 660, 360, 140, IMAGEFILEPATH + "button\\pic10.png", self.move_error),#不良
+        self.buttons        = [
             Button(self.screen, 0, 960, 330, 120,  IMAGEFILEPATH + "button\\back.png", self.move_data)
+        ]
+        self.select_buutons = {
+            TODAY : Button(self.screen, 20, 280, 360, 140, IMAGEFILEPATH + "button\\pic11.png", self.move_today),
+            SEVEN : Button(self.screen, 20, 470, 360, 140, IMAGEFILEPATH + "button\\pic09.png", self.move_seven),
+            ERROR : Button(self.screen, 20, 660, 360, 140, IMAGEFILEPATH + "button\\pic10.png", self.move_error)
         }
-        self.scrol_buttons = {
+        self.scrol_buttons  = {
             Button(self.screen, 1570, 280, 220, 160, IMAGEFILEPATH + "button\\pic14.png", self.table_full_up),
             Button(self.screen, 1590, 480, 180, 120, IMAGEFILEPATH + "button\\pic15.png", self.table_up),
             Button(self.screen, 1590, 640, 180, 120, IMAGEFILEPATH + "button\\pic16.png", self.table_down),
             Button(self.screen, 1570, 810, 220, 160, IMAGEFILEPATH + "button\\pic17.png", self.table_full_down)
-        }
-        self.images = {
-            Picture(self.screen, 0, 0, 750, 200, IMAGEFILEPATH + "title\\pic07.png")
         }
 
     #   画面描画処理
@@ -56,44 +66,59 @@ class CountFrame(BaseFrame):
 
         #   イベント処理を記述
     def update(self):
-        move = None
+        reaction = None
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                for button in self.buttons:
-                    move = button.is_clicked(event)
-                    if move:
-                        break
-                for button in self.scrol_buttons:
-                    button.is_clicked(event)
-                return move
+                reaction = self.there_is_a_click_event(event)
+        return reaction
 
+    def there_is_a_click_event(self, event : pygame.event.Event):
+        reaction = None
+        for button in self.buttons:
+            reaction = button.is_clicked(event)
+            if reaction:
+                return reaction
+        for key in self.select_buutons:
+            if key != self.view:
+                reaction = self.select_buutons[key].is_clicked(event)
+            if reaction:
+                return reaction
+        for button in self.scrol_buttons:
+            button.is_clicked(event)
+        return reaction
 
     def draw_buttons(self):
         for button in self.buttons:
             button.draw()
+        for key    in self.select_buutons:
+            if key == self.view:
+                self.select_images[key].draw()
+            else:
+                self.select_buutons[key].draw()
+
         if self.scrol:
             for button in self.scrol_buttons:
                 button.draw()
 
     #   良否カウント画面に遷移
     def move_today(self):
-        self.view = "today"
+        self.view = TODAY
         self.scrol = False
         self.table_font = pygame.font.Font(FONT,size=110)
 
     def move_seven(self):
-        if self.db_data_check("seven"):
-            self.view = "seven"
+        if self.db_data_check(SEVEN):
+            self.view = SEVEN
         else:
             return "none_data"
         self.scrol = False
         self.table_font = pygame.font.Font(FONT,size=50)
     
     def move_error(self):
-        if self.db_data_check("seven"):
+        if self.db_data_check(SEVEN):
             self.bad_view = 0
             self.scrol = True
-            self.view = "error"
+            self.view = ERROR
         else:
             return "none_data"
         self.table_font = pygame.font.Font(FONT,size=50)

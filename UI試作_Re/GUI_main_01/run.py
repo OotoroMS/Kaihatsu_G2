@@ -7,7 +7,7 @@ import serial
 FONT = "C:\\Windows\\Fonts\\msgothic.ttc"
 
 # シリアルポートの設定
-PORT1 = "COM4"  # 適切なポートに変更してください
+PORT1 = "COM8"  # 適切なポートに変更してください
 BAUD_RATE = 9600
 TIMEOUT = 0.08
 PARITY = serial.PARITY_EVEN
