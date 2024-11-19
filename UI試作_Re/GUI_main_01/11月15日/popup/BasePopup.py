@@ -51,7 +51,7 @@ class BasePopup(BaseFrame):
         if self.rect:
             pygame.draw.rect(self.screen, GRAY, self.rect)
             pygame.draw.rect(self.screen, BLACK, self.rect, 2)
-            self.screen.blit(self.text_message, (((self.width // 4), self.height // 2)))
+            self.screen.blit(self.text_message, (((self.width // 6), self.height // 2)))
             for button in self.buttons:
                 button.draw()
         else:

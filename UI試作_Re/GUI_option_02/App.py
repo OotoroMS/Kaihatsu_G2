@@ -64,7 +64,7 @@ class App:
         self.setting_vital()                                    # 稼働状況表示の初期化 
         self.setting_fps()                                      # FPSを設定
         self.setting_background()                               # 背景を設定
-        
+ 
     #   画面の登録
     def setting_screen(self):
         #   表示する画面を代入
@@ -93,7 +93,7 @@ class App:
             DB_RESET         : DBresetPopup(self.screen, self.font),
             DB_RESET_SUCCESS : BasePopup(self.screen, self.font, DB_RESET_TEXT)
         }
-    
+
     #   背景の設定
     def setting_background(self):
         if self.current_screen in BACKGROUNDIMAGE.keys():
@@ -105,13 +105,13 @@ class App:
         self.clock = pygame.time.Clock()
         self.clock.tick(FPS)
         self.tcnt = 0
-    
+
     #   稼働状況の初期設定
     def setting_vital(self):
         self.text_vital = FARSTVITAL
         self.font_vital = pygame.font.Font(self.font, 30)   #   稼働状況描画用フォントを設定
         self.vital, self.rect_vital, self.point_vital = Vital.setting_vital(self.text_vital,self.font_vital)
-    
+
     #   暗転
     def brackout(self):
         print(self.current_screen)

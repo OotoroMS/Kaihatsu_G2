@@ -14,6 +14,7 @@ BACKFRAME = IMAGEFILEPATH + "button\\back.png"#戻る
 ENDFRAME  = IMAGEFILEPATH + "button\\pic04.png"#04終了
 BASEPASH = IMAGEFILEPATH + "exptxt\\pic75.png"#FAILアイコン
 
+DB_RESET_TEXT = "データベースをリセットしますか？"
 DBNAME = "testdb_main.db" 
 QUERY = "DELETE FROM %s"
 TARGETTABLE = [
@@ -24,11 +25,11 @@ TARGETTABLE = [
 ]
 
 class DBresetPopup(BaseFrame):
-    def __init__(self, screen : pygame.Surface, font : pygame.font.Font, text : str):
+    def __init__(self, screen : pygame.Surface, font : pygame.font.Font):
         super().__init__(screen, font)
         self.text_font = pygame.font.Font(font, 100)
         self.rect = self.create_popup_rect()
-        self.text = text
+        self.text = DB_RESET_TEXT
         self.text_message = self.text_font.render(self.text, True, WHITE)
         self.buttons = {
             Button(self.screen, (self.width // 2) - (self.width // 4), self.height - (self.height // 4) , self.width // 4,self.height//4, ENDFRAME,  self.YES),     
@@ -66,7 +67,9 @@ class DBresetPopup(BaseFrame):
         if self.rect:
             pygame.draw.rect(self.screen, GRAY, self.rect)
             pygame.draw.rect(self.screen, BLACK, self.rect, 2)
-            self.screen.blit(self.text_message, (((self.width // 3), self.height // 2)))
+            view_text_width = self.text_message.get_width()
+            view_text_x = self.pos_x + ((self.width - view_text_width) // 2)
+            self.screen.blit(self.text_message, (view_text_x, self.height // 2))
             for button in self.buttons:
                 button.draw()
         else:

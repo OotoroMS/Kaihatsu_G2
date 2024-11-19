@@ -9,7 +9,7 @@ SIZE = (13,7.5)
 DB = "testdb_main.db"
 QUERY = "select * from DB_sizelog order by id desc limit 20"
 FONT = 'HGMaruGothicMPRO'
-PATH = "image\\graph.png"
+PATH = "GUI_main_01\\11月15日\\image\\graph.png"
 
 #   データベースからデータを取得
 def get_data():

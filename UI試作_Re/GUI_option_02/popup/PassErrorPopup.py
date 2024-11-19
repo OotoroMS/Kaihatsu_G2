@@ -12,11 +12,11 @@ from constant.PopupName     import *
 WHITE          = ((0,0,0))           #   カラーコード(白)
 GRAY           = ((200,200,200))      #   カラーコード(灰色)
 BLACK          = ((255,255,255))     #   カラーコード(黒)
-IMAGESIZE      = (250, 150)
+IMAGESIZE      = (550, 300)
 IMAGEDISTANSE  = 50
-TEXTDISTANSE   = 200
+TEXTDISTANSE   = 320
 BACKFRAME      = BUTTONFILEPATH + "back.png"
-FAILIMAGE      = EXPTXTFILEPATH + "pic75.png"
+FAILIMAGE      = EXPTXTFILEPATH + "pic78.png"
 MAINTEXT       = "パスワードが違います"
 RETRYTEXT      = "もう一度入力してください"
 RESETTEXT      = "最初からやり直してください"

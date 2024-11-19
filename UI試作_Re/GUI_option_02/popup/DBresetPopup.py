@@ -13,7 +13,7 @@ WHITE = ((0,0,0))           #   カラーコード(白)
 BASEMSSEGE = "BASE POPUP"
 BACKFRAME = BUTTONFILEPATH + "back.png"#戻る
 ENDFRAME  = BUTTONFILEPATH + "pic04.png"#04終了
-BASEPASH = EXPTXTFILEPATH  + "pic75.png"#FAILアイコン
+BASEPASH = EXPTXTFILEPATH  + "pic78.png"#FAILアイコン
 
 DB_RESET_TEXT = "データベースをリセットしますか？"
 DBNAME        = "testdb_main.db" 

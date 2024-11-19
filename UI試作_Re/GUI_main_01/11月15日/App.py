@@ -39,7 +39,8 @@ BACKGROUND_IMAGE = {
 }
 POPUPMSG = "装置を停止してください"
 ENDPOPUP = "終了しますか？"
-DBRESETPOPUP = "DBをリセットしますか？"
+#DBRESETPOPUP = "DBをリセットしますか？"
+DB_RESET_TEXT    = "データベースをリセットしました"
 END      = "end"
 
 class App:
@@ -82,8 +83,8 @@ class App:
             "pass_stop"  : WorningPopup(self.screen, self.font),
             "error"      : ErrorPopup(self.screen, self.font),
             "not_pass"   : PassErrorPopup(self.screen, self.font, "retry"),
-            "db_reset"   : DBresetPopup(self.screen, self.font, DBRESETPOPUP),
-            "reset_complete" : BasePopup(self.screen, self.font, "リセット完了しました"),
+            "db_reset"   : DBresetPopup(self.screen, self.font),
+            "reset_complete" : BasePopup(self.screen, self.font,DB_RESET_TEXT),
             "none_data"  : BasePopup(self.screen, self.font, "データが存在しません")
         }
 
@@ -135,12 +136,13 @@ class App:
         elif action in self.screens.keys():
             self.current_screen = action
     
+    # ポップアップの描画処理
     def draw_popup(self, action):
         button_lespons = None
         while self.popup_flg:
             self.popups[self.veiw_popup].draw()
             button_lespons = self.popups[self.veiw_popup].update()
-            if button_lespons == "reset_complet":
+            if button_lespons == "reset_complete":
                 self.veiw_popup = button_lespons
             elif button_lespons != None:
                 self.popup_flg = False
