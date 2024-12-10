@@ -226,6 +226,13 @@ def main():
                     plc.write_serial(PLC_SND_CMD["NG"])  # 存在していない場合、PLCにNGを送信
                     continue   # 次のループへ
 
+                # PLCからの動作開始を待つ
+                data = plc.read()
+                if data == PLC_Lib.STATE["START"]:
+                    pass
+                else:
+                    continue
+
                 ##### 判別処理 #####
                 flg_judge = JUDGE["OK"]  # 判定結果
                 for i in range(ROTATE_COUNT):   # 回転回数分、推論処理を行う
