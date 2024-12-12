@@ -2,10 +2,10 @@
 # 環境に合わせてファイルパスを変更してください.
 
 # フォントのファイルパス
-FONT = "FONT\\msgothic.ttc"
+FONT = "PROJET\\FONT\\msgothic.ttc"
 # 画像読み込みエラーの場合,
 # 基本的にここを変更すればOK
-IMAGE_FFAILE_PATH    = "GUI\\FRONT\\image\\"
+IMAGE_FFAILE_PATH    = "PROJET\\GUI\\FRONT\\image\\"
 # ディレクトリが増えたらここに,
 # IMAGEFFAILEPATH + "ディレクトリ名" の形で宣言
 TITLE_FILE_PATH      = IMAGE_FFAILE_PATH + "title\\"
