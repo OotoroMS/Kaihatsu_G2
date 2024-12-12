@@ -1,22 +1,20 @@
+# serial_communcator.py(プログラムファイル名+パス)
 import serial
 import threading
 from time import perf_counter
 from typing import Optional
-import time
 
-SERIALPORT_STATUS = {
-    "serial_open": True,
-    "serial_close": False
-}
-OPERATION_STATUS = {
-    "success": True,
-    "failure": False
-}
+# 自作プログラムをimport この３つはほかのプログラムでも使用している
+# クラス名：関数名：エラー内容を引数に渡すことでエラー文をprintする関数
+import log_error
+# 引数の型をチェックするデコレータ
+from type_check import type_check_decorator
+# bool値をわかりやすい変数名にしたクラス 各状態フラグなどに使用する
+from Status     import SerialPortStatus , OperationStatus
 
-ELAPSED_TIME = 0.0
-
+# シリアル通信（接続・送信・受信・切断)を行うクラス
 class SerialCommunicator:
-    def __init__(self, port: str, baudrate: int, parity: str, stopbits: int, timeout: Optional[float]):
+    def __init__(self, port: str, baudrate: int, parity: str, stopbits: int, timeout: float):
         self.serial = serial.Serial(
             port=port,
             baudrate=baudrate,
@@ -25,65 +23,66 @@ class SerialCommunicator:
             stopbits=stopbits,
             timeout=timeout
         )
-        self.lock = threading.Lock() 
-        self.is_open = SERIALPORT_STATUS["serial_open"]
+        self.lock: threading.Lock = threading.Lock()
+        self.is_open: bool = SerialPortStatus.OPEN
 
-    def serial_write(self, data: bytes, wait: int = 0.01) -> bool:        
+    # データ送信関数。引数(byte型)を送信する。
+    @type_check_decorator({'data': bytes})
+    def serial_write(self, data: bytes) -> bool:        
         with self.lock:
             try:
                 self.serial.write(data)
-                return OPERATION_STATUS["success"]
+                return OperationStatus.SUCCESS
             except serial.SerialException as e:
-                print(f"Error sending data via serial:{e}")
-                return OPERATION_STATUS["failure"]
-        # スレッド切替用
-        time.sleep(wait)        
+                log_error(self, self.serial_write.__name__, e)
+                return OperationStatus.FAILURE
 
-    def serial_read(self, wait: int = 0.01) -> tuple[bytes, bool]:
+    # データ受信関数。受信したデータを返す。
+    def serial_read(self) -> tuple[bytes, OperationStatus]:
         data = b''
         serial_none = 0
         with self.lock:
             try:
                 # データが無しならとっとと次の処理に行く
                 if self.serial.in_waiting > serial_none:
-                    data = self.serial.readline()                
-                return data,OPERATION_STATUS["success"]
+                    data = self.serial.readline()
+                return data, OperationStatus.SUCCESS
             except serial.SerialException as e:
-                print(f"Error receiving data via serial port:{e}")
-                return data,OPERATION_STATUS["failure"]
-        time.sleep(wait)        
+                log_error(self, self.serial_read.__name__, e)
+                return data, OperationStatus.FAILURE
 
-    def serial_close(self) -> bool:
+    # 通信経路を切断する関数。終わるときに使用する。
+    def serial_close(self) -> OperationStatus:
         if self.serial.is_open:
             try:
                 print(f"Closing serial port: {self.serial.name}")
                 self.serial.close()
-                self.is_open = SERIALPORT_STATUS["serial_close"]
+                self.is_open = SerialPortStatus.CLOSE
+                return OperationStatus.SUCCESS
             except serial.SerialException as e:
-                print(f"Error closing serial port: {e}")
+                log_error(self, self.serial_close.__name__, e)
+                return OperationStatus.FAILURE
 
     # テスト用メッセージ表示
-    def log_message(self, msg: str):
+    @type_check_decorator({'msg': str})
+    def log_message(self, msg: str) -> None:
         print(f"[TEST][Thread-{threading.get_ident()}] {msg}")        
 
     # テスト用メッセージ付き関数
-    def log_serial_write(self, data: bytes):        
-        # self.log_message("Lock serial_write")
-        start_time = perf_counter()
-        elapsed_time = ELAPSED_TIME
-        self.serial_write(data)
+    @type_check_decorator({'data': bytes})
+    def log_serial_write(self, data: bytes) -> bool:
+        start_time = perf_counter()        
+        result = self.serial_write(data)
         elapsed_time = perf_counter() - start_time
-        self.log_message(f"Data sent: {data}(Time: {elapsed_time:.9f} sec)")        
-        # self.log_message("Unlock serial_write")
-
-    def log_serial_read(self):
-        # self.log_message("Lock serial_read")
-        start_time = perf_counter()  # 計測開始
-        elapsed_time = ELAPSED_TIME
+        self.log_message(f"Data sent: {data}(Time: {elapsed_time:.9f} sec)")
+        return result
+    
+    # テスト用メッセージ付き関数
+    def log_serial_read(self) -> tuple[bytes, OperationStatus]:        
+        start_time = perf_counter()        
         test = self.serial_read()
-        elapsed_time = perf_counter() - start_time  # 経過時間
+        elapsed_time = perf_counter() - start_time
         if test[0]:
             self.log_message(f"Data recv: {test[0]} (Time: {elapsed_time:.9f} sec)")  # 下1行も確認用
-        return test
-        # self.log_message("Unlock serial_read")
+        return test        
 

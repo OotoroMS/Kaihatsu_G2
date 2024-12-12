@@ -6,7 +6,7 @@ from plc_pc import SerialManager
 from pc_comands import PCManager
 
 # シリアルポートの設定
-PORT1 = "COM3"  # 適切なポートに変更してください
+PORT1 = "COM5"  # 適切なポートに変更してください
 BAUD_RATE = 9600
 TIMEOUT = 0.08
 PARITY = serial.PARITY_EVEN
@@ -24,9 +24,8 @@ serial_params1 = {
 
 
 class SerialTest:
-    def __init__(self):
-        self.serial_comm1 = SerialManager(serial_params1)
-        self.serial_test = PCManager(self.serial_comm1)
+    def __init__(self):        
+        self.serial_test = PCManager(serial_params1)
         self.user_input = ""
 
     def send_input_test(self):
@@ -82,7 +81,7 @@ class SerialTest:
     def close_connection(self):
         """シリアル接続を閉じる"""
         print("Closing serial connection...")
-        self.serial_comm1.serial_close()
+        self.serial_test.serial_close()
         print("Serial connection closed.")
 
 def main():
