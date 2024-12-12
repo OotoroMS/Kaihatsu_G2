@@ -33,7 +33,7 @@ class BaseScreen:
         # 配置するボタン達
         self.buttons = [
             Button(self.screen, BtnBase.End.pos, BtnBase.End.size,
-                   BtnBase.End.path, self.func),
+                   BtnBase.End.path, self.end_func),
             Button(self.screen, BtnBase.Main.pos, BtnBase.Main.size,
                    BtnBase.Main.path, self.main_func)
         ]
@@ -60,6 +60,10 @@ class BaseScreen:
     def func(self):
         # ボタンに紐付ける関数(例)
         print("ボタンが押されました")
+    
+    def end_func(self):
+        print("終了ポップアップへ")
+        self.to_back.put("EndPopup")
     
     def main_func(self):
         print("メイン画面へ")

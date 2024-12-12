@@ -14,4 +14,12 @@ def background_task(to_back: Queue, from_back: Queue):
             if message == "BaseScreen":
                 # 画面変更の命令をフロントに返す
                 from_back.put("BaseScreen")
+            if message == "NG":
+                from_back.put("NG")
+            if message == "Back":
+                from_back.put("BaseScreen")
+            if message == "End":
+                from_back.put("End")
+            if message == "EndPopup":
+                from_back.put("EndPopup")
         time.sleep(0.01)    # CPU使用率の低下

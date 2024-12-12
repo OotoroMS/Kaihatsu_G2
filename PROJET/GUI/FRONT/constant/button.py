@@ -20,10 +20,19 @@ class BtnBase(ButtonBase):
     End  = ((0, 960), (330, 120), 
             BUTTON_FILE_PATH + "button_end.png")
     # BasePopupで使用するボタンたち
-#     OK   = None
-#     NG   = None
+    OK   = ((1000, 300), (330, 120),
+            BUTTON_FILE_PATH + "pic76.png")
+    NG   = ((1000, 500), (330, 120),
+            BUTTON_FILE_PATH + "pic77.png")
 
 class BtnMain(ButtonBase):
     # MainScreenで使用するボタンたち    
     Back = ((0, 960), (330, 120), 
             BUTTON_FILE_PATH + "button_back.png")
+
+class BtnEnd(ButtonBase):
+    # EndPopupで使用するボタンたち
+    OK   = ((600, 800), (330, 120),
+            BUTTON_FILE_PATH + "pic76.png")
+    NG   = ((1000, 800), (330, 120),
+            BUTTON_FILE_PATH + "pic77.png")

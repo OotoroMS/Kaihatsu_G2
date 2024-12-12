@@ -13,6 +13,7 @@ from typing import Tuple, Optional
 from GUI.FRONT.parts.Button import Button
 from GUI.FRONT.constant.file_path import FONT
 from GUI.FRONT.constant.color     import GRAY, BLACK
+from GUI.FRONT.constant.button    import BtnBase
 
 class BasePopup:    
     def __init__(self, screen: pygame.Surface, to_back: Queue):
@@ -21,6 +22,9 @@ class BasePopup:
         self.text_font = pygame.font.Font(FONT, 100)
         # ポップアップの作成
         self.rect = self.popup()
+        # 各部品の配置
+        self.setting_images()
+        self.setting_button()
     
     def setting_images(self):
         self.images = [
@@ -29,7 +33,10 @@ class BasePopup:
     
     def setting_button(self):
         self.buttons = [
-            None
+            Button(self.screen, BtnBase.OK.pos, BtnBase.OK.size,
+                   BtnBase.OK.path, self.ok_func),
+            Button(self.screen, BtnBase.NG.pos, BtnBase.NG.size,
+                   BtnBase.NG.path, self.ng_func)
         ]
     
     def images_draw(self):
@@ -48,7 +55,7 @@ class BasePopup:
         if self.rect:
             # 背景の描画
             pygame.draw.rect(self.screen, GRAY, self.rect)
-            pygame.draw.rect(self.screen, BLACK, self.rect)
+            pygame.draw.rect(self.screen, BLACK, self.rect, 2)
             self.images_draw()
             self.buttons_draw()
     
@@ -65,3 +72,14 @@ class BasePopup:
             return rect
         else:
             return None
+    
+    def handle_event(self, event: pygame.event.Event):
+        for button in self.buttons:
+            button.check_click(event)
+    
+    def ok_func(self):
+        print("OK")
+
+    def ng_func(self):
+        print("NG")
+        self.to_back.put("NG")
