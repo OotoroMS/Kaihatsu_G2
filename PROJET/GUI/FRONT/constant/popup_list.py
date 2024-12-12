@@ -2,5 +2,7 @@
 
 popup_names = [
     "BasePopup",   # ポップアップクラス名
-    "EndPopup"
+    "EndPopup",
+    "OriginResetPopup",
+    "MeasurePopup"
 ]

@@ -19,14 +19,14 @@ from GUI.FRONT.constant.popup_list  import popup_names
 class Application:
     def __init__(self, screen: pygame.Surface, to_back: Queue, from_back: Queue):
         self.screen: pygame.Surface = screen
-        self.current_screen: BaseScreen = None
-        self.current_popup : BasePopup  = None
-        self.is_run:  bool = True
+        self.current_screen: BaseScreen = None  # 現在の表示画面
+        self.current_popup : BasePopup  = None  # 現在の表示ポップアップ
+        self.is_run:  bool = True   # メインループの状態フラグ
         self.screens: dict = {}  # 全ての画面インスタンスを保持する辞書
         self.popups:  dict = {}  # 全てのポップアップインスタンスを保持する辞書
         self.screen_names = screen_names  # 外部ファイルから画面リストを取得
         self.popup_names = popup_names    # 外部ファイルからポップアップリストを取得
-        self.to_back = to_back  # フロントからバックへのキュー
+        self.to_back = to_back      # フロントからバックへのキュー
         self.from_back = from_back  # バックからフロントへのキュー
         self.initialize_screens()  # 全画面を最初に作成
         self.initialize_popup()    # 全ポップアップを最初に作成
@@ -37,7 +37,8 @@ class Application:
             if screen_name not in self.screens:
                 try:
                     module = importlib.import_module(f"GUI.FRONT.screen.{screen_name}")
-                    screen_class = getattr(module, screen_name)  # クラスを取得
+                    # クラスを取得
+                    screen_class = getattr(module, screen_name)
                     # 画面クラスをインスタンス化して辞書に格納
                     self.screens[screen_name] = screen_class(self.screen, self.to_back)
                 except (ModuleNotFoundError, AttributeError) as e:
@@ -74,21 +75,31 @@ class Application:
         if not self.from_back.empty():
             response = self.from_back.get()
             print(f"バックからのレスポンス: {response}")
+
+            # リスト型の処理
+            if isinstance(response, list) and len(response) > 0:
+                print("ここには来た？")
+                if response[0] in self.popups:
+                    self.change_popup(response[0])
+                    if len(response) > 1:
+                        # リストの2番目の値をポップアップ更新に利用
+                        self.current_popup.popup_update(response[1])
+                return  # リスト型の場合はここで終了
+            
             if response in self.screens:  # レスポンスが辞書のキーとして存在すればその画面に遷移
                 self.change_screen(response)  # レスポンスに基づいて画面遷移を行う
                 self.current_popup = None
             elif response in self.popups:
-                self.change_popup(response)
-            elif response in ["NG"]:
+                self.change_popup(response)                
+            if response in ["NG"]:
                 self.current_popup = None
-            elif response in ["End"]:
-                self.is_run = False
-                
+            if response in ["End"]:
+                self.is_run = False                                            
 
     # メインループ
     def run(self):        
         self.change_screen("BaseScreen")  # 初期画面を設定
-        # self.change_popup("BasePopup")
+        # self.change_popup("MeasurePopup")
         while self.is_run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

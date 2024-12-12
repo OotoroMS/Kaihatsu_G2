@@ -14,7 +14,7 @@ def setup_logging():
 
     # エラーログ用のハンドラを作成（7日ごとにローテーション）
     error_handler = TimedRotatingFileHandler(
-        'SERIAL/logs/error_log.txt', 
+        'PROJET/SERIAL/logs/error_log.txt', 
         when='midnight',  # 毎日0時にローテーション
         interval=1,  # 1日ごとにローテーション
         backupCount=7,  # ログを7日分保持
@@ -26,7 +26,7 @@ def setup_logging():
 
     # デバッグログ用のハンドラを作成（7日ごとにローテーション）
     debug_handler = TimedRotatingFileHandler(
-        'SERIAL/logs/debug_log.txt',
+        'PROJET/SERIAL/logs/debug_log.txt',
         when='midnight',  # 毎日0時にローテーション
         interval=1,  # 1日ごとにローテーション
         backupCount=7,  # ログを7日分保持

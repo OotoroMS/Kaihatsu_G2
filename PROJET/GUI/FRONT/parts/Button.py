@@ -2,7 +2,6 @@
 
 import pygame
 from typing import Tuple
-# 自作プログラムをimport
 
 class Button:
     def __init__(self, screen: pygame.Surface, pos: Tuple[int, int], 

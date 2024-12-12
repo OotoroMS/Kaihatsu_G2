@@ -11,9 +11,9 @@ from typing import Tuple, Optional
 
 # 自作プログラムをimport
 from GUI.FRONT.parts.Button import Button
+from GUI.FRONT.parts.Text   import Text
 from GUI.FRONT.constant.file_path import FONT
 from GUI.FRONT.constant.color     import GRAY, BLACK
-from GUI.FRONT.constant.button    import BtnBase
 
 class BasePopup:    
     def __init__(self, screen: pygame.Surface, to_back: Queue):
@@ -24,19 +24,22 @@ class BasePopup:
         self.rect = self.popup()
         # 各部品の配置
         self.setting_images()
-        self.setting_button()
+        self.setting_buttons()
+        self.setting_texts()
     
     def setting_images(self):
         self.images = [
             None
         ]
     
-    def setting_button(self):
-        self.buttons = [
-            Button(self.screen, BtnBase.OK.pos, BtnBase.OK.size,
-                   BtnBase.OK.path, self.ok_func),
-            Button(self.screen, BtnBase.NG.pos, BtnBase.NG.size,
-                   BtnBase.NG.path, self.ng_func)
+    def setting_texts(self):
+        self.texts: list[Text] = [
+            None
+        ]
+    
+    def setting_buttons(self):
+        self.buttons: list[Button] = [
+            None
         ]
     
     def images_draw(self):
@@ -51,6 +54,12 @@ class BasePopup:
                 # ボタンの描画処理
                 button.draw()
     
+    def texts_draw(self):
+        for text in self.texts:
+            if text:
+                # テキストの描画処理
+                text.draw()
+    
     def draw(self):
         if self.rect:
             # 背景の描画
@@ -58,6 +67,8 @@ class BasePopup:
             pygame.draw.rect(self.screen, BLACK, self.rect, 2)
             self.images_draw()
             self.buttons_draw()
+            self.texts_draw()
+
     
     def popup(self):
         window_size = pygame.display.get_window_size()  # 画面サイズ取得
@@ -73,6 +84,11 @@ class BasePopup:
         else:
             return None
     
+    def popup_update(self, text: str):
+        for view_text in self.texts:
+            if view_text:
+                view_text.update(text)
+
     def handle_event(self, event: pygame.event.Event):
         for button in self.buttons:
             button.check_click(event)

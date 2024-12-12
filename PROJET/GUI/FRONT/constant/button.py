@@ -1,5 +1,6 @@
 # GUI/FRONT/constant/button.py
 
+# 各ボタンの設定をまとめたファイル
 from enum import Enum
 
 # 自作プログラムをimport
@@ -32,7 +33,18 @@ class BtnMain(ButtonBase):
 
 class BtnEnd(ButtonBase):
     # EndPopupで使用するボタンたち
-    OK   = ((600, 800), (330, 120),
+    OK   = ((400, 700), (340, 150),
             BUTTON_FILE_PATH + "pic76.png")
-    NG   = ((1000, 800), (330, 120),
+    NG   = ((1200, 700), (340, 150),
             BUTTON_FILE_PATH + "pic77.png")
+
+class BtnOrignReset(ButtonBase):
+    # OriginResetPopupで使用するボタンたち
+    OK   = ((400, 700), (340, 150),
+            BUTTON_FILE_PATH + "pic76.png")
+    NG   = ((1200, 700), (340, 150),
+            BUTTON_FILE_PATH + "pic77.png")
+
+class BtnMeasure(ButtonBase):
+    OK   = ((800, 700), (340, 150),
+            BUTTON_FILE_PATH + "pic76.png")
