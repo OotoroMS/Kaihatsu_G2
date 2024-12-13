@@ -14,33 +14,11 @@ from SERIAL.manager.plc_communicator import PLCCommunicator
 # ログを作成
 logger = log.setup_logging()
 
-class PLCBaseHandler:
-    def __init__(self, plc_communicator: PLCCommunicator):
+class PLCBaseHandler(PLCCommunicator):
+    def __init__(self, serial_params):
+        super().__init__(serial_params)
         # 辞書の管理
         self.do_dict: DictManager = DictManager()
-        # シリアル通信
-        self.plc_communicator: PLCCommunicator = plc_communicator        
-
-    # 受信処理（ループなし）
-    def receive(self):
-        try:
-            # シリアル通信でデータを受信
-            data, status = self.plc_communicator.read()
-            if status == OperationStatus.SUCCESS:
-                # 受信データを処理
-                self.process_received_data(data)
-        except Exception as e:
-            logger.error(f"{self}: {self.receive.__name__}: {e}")
-
-    # 送信処理
-    @type_check_decorator({'data': bytes})
-    def send(self, data: bytes):
-        try:
-            # シリアル送信処理を呼び出し
-            self.plc_communicator.send(data)
-            print(f"Sent data: {data}")
-        except Exception as e:
-           logger.error(f"{self}: {self.send.__name__}: {e}")
 
     # 受信データをDoDictを使用して辞書の返り値を取得
     # 辞書の返り値をUIに渡すやつとインジケータに渡すやつに渡す

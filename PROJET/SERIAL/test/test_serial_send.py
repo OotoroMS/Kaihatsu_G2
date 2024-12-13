@@ -10,7 +10,7 @@ import time
 import serial
 
 # シリアルポートの設定
-PORT1 = "COM4"  # 適切なポートに変更してください
+PORT1 = "COM3"  # 適切なポートに変更してください
 BAUD_RATE1 = 9600
 BAUD_RATE2 = 2400
 PARITY1 = serial.PARITY_EVEN
@@ -60,4 +60,4 @@ def test_serial_send_cr():
 
 # テストの実行
 if __name__ == "__main__":
-    test_serial_send_cr()  # 送信ポートを指定
+    test_serial_send()  # 送信ポートを指定

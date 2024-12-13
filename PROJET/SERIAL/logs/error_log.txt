@@ -1,0 +1,1 @@
+2024-12-12 16:17:34,605 - ERROR - <SERIAL.manager.plc_base_handler.PLCBaseHandler object at 0x0000025A47B38500>: receive: startswith first arg must be bytes or a tuple of bytes, not DataPrefix

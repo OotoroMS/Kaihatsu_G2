@@ -1,6 +1,7 @@
 # SERIAL/manager/plc_pc.py
 
 from typing import Optional, Tuple
+import struct
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
@@ -23,6 +24,10 @@ class PLCCommunicator(SerialCommunicator):
 
         self.is_response: ResponseStatus = ResponseStatus.NOT_WAITING
         self.send_data: bytes = b''
+
+    def format_int(self, data: int) -> bytes:
+        bytes_data: bytes = struct.pack(">B", data)
+        return bytes_data
 
     # 引数の値を成形して返す
     """ (例)
@@ -70,7 +75,7 @@ class PLCCommunicator(SerialCommunicator):
         返値: OperationStatus.SUCCESS
     """
     def valid_data(self, data: bytes) -> OperationStatus:
-        if len(data) < 2:  # 受信データの長さが2未満の場合
+        if len(data) < 1:  # 受信データの長さが2未満の場合
             logger.error(f"受信データの長さが足りません")
             return OperationStatus.FAILURE
         return OperationStatus.SUCCESS
@@ -84,17 +89,17 @@ class PLCCommunicator(SerialCommunicator):
         if self.valid_data(data) == OperationStatus.FAILURE:
             return b'', OperationStatus.FAILURE
 
-        if data.startswith(DataPrefix.DATA_IN):  # DATA_INが接頭語の場合
+        if data.startswith(DataPrefix.DATA_IN.value):  # DATA_INが接頭語の場合
             logger.debug(f"PLCからの送信データ")
-            cmd = data[2:3]  # コマンドデータ
+            cmd = data[1:2]  # コマンドデータ
             status = self.response(cmd)  # 応答送信
             if status == OperationStatus.FAILURE:
                 return b'', status
             return cmd, status
-        elif data.startswith(DataPrefix.ACK):  # ACKが接頭語の場合
+        elif data.startswith(DataPrefix.ACK.value):  # ACKが接頭語の場合
             logger.debug(f"PLCからの応答データ")
             self.is_response = ResponseStatus.NOT_WAITING  # 応答待ち解除
-            cmd = data[2:3]  # コマンドデータ
+            cmd = data[1:2]  # コマンドデータ
             status = self.compare(cmd)  # データ比較
             if status == OperationStatus.FAILURE:
                 self.send(cmd)  # 再送                
