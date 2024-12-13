@@ -11,9 +11,6 @@ from SERIAL.manager.dict_manager import DictManager
 # PLCとの通信処理に基づいた処理を行うクラス
 from SERIAL.manager.plc_communicator import PLCCommunicator
 
-# ログを作成
-logger = log.setup_logging()
-
 class PLCBaseHandler(PLCCommunicator):
     def __init__(self, serial_params):
         super().__init__(serial_params)
@@ -34,7 +31,7 @@ class PLCBaseHandler(PLCCommunicator):
                 self.send_to_indicator(["動作不良", ""])
                 self.send_to_indicator(["動作不良", ""])
         except Exception as e:
-            logger.error(f"{self}: {self.process_received_data.__name__}: {e}")            
+            self.logger.error(f"{self}: {self.process_received_data.__name__}: {e}")            
 
     # 辞書の返り値をUIに渡す
     @type_check_decorator({'data': list})
@@ -43,7 +40,7 @@ class PLCBaseHandler(PLCCommunicator):
             print(f"UIに渡すデータ{data}")
             return data
         except Exception as e:
-            logger.error(f"{self}: {self.send_to_ui.__name__}: {e}")            
+            self.logger.error(f"{self}: {self.send_to_ui.__name__}: {e}")            
             return ["動作不良",""]
 
     # 辞書の返り値をインジケータに渡す
@@ -53,7 +50,7 @@ class PLCBaseHandler(PLCCommunicator):
             print(f"インジケータに渡すデータ{data}")
             return data
         except Exception as e:
-            logger.error(f"{self}: {self.send_to_indicator.__name__}: {e}")
+            self.logger.error(f"{self}: {self.send_to_indicator.__name__}: {e}")
             return ["動作不良",""]
 
     # シリアル通信の終了

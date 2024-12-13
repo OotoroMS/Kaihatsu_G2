@@ -26,4 +26,4 @@ class BackBase(BackGroundBase):
     Base = BACKGROUND_FILE_PATH + "base.jpg"  # 背景画像のパス
 
 class BackMain(BackGroundBase):
-    Main = BACKGROUND_FILE_PATH + "password.jpg"  # 背景画像のパス
+    Main = BACKGROUND_FILE_PATH + "base.jpg"  # 背景画像のパス

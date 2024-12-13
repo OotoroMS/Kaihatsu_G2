@@ -44,4 +44,4 @@ class OriginResetPopup(BasePopup):
     
     def ng_func(self):
         print("ベース画面に戻ります")
-        self.to_back.put("NG")
+        self.to_back.put("OriginNotReset")

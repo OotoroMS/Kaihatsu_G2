@@ -98,7 +98,7 @@ class Application:
 
     # メインループ
     def run(self):        
-        self.change_screen("BaseScreen")  # 初期画面を設定
+        self.change_screen("MainScreen")  # 初期画面を設定
         # self.change_popup("MeasurePopup")
         while self.is_run:
             for event in pygame.event.get():

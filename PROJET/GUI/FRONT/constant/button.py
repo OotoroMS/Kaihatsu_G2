@@ -27,9 +27,9 @@ class BtnBase(ButtonBase):
             BUTTON_FILE_PATH + "pic77.png")
 
 class BtnMain(ButtonBase):
-    # MainScreenで使用するボタンたち    
-    Back = ((0, 960), (330, 120), 
-            BUTTON_FILE_PATH + "button_back.png")
+    # MainScreenで使用するボタンたち        
+    End  = ((0, 960), (330, 120), 
+            BUTTON_FILE_PATH + "button_end.png")
 
 class BtnEnd(ButtonBase):
     # EndPopupで使用するボタンたち

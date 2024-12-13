@@ -13,9 +13,6 @@ import UTILS.log_config as log
 # 定数ファイル
 from SERIAL.constant.Status     import OperationStatus
 
-# ログを作成
-logger = log.setup_logging()
-
 # シリアル通信（接続・送信・受信・切断)を行うクラス
 class SerialCommunicator:
     def __init__(self, port: str, baudrate: int, parity: str, stopbits: int, timeout: float):
@@ -27,7 +24,9 @@ class SerialCommunicator:
             stopbits=stopbits,
             timeout=timeout
         )
-        logger.debug(f"シリアル通信開始：{self.serial.name}")
+        # ログを作成
+        self.logger = log.setup_logging()
+        self.logger.debug(f"シリアル通信開始：{self.serial.name}")
         self.lock: threading.Lock = threading.Lock()                
 
     # データ送信関数。引数(byte型)を送信する。
@@ -36,10 +35,10 @@ class SerialCommunicator:
         with self.lock:
             try:                
                 self.serial.write(data)
-                logger.debug(f"{self.serial.name} 送信：{data}")
+                self.logger.debug(f"{self.serial.name} 送信：{data}")
                 return OperationStatus.SUCCESS
             except serial.SerialException as e:
-                logger.error(f"{self}: {self.serial_write.__name__}: {e}")
+                self.logger.error(f"{self}: {self.serial_write.__name__}: {e}")
                 return OperationStatus.FAILURE
 
     # データ受信関数。受信したデータを返す。
@@ -53,12 +52,12 @@ class SerialCommunicator:
                     data = self.serial.readline()
                 # 受信データの有無
                 if data:
-                    logger.debug(f"{self.serial.name} 受信：{data}")
+                    self.logger.debug(f"{self.serial.name} 受信：{data}")
                     return data, OperationStatus.SUCCESS
                 # 無=失敗
                 return data, OperationStatus.FAILURE
             except serial.SerialException as e:
-                logger.error(f"{self}: {self.serial_read.__name__}: {e}")
+                self.logger.error(f"{self}: {self.serial_read.__name__}: {e}")
                 return data, OperationStatus.FAILURE
             
     # データ受信関数。CRを終端文字とする。
@@ -73,15 +72,15 @@ class SerialCommunicator:
                     if char == b'': # タイムアウト発生
                         return bytes(line), OperationStatus.FAILURE                    
                     elif char:  # 配列に追加(データがある場合のみ)
-                        logger.debug(f"一文字受信：{char}")
+                        self.logger.debug(f"一文字受信：{char}")
                         line.extend(char)
                     # CRかどうか判定 CRだったらTureが帰ってくる
                     if self.is_cr_terminated(char):
                         break
-                logger.debug(f"{self.serial.name} 受信：{bytes(line)}")
+                self.logger.debug(f"{self.serial.name} 受信：{bytes(line)}")
                 return bytes(line), OperationStatus.SUCCESS
             except serial.SerialException as e:
-                logger.error(f"{self}: {self.serial_read_cr.__name__}: {e}")
+                self.logger.error(f"{self}: {self.serial_read_cr.__name__}: {e}")
                 return bytes(line), OperationStatus.FAILURE
 
     # 1バイトを読み込む関数
@@ -98,10 +97,10 @@ class SerialCommunicator:
         if self.serial.is_open:
             try:                
                 self.serial.close()
-                logger.debug(f"シリアル通信終了：{self.serial.name}")
+                self.logger.debug(f"シリアル通信終了：{self.serial.name}")
                 return OperationStatus.SUCCESS
             except serial.SerialException as e:
-                logger.error(f"{self}: {self.serial_close.__name__}: {e}")
+                self.logger.error(f"{self}: {self.serial_close.__name__}: {e}")
                 return OperationStatus.FAILURE
 
 """

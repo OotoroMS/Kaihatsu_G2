@@ -24,15 +24,35 @@ def background_task(to_back: Queue, from_back: Queue, serial: PLCBaseHandler):
             if message == "EndPopup":
                 from_back.put("EndPopup")
             if message == "OriginReset":
+                # ポップアップを消す
                 from_back.put("NG")
+                # 特定のコマンドを送信
+                bytes_data = serial.format_int(17)
+                serial.send(bytes_data)
+            if message == "OriginNotReset":
+                from_back.put("NG")
+                # 特定のコマンドを送信
+                bytes_data = serial.format_int(19)
+                serial.send(bytes_data)
         # シリアル通信の受信を受け取る        
         data, status = serial.read()
         if status == OperationStatus.SUCCESS:
             print(data)
-            # if data == b'23':
-            #     from_back.put("OriginResetPopup")
-            # elif data == b'53':
-            #     from_back.put(["MeasurePopup", "測定値: 10.3 mm"])
-            # elif data == b'54':
-            #     from_back.put(["MeasurePopup", "測定値: 15.3 mm"])
+            number = int.from_bytes(data, byteorder='big')
+            print(number)
+            if number == 15:
+                from_back.put("OriginResetPopup")
+            elif number == 42:
+                # デジタルインジケータを実行
+                measure = 7.56
+                result = "OK"                
+                # 結果によって異なるデータを送信+ポップアップを表示
+                from_back.put(["MeasurePopup", f"測定値:{measure}mm\n 判定結果:{result}"])
+                # OK = 44 NG = 46
+                if result == "OK":
+                    bytes_data = serial.format_int(44)
+                    serial.send(bytes_data)
+                elif result == "NG":
+                    bytes_data = serial.format_int(46)
+                    serial.send(bytes_data)
         time.sleep(0.01)    # CPU使用率の低下

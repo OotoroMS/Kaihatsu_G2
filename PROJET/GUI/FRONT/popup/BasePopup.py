@@ -91,11 +91,4 @@ class BasePopup:
 
     def handle_event(self, event: pygame.event.Event):
         for button in self.buttons:
-            button.check_click(event)
-    
-    def ok_func(self):
-        print("OK")
-
-    def ng_func(self):
-        print("NG")
-        self.to_back.put("NG")
+            button.check_click(event)    

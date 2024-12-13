@@ -26,10 +26,10 @@ class MainScreen(BaseScreen):
     
     def setting_buttons(self):
         self.buttons = [
-            Button(self.screen, BtnMain.Back.pos, BtnMain.Back.size,
-                   BtnMain.Back.path, self.func)
+            Button(self.screen, BtnMain.End.pos, BtnMain.End.size,
+                   BtnMain.End.path, self.end_func)
         ]
     
-    def func(self):
-        print("メイン画面のボタンが押されました")
-        self.to_back.put("BaseScreen")
+    def end_func(self):
+        print("終了ポップアップへ")
+        self.to_back.put("EndPopup")

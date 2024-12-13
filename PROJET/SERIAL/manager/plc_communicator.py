@@ -13,9 +13,6 @@ from SERIAL.constant.Format     import DataPrefix, LineEnding
 # シリアル通信のクラス(このクラスの親)
 from SERIAL.manager.serial_communicator import SerialCommunicator
 
-# ログを作成
-logger = log.setup_logging()
-
 # PLCとの通信処理に基づいた処理を行うクラス
 class PLCCommunicator(SerialCommunicator):
     def __init__(self, serial_params: dict):
@@ -25,8 +22,8 @@ class PLCCommunicator(SerialCommunicator):
         self.is_response: ResponseStatus = ResponseStatus.NOT_WAITING
         self.send_data: bytes = b''
 
-    def format_int(self, data: int) -> bytes:
-        bytes_data: bytes = struct.pack(">B", data)
+    def format_int(self, data: int) ->bytes:
+        bytes_data = struct.pack(">B", data)
         return bytes_data
 
     # 引数の値を成形して返す
@@ -36,7 +33,7 @@ class PLCCommunicator(SerialCommunicator):
     """
     def format_bytes(self, prefix: DataPrefix, data: bytes) -> bytes:
         format_data = prefix.value + data + LineEnding.LF.value
-        logger.debug(f"成形前データ:{data}\n成形後データ{format_data}")
+        self.logger.debug(f"成形前データ:{data}\n成形後データ{format_data}")
         return format_data
     
     # 送信の流れ
@@ -76,7 +73,7 @@ class PLCCommunicator(SerialCommunicator):
     """
     def valid_data(self, data: bytes) -> OperationStatus:
         if len(data) < 1:  # 受信データの長さが2未満の場合
-            logger.error(f"受信データの長さが足りません")
+            self.logger.error(f"受信データの長さが足りません")
             return OperationStatus.FAILURE
         return OperationStatus.SUCCESS
 
@@ -90,14 +87,14 @@ class PLCCommunicator(SerialCommunicator):
             return b'', OperationStatus.FAILURE
 
         if data.startswith(DataPrefix.DATA_IN.value):  # DATA_INが接頭語の場合
-            logger.debug(f"PLCからの送信データ")
+            self.logger.debug(f"PLCからの送信データ")
             cmd = data[1:2]  # コマンドデータ
             status = self.response(cmd)  # 応答送信
             if status == OperationStatus.FAILURE:
                 return b'', status
             return cmd, status
         elif data.startswith(DataPrefix.ACK.value):  # ACKが接頭語の場合
-            logger.debug(f"PLCからの応答データ")
+            self.logger.debug(f"PLCからの応答データ")
             self.is_response = ResponseStatus.NOT_WAITING  # 応答待ち解除
             cmd = data[1:2]  # コマンドデータ
             status = self.compare(cmd)  # データ比較
@@ -117,7 +114,7 @@ class PLCCommunicator(SerialCommunicator):
     def response(self, data: bytes) -> OperationStatus:
         response_data = self.format_bytes(DataPrefix.ACK, data)  # 応答データ成形
         result = super().serial_write(response_data)  # 応答送信
-        logger.debug(f"応答を送信します。")
+        self.logger.debug(f"応答を送信します。")
         return result
 
     # 送信データの比較
@@ -127,9 +124,9 @@ class PLCCommunicator(SerialCommunicator):
     """
     def compare(self, data: bytes) -> OperationStatus:
         if data == self.send_data:
-            logger.debug(f"受信データの中身:OK")
+            self.logger.debug(f"受信データの中身:OK")
             return OperationStatus.SUCCESS
-        logger.debug(f"受信データの中身:NG")
+        self.logger.debug(f"受信データの中身:NG")
         return OperationStatus.FAILURE
 
 if __name__ == '__main__':
