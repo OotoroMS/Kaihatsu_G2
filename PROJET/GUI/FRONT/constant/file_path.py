@@ -1,6 +1,8 @@
 # ファイルパスを定義
 # 環境に合わせてファイルパスを変更してください.
 
+# データベースのファイルパス
+DB_FILE_PATH         = "PROJECT\\DATABASE\\"
 # フォントのファイルパス
 FONT = "PROJET\\FONT\\msgothic.ttc"
 # 画像読み込みエラーの場合,
