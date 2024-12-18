@@ -56,7 +56,7 @@ class PLCCommunicator(SerialCommunicator):
     # 受信の流れ
     """ (例)
         引数: なし
-        返値: (b'\x01\x01\x2c', OperationStatus.SUCCESS)
+        返値: (b'\x01\x2c', OperationStatus.SUCCESS)
               (b'', OperationStatus.FAILURE)
     """
     def read(self) -> tuple[bytes, OperationStatus]:

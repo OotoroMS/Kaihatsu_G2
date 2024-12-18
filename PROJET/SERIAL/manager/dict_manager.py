@@ -53,7 +53,7 @@ class DictManager:
             if len(data) < 2:
                 raise ValueError("コマンドデータが含まれていません。")
             # 辞書から値を取得
-            text = command_dict.get(data[1:], ["不明なコマンド"])
+            text = command_dict.get(data[1:], None)
             return text, OperationStatus.SUCCESS
         except Exception as e:
             logger.error(f"{self}: {self.bytes_to_list.__name__}: {e}")
@@ -77,7 +77,7 @@ class DictManager:
             command_dict, status = self.compare_dict(data)
             if status == OperationStatus.SUCCESS:
                 # 戻り値 例 ["正常001", "投入部"], OperationStatus.SUCCESS
-                return self.bytes_to_list(command_dict, data)
+                return self.bytes_to_list(command_dict, data), status
             else:
                 return ["動作不良", ""], OperationStatus.FAILURE
         except (ValueError, TypeError) as e:
