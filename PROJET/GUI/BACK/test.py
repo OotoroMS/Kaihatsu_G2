@@ -3,10 +3,11 @@
 from queue import Queue
 import time
 from SERIAL.manager.serial_communicator import SerialCommunicator
+from DEGITALINDICATOR.Indicator         import Indicator
 from SERIAL.manager.plc_base_handler    import PLCBaseHandler
 from SERIAL.constant.Status             import OperationStatus
 
-def background_task(to_back: Queue, from_back: Queue, serial: PLCBaseHandler):
+def background_task(to_back: Queue, from_back: Queue, serial: PLCBaseHandler, indicator: Indicator):
     while True:
         # フロントからの要求を待つ
         if not to_back.empty():
@@ -44,8 +45,7 @@ def background_task(to_back: Queue, from_back: Queue, serial: PLCBaseHandler):
                 from_back.put("OriginResetPopup")
             elif number == 42:
                 # デジタルインジケータを実行
-                measure = 7.56
-                result = "OK"                
+                measure, result = indicator.main(27.0)
                 # 結果によって異なるデータを送信+ポップアップを表示
                 from_back.put(["MeasurePopup", f"測定値:{measure}mm\n 判定結果:{result}"])
                 # OK = 44 NG = 46
