@@ -1,0 +1,3 @@
+STATUS_ACTIVE = "稼働中"
+STATUS_STOP   = "停止中"
+STATUS_ERROR  = "エラー"

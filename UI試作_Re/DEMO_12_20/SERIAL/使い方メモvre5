@@ -1,0 +1,48 @@
+ファイル名
+plc_pc.py
+do_serial.py
+
+インスタンス化するクラス
+form plc_pc import SerialManager
+from do_serial import DoSerial
+
+SerialManagerの引数は
+辞書型で定義
+例
+# シリアルポートの設定
+PORT1 = "COM5"  # 適切なポートに変更してください
+BAUD_RATE = 9600
+TIMEOUT = 0.08
+PARITY = serial.PARITY_EVEN
+STOPBITS = serial.STOPBITS_ONE
+
+serial_params1 = {
+    "port": PORT1,
+    "baudrate": BAUD_RATE,
+    "parity": PARITY,
+    "stopbits": STOPBITS,
+    "timeout": TIMEOUT,
+}
+
+DoSerialの引数は
+SerialManagerのインスタンスを渡して
+
+スレッド化する関数
+DoSerialの
+receive_loop()
+
+あと使用する関数。
+PLCへの送信
+set_and_send(data: tuple(str, str))
+引数に送りたい文字列を入れて。勝手に変換して送るから
+例
+tuple("シリンダ上", "測定部")
+
+PLCからの受信
+data = send_to_ui()
+dataの中身はlist[str, str]で渡すのでそれに合わせて処理してね
+
+シリアル通信の終了
+DoSerialの
+colse()
+

@@ -1,0 +1,1 @@
+POPUP_END_MESSAGE  = "終了しますか？"
