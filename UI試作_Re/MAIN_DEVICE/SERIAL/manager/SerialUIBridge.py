@@ -20,6 +20,7 @@ class SerialUIBridge(PLCCommunicator):
         # データ受信        
         data, status = super().read()
         # 受信成功
+        self.logger.debug(f"シリアル通信結果:{status}")
         if status == OperationStatus.SUCCESS:
             # キューに値を入れる
             self.queue.put(data)
