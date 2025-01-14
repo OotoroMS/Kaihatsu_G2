@@ -72,7 +72,7 @@ class PLCCommunicator(SerialCommunicator):
         返値: OperationStatus.SUCCESS
     """
     def valid_data(self, data: bytes) -> OperationStatus:
-        if len(data) < 1:  # 受信データの長さが2未満の場合
+        if len(data) < 2:  # 受信データの長さが2未満の場合
             self.logger.error(f"受信データの長さが足りません")
             return OperationStatus.FAILURE
         return OperationStatus.SUCCESS
