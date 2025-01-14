@@ -14,11 +14,11 @@ PARITY = serial.PARITY_EVEN
 STOPBITS = serial.STOPBITS_ONE
 
 SERIAL_PARAMS_GUI = {
-    "port": PORT1,
-    "baudrate": BAUD_RATE,
-    "parity": PARITY,
-    "stopbits": STOPBITS,
-    "timeout": TIMEOUT
+    "port": "COM3",
+    "baudrate": 9600,
+    "parity": serial.PARITY_NONE,
+    "stopbits": serial.STOPBITS_ONE,
+    "timeout": 0.08,
 }
 SERIAL_PARAMS_DE  = {
     "port"      : None,
