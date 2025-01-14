@@ -39,14 +39,22 @@ class OperatingManager:
     # 稼働状況を受け取る
     def receive_operating_status(self) -> bool:
         message = self.serial.process_serial_queue()
-        if message:
+        print("message :", message)
+        if message[0] != None:
             self.operating_status = message[0]
             self.plase            = message[1]
+            # print("self.operating_status :", self.operating_status)
+            # print("self.plase            :", self.plase)
+            return True
+        else:
+            # print("self.operating_status :", self.operating_status)
+            # print("self.plase            :", self.plase)
             return True
         return False
     
     # 受け取った稼働状況を判別
     def status_check(self) -> bool:
+        print("status_check :", self.operating_status[:3])
         if self.operating_status[:3]   == STATUS_ERROR:
             self.text = STATUS_ERROR
             return True
@@ -57,17 +65,17 @@ class OperatingManager:
             self.text = STATUS_STOP
             return True
         return False
-        if self.operating_status   == STATUS_ACTIVE:
-            self.text = STATUS_STOP
-            self.operating_status = STATUS_STOP
-        elif self.operating_status == STATUS_STOP:
-            self.text = STATUS_ERROR
-            self.operating_status = STATUS_ERROR
-        elif self.operating_status == STATUS_ERROR:
-            self.text = STATUS_ACTIVE
-            self.operating_status = STATUS_ACTIVE
-        else:
-            return False
+        # if self.operating_status   == STATUS_ACTIVE:
+        #     self.text = STATUS_STOP
+        #     self.operating_status = STATUS_STOP
+        # elif self.operating_status == STATUS_STOP:
+        #     self.text = STATUS_ERROR
+        #     self.operating_status = STATUS_ERROR
+        # elif self.operating_status == STATUS_ERROR:
+        #     self.text = STATUS_ACTIVE
+        #     self.operating_status = STATUS_ACTIVE
+        # else:
+        #     return False
         return True
     
     # 描画
@@ -85,20 +93,30 @@ class OperatingManager:
 
     # 受信及び描画処理
     def status_receve_draw(self, tcnt : int) -> bool:
-        # if not self.receive_operating_status():
-        #     return False
-        if tcnt >= 15:
-            if not self.status_check():
-                return False
+        if not self.receive_operating_status():
+            return False
+        if not self.status_check():
+            print("not status_check")
+            return False
         if not self.draw():
             return False
         return True
+        
+        # if tcnt >= 15:
+        #     if not self.status_check():
+        #         return False
+        # if not self.draw():
+        #     return False
+        # return True
     
     def foward_error(self):
-        if self.operating_status[:3] == STATUS_ERROR:
-            return True, ERROR_POPUP, [self.operating_status, self.plase]
+        if self.operating_status:
+            if self.operating_status[:3] == STATUS_ERROR:
+                return True, ERROR_POPUP, [self.operating_status, self.plase]
+            else:
+                return False, None, None
         else:
-            return False, None, None
+                return False, None, None
         # デバック用
         # if self.operating_status == STATUS_ERROR:
         #     error = [self.operating_status + "001", self.plase]
