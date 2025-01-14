@@ -10,19 +10,20 @@ import struct
 import threading
 
 # 自作プログラムをimport
-from SERIAL.manager.plc_base_handler import PLCBaseHandler
+from PROJET.SERIAL.manager.SerialUIBridge import SerialUIBridge
 
 
 class Test:
     def __init__(self):
         serial_params1 = {
-            "port": "COM3",
+            "port": "COM6",
             "baudrate": 9600,
             "parity": serial.PARITY_NONE,
             "stopbits": serial.STOPBITS_ONE,
             "timeout": 0.08,
         }    
-        self.plc_comm: PLCBaseHandler = PLCBaseHandler(serial_params1)
+        self.plc_comm: SerialUIBridge = SerialUIBridge(serial_params1)
+        self.inpt = None
 
     def main(self):
         while True:
@@ -40,7 +41,15 @@ class Test:
 
     def read(self):
         while True:
-            self.plc_comm.read()
+            self.plc_comm.read_loop()
+            if self.inpt == exit:
+                break
+    
+    def queue(self):
+        while True:
+            data, status = self.plc_comm.process_serial_queue()
+            if data != None:
+                print(data)
             if self.inpt == exit:
                 break
 
@@ -49,6 +58,9 @@ if __name__ == '__main__':
 
     read = threading.Thread(target=test.read)
     read.daemon = True
+    queue = threading.Thread(target=test.queue)
+    queue.daemon = True
     read.start()
+    queue.start()
 
     test.main()

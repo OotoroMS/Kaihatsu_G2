@@ -56,7 +56,7 @@ class PLCCommunicator(SerialCommunicator):
     # 受信の流れ
     """ (例)
         引数: なし
-        返値: (b'\x01\x2c', OperationStatus.SUCCESS)
+        返値: (b'\x01\x01\x2c', OperationStatus.SUCCESS)
               (b'', OperationStatus.FAILURE)
     """
     def read(self) -> tuple[bytes, OperationStatus]:
@@ -88,15 +88,16 @@ class PLCCommunicator(SerialCommunicator):
 
         if data.startswith(DataPrefix.DATA_IN.value):  # DATA_INが接頭語の場合
             self.logger.debug(f"PLCからの送信データ")
-            cmd = data[1:2]  # コマンドデータ
+            cmd = data[2:3]  # コマンドデータ
             status = self.response(cmd)  # 応答送信
             if status == OperationStatus.FAILURE:
                 return b'', status
+            cmd = data[1:3]
             return cmd, status
         elif data.startswith(DataPrefix.ACK.value):  # ACKが接頭語の場合
             self.logger.debug(f"PLCからの応答データ")
             self.is_response = ResponseStatus.NOT_WAITING  # 応答待ち解除
-            cmd = data[1:2]  # コマンドデータ
+            cmd = data[2:3]  # コマンドデータ
             status = self.compare(cmd)  # データ比較
             if status == OperationStatus.FAILURE:
                 self.send(cmd)  # 再送                

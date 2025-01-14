@@ -47,27 +47,27 @@ class OperatingManager:
     
     # 受け取った稼働状況を判別
     def status_check(self) -> bool:
-        # if self.operating_status[:3]   == STATUS_ERROR:
-        #     self.text = STATUS_ERROR
-        #     return True
-        # elif self.operating_status[:3] == STATUS_ACTIVE:
-        #     self.text = STATUS_ACTIVE
-        #     return True
-        # elif self.operating_status[:3] == STATUS_STOP:
-        #     self.text = STATUS_STOP
-        #     return True
-        # return False
-        # if self.operating_status   == STATUS_ACTIVE:
-        #     self.text = STATUS_STOP
-        #     self.operating_status = STATUS_STOP
-        # elif self.operating_status == STATUS_STOP:
-        #     self.text = STATUS_ERROR
-        #     self.operating_status = STATUS_ERROR
-        # elif self.operating_status == STATUS_ERROR:
-        #     self.text = STATUS_ACTIVE
-        #     self.operating_status = STATUS_ACTIVE
-        # else:
-        #     return False
+        if self.operating_status[:3]   == STATUS_ERROR:
+            self.text = STATUS_ERROR
+            return True
+        elif self.operating_status[:3] == STATUS_ACTIVE:
+            self.text = STATUS_ACTIVE
+            return True
+        elif self.operating_status[:3] == STATUS_STOP:
+            self.text = STATUS_STOP
+            return True
+        return False
+        if self.operating_status   == STATUS_ACTIVE:
+            self.text = STATUS_STOP
+            self.operating_status = STATUS_STOP
+        elif self.operating_status == STATUS_STOP:
+            self.text = STATUS_ERROR
+            self.operating_status = STATUS_ERROR
+        elif self.operating_status == STATUS_ERROR:
+            self.text = STATUS_ACTIVE
+            self.operating_status = STATUS_ACTIVE
+        else:
+            return False
         return True
     
     # 描画
@@ -95,14 +95,14 @@ class OperatingManager:
         return True
     
     def foward_error(self):
-        # if self.operating_status[:3] == STATUS_ERROR:
-        #     return True, ERROR_POPUP, [self.operating_status, self.plase]
-        # else:
-        #     return False, None, None
-        # デバック用
-        if self.operating_status == STATUS_ERROR:
-            error = [self.operating_status + "001", self.plase]
-            return True, ERROR_POPUP, error
+        if self.operating_status[:3] == STATUS_ERROR:
+            return True, ERROR_POPUP, [self.operating_status, self.plase]
         else:
             return False, None, None
+        # デバック用
+        # if self.operating_status == STATUS_ERROR:
+        #     error = [self.operating_status + "001", self.plase]
+        #     return True, ERROR_POPUP, error
+        # else:
+        #     return False, None, None
     

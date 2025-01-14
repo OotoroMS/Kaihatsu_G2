@@ -7,7 +7,7 @@ from GUI.application                import Application
 from SERIAL.manager.SerialUIBridge  import SerialUIBridge
 from DEGITALINDICATOR.Meas          import MeasurementConverter
 
-PORT1 = None # 適切なポートに変更してください
+PORT1 = "COM3" # 適切なポートに変更してください
 BAUD_RATE = 9600
 TIMEOUT = 0.08
 PARITY = serial.PARITY_EVEN
@@ -50,7 +50,7 @@ def main():
     de = MeasurementConverter()
 
     screen = pygame.display.set_mode((1920,1080))
-    app    = Application(screen, do_serial)
+    app    = Application(screen, serial)
 
     serial_thread = threading.Thread(target=do_serial.read)
     serial_thread.start()
