@@ -43,7 +43,7 @@ class PLCSimulator(SerialCommunicator):
         返値:OperationStatus.SUCCESS            
     """
     def send(self, data: bytes) -> OperationStatus:
-        send_data = self.format_bytes(PLCDataPrefix.DATA_IN, PLCDataPrefix.NORMAL, data)  # データの成形
+        send_data = self.format_bytes(PLCDataPrefix.DATA_IN, PLCDataPrefix.ERROR, data)  # データの成形
         if self.is_response == ResponseStatus.NOT_WAITING:
             result = super().serial_write(send_data)  # 送信            
             if result == OperationStatus.FAILURE:
