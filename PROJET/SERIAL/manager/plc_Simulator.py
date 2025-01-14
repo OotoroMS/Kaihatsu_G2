@@ -88,7 +88,7 @@ class PLCSimulator(SerialCommunicator):
 
         if data.startswith(PLCDataPrefix.DATA_IN.value):  # DATA_INが接頭語の場合
             self.logger.debug(f"PLCからの送信データ")
-            cmd = data[0:1]  # コマンドデータ
+            cmd = data[1:2]  # コマンドデータ
             status = self.response(cmd)  # 応答送信
             if status == OperationStatus.FAILURE:
                 return b'', status
@@ -96,7 +96,7 @@ class PLCSimulator(SerialCommunicator):
         elif data.startswith(PLCDataPrefix.ACK.value):  # ACKが接頭語の場合
             self.logger.debug(f"PLCからの応答データ")
             self.is_response = ResponseStatus.NOT_WAITING  # 応答待ち解除
-            cmd = data[0:1]  # コマンドデータ
+            cmd = data[1:2]  # コマンドデータ
             status = self.compare(cmd)  # データ比較
             if status == OperationStatus.FAILURE:
                 self.send(cmd)  # 再送                
