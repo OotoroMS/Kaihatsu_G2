@@ -1,120 +1,133 @@
-import serial
-import logging
-from typing import Tuple
-from SERIAL.constant.Status import OperationStatus
-from SERIAL.constant.Format import DataPrefix, LineEnding
-from UTILS.log_config import setup_logging
-from SERIAL.manager.serial_communicator import SerialCommunicator
+# SERIAL/manager/plc_pc.py
 
-class PLCProtocolCommunicator(SerialCommunicator):
-    def __init__(self, port: str, baudrate: int = 9600, parity: str = serial.PARITY_NONE, stopbits: int = serial.STOPBITS_ONE, timeout: float = 1.0):
-        """
-        PLCとの通信をフォーマットに基づいて行うクラスを初期化します。
+from typing import Optional, Tuple
+import struct
 
-        Args:
-            port (str): シリアルポート名 (例: "COM3")。
-            baudrate (int): ボーレート。デフォルトは9600。
-            parity (str): パリティビット設定。デフォルトはPARITY_NONE。
-            stopbits (int): ストップビット設定。デフォルトはSTOPBITS_ONE。
-            timeout (float): タイムアウト秒数。デフォルトは1.0秒。
-        """
-        super().__init__(port, baudrate, parity, stopbits, timeout)
-        self.logger = setup_logging()
+# 自作プログラムをimport
+# 型チェックのデコレータ, エラー文表示
+from PROJET.UTILS.type_check import type_check_decorator
+import PROJET.UTILS.log_config as log
+# 定数ファイル 
+from PROJET.SERIAL.constant.Status     import ResponseStatus, OperationStatus
+from PROJET.SERIAL.constant.Format     import PLCDataPrefix, LineEnding
+# シリアル通信のクラス(このクラスの親)
+from PROJET.SERIAL.manager.serial_communicator import SerialCommunicator
 
-    def format_bytes(self, prefix1: DataPrefix, prefix2: DataPrefix, data: bytes) -> bytes:
-        """
-        フォーマットに基づいて送信データを構築します。
+# PLCとの通信処理に基づいた処理を行うクラス
+class PLCSimulator(SerialCommunicator):
+    def __init__(self, serial_params: dict):
+        # 親クラスのコンストラクタを呼び出す
+        super().__init__(**serial_params)
 
-        Args:
-            prefix1 (DataPrefix): 最初の接頭語。
-            prefix2 (DataPrefix): 2番目の接頭語。
-            data (bytes): 実際のデータ。
+        self.is_response: ResponseStatus = ResponseStatus.NOT_WAITING
+        self.send_data: bytes = b''
 
-        Returns:
-            bytes: フォーマット済みデータ。
-        """
-        formatted_data = prefix1.value + prefix2.value + data + LineEnding.LF.value
-        self.logger.debug(f"成形データ: {formatted_data}")
-        return formatted_data
+    def format_int(self, data: int) ->bytes:
+        bytes_data = struct.pack(">B", data)
+        return bytes_data
 
-    def send_data(self, prefix1: DataPrefix, prefix2: DataPrefix, data: bytes) -> OperationStatus:
-        """
-        フォーマット済みデータをPLCに送信します。
+    # 引数の値を成形して返す
+    """ (例)
+        引数:PLCDataPrefix.DATA_IN, PLCDataPrefix.ERROR, b'\x2c'   戻り値:b'\x01\x02\x2c\n'
+        引数:PLCDataPrefix.ACK, PLCDataPrefix.NORMAL, b'\x2c'       戻り値:b'\x02\x01\x2c\n'
+    """
+    def format_bytes(self, prefix1: PLCDataPrefix, prefix2: PLCDataPrefix, data: bytes) -> bytes:
+        format_data = prefix1.value + prefix2.value + data + LineEnding.LF.value
+        self.logger.debug(f"成形前データ:{data}\n成形後データ{format_data}")
+        return format_data
+    
+    # 送信の流れ
+    """ (例)
+        引数: b'\x2c' 
+        成形データ: b'\x01\x02\x2c\n' 
+        返値:OperationStatus.SUCCESS            
+    """
+    def send(self, data: bytes) -> OperationStatus:
+        send_data = self.format_bytes(PLCDataPrefix.DATA_IN, PLCDataPrefix.NORMAL, data)  # データの成形
+        if self.is_response == ResponseStatus.NOT_WAITING:
+            result = super().serial_write(send_data)  # 送信            
+            if result == OperationStatus.FAILURE:
+                return result
+            self.send_data = data
+            self.is_response = ResponseStatus.WAITING
+            return result
+        return OperationStatus.FAILURE
+    
+    # 受信の流れ
+    """ (例)
+        引数: なし
+        返値: (b'\x01\x2c', OperationStatus.SUCCESS)
+              (b'', OperationStatus.FAILURE)
+    """
+    def read(self) -> tuple[bytes, OperationStatus]:
+        data, status = super().serial_read()  # シリアルポートからデータを受信
+        if status == OperationStatus.FAILURE:
+            return data, status
+        rcv_data, status = self.compare_and_process(data)  # 受信データを判別して処理
+        return rcv_data, status
 
-        Args:
-            prefix1 (DataPrefix): 最初の接頭語。
-            prefix2 (DataPrefix): 2番目の接頭語。
-            data (bytes): 実際のデータ。
-
-        Returns:
-            OperationStatus: SUCCESSまたはFAILURE。
-        """
-        try:
-            formatted_data = self.format_bytes(prefix1, prefix2, data)
-            return self.serial_write(formatted_data)
-        except Exception as e:
-            self.logger.error(f"送信エラー: {e}")
+    # 受信データの長さ確認
+    """ (例)
+        引数: b'\x01\x2c' 
+        返値: OperationStatus.SUCCESS
+    """
+    def valid_data(self, data: bytes) -> OperationStatus:
+        if len(data) < 1:  # 受信データの長さが2未満の場合
+            self.logger.error(f"受信データの長さが足りません")
             return OperationStatus.FAILURE
+        return OperationStatus.SUCCESS
 
-    def receive_data(self) -> Tuple[bytes, OperationStatus]:
-        """
-        PLCからデータを受信します。
+    # 受信データの判別と処理
+    """ (例)
+        引数: b'\x01\x2c' 
+        返値: (b'\x2c', OperationStatus.SUCCESS)    
+    """
+    def compare_and_process(self, data: bytes) -> tuple[bytes, OperationStatus]:
+        if self.valid_data(data) == OperationStatus.FAILURE:
+            return b'', OperationStatus.FAILURE
 
-        Returns:
-            Tuple[bytes, OperationStatus]: 受信データとステータス。
-        """
-        try:
-            raw_data, status = self.serial_read()
-            if status == OperationStatus.SUCCESS:
-                self.logger.debug(f"受信データ: {raw_data}")
-                return raw_data, OperationStatus.SUCCESS
-            return b"", OperationStatus.FAILURE
-        except Exception as e:
-            self.logger.error(f"受信エラー: {e}")
-            return b"", OperationStatus.FAILURE
+        if data.startswith(PLCDataPrefix.DATA_IN.value):  # DATA_INが接頭語の場合
+            self.logger.debug(f"PLCからの送信データ")
+            cmd = data[0:1]  # コマンドデータ
+            status = self.response(cmd)  # 応答送信
+            if status == OperationStatus.FAILURE:
+                return b'', status
+            return cmd, status
+        elif data.startswith(PLCDataPrefix.ACK.value):  # ACKが接頭語の場合
+            self.logger.debug(f"PLCからの応答データ")
+            self.is_response = ResponseStatus.NOT_WAITING  # 応答待ち解除
+            cmd = data[0:1]  # コマンドデータ
+            status = self.compare(cmd)  # データ比較
+            if status == OperationStatus.FAILURE:
+                self.send(cmd)  # 再送                
+            return b'', OperationStatus.FAILURE
+        
+        self.is_response = ResponseStatus.NOT_WAITING  # 応答待ち解除
+        return b'', OperationStatus.FAILURE
 
-    def parse_data(self, data: bytes) -> Tuple[bytes, DataPrefix]:
-        """
-        受信データを解析し、接頭語とデータ本体を分割します。
+    # 応答を返す
+    """ (例)
+        引数: b'\x2c'
+        成形データ: b'\x02\x01\x2c'
+        返値: OperationStatus.SUCCESS または OperationStatus.FAILURE
+    """
+    def response(self, data: bytes) -> OperationStatus:
+        response_data = self.format_bytes(PLCDataPrefix.ACK, PLCDataPrefix.NORMAL, data)  # 応答データ成形
+        result = super().serial_write(response_data)  # 応答送信
+        self.logger.debug(f"応答を送信します。")
+        return result
 
-        Args:
-            data (bytes): 受信データ。
+    # 送信データの比較
+    """ (例)
+        引数: b'\x2c'
+        返値: OperationStatus.SUCCESS        
+    """
+    def compare(self, data: bytes) -> OperationStatus:
+        if data == self.send_data:
+            self.logger.debug(f"受信データの中身:OK")
+            return OperationStatus.SUCCESS
+        self.logger.debug(f"受信データの中身:NG")
+        return OperationStatus.FAILURE
 
-        Returns:
-            Tuple[bytes, DataPrefix]: データ本体と最初の接頭語。
-        """
-        try:
-            if len(data) < 2:
-                raise ValueError("データの長さが短すぎます。")
-
-            prefix1 = DataPrefix(data[:1])
-            body = data[1:-1]  # 最初の接頭語と終端文字を除去
-            self.logger.debug(f"解析結果: 接頭語1={prefix1}, データ本体={body}")
-            return body, prefix1
-        except Exception as e:
-            self.logger.error(f"解析エラー: {e}")
-            return b"", DataPrefix.NONE
-
-if __name__ == "__main__":
-    serial_params = {
-        "port": "COM3",
-        "baudrate": 9600,
-        "parity": serial.PARITY_NONE,
-        "stopbits": serial.STOPBITS_ONE,
-        "timeout": 1.0,
-    }
-
-    communicator = PLCProtocolCommunicator(**serial_params)
-
-    if communicator.serial_open() == OperationStatus.SUCCESS:
-        try:
-            while True:
-                raw_data, status = communicator.receive_data()
-                if status == OperationStatus.SUCCESS:
-                    body, prefix1 = communicator.parse_data(raw_data)
-                    communicator.logger.info(f"受信データ解析: 接頭語1={prefix1}, 本文={body}")
-                    communicator.send_data(DataPrefix.ACK, DataPrefix.DATA_IN, body)
-                else:
-                    break
-        finally:
-            communicator.serial_close()
+if __name__ == '__main__':
+    pass

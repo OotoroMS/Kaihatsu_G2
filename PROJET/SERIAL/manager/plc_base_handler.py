@@ -2,14 +2,14 @@
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
-from UTILS.type_check import type_check_decorator
-import UTILS.log_config as log
+from PROJET.UTILS.type_check import type_check_decorator
+import PROJET.UTILS.log_config as log
 # 定数ファイル
-from SERIAL.constant.Status    import OperationStatus
+from PROJET.SERIAL.constant.Status    import OperationStatus
 # 自作辞をを管理するクラス
-from SERIAL.manager.dict_manager import DictManager
+from PROJET.SERIAL.manager.dict_manager import DictManager
 # PLCとの通信処理に基づいた処理を行うクラス
-from SERIAL.manager.plc_communicator import PLCCommunicator
+from PROJET.SERIAL.manager.plc_communicator import PLCCommunicator
 
 class PLCBaseHandler(PLCCommunicator):
     def __init__(self, serial_params):

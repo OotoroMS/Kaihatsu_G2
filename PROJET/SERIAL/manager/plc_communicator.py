@@ -5,13 +5,13 @@ import struct
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
-from UTILS.type_check import type_check_decorator
-import UTILS.log_config as log
+from PROJET.UTILS.type_check import type_check_decorator
+import PROJET.UTILS.log_config as log
 # 定数ファイル 
-from SERIAL.constant.Status     import ResponseStatus, OperationStatus
-from SERIAL.constant.Format     import DataPrefix, LineEnding
+from PROJET.SERIAL.constant.Status     import ResponseStatus, OperationStatus
+from PROJET.SERIAL.constant.Format     import DataPrefix, LineEnding
 # シリアル通信のクラス(このクラスの親)
-from SERIAL.manager.serial_communicator import SerialCommunicator
+from PROJET.SERIAL.manager.serial_communicator import SerialCommunicator
 
 # PLCとの通信処理に基づいた処理を行うクラス
 class PLCCommunicator(SerialCommunicator):
@@ -56,7 +56,7 @@ class PLCCommunicator(SerialCommunicator):
     # 受信の流れ
     """ (例)
         引数: なし
-        返値: (b'\x01\x2c', OperationStatus.SUCCESS)
+        返値: (b'\x01\x01\x2c', OperationStatus.SUCCESS)
               (b'', OperationStatus.FAILURE)
     """
     def read(self) -> tuple[bytes, OperationStatus]:

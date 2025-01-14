@@ -6,9 +6,9 @@ sys.path.append(os.getcwd())
 import serial
 from queue  import Queue
 from typing import Optional, Tuple
-from SERIAL.manager.plc_communicator import PLCCommunicator
-from SERIAL.manager.dict_manager     import DictManager
-from SERIAL.constant.Status  import OperationStatus
+from PROJET.SERIAL.manager.plc_communicator import PLCCommunicator
+from PROJET.SERIAL.manager.dict_manager     import DictManager
+from PROJET.SERIAL.constant.Status  import OperationStatus
 
 class SerialUIBridge(PLCCommunicator):
     def __init__(self, prams: dict):

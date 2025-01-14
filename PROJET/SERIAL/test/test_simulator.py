@@ -10,7 +10,7 @@ import struct
 import threading
 
 # 自作プログラムをimport
-from PROJET.SERIAL.manager.SerialUIBridge import SerialUIBridge
+from PROJET.SERIAL.manager.plc_Simulator import PLCSimulator
 
 
 class Test:
@@ -22,7 +22,7 @@ class Test:
             "stopbits": serial.STOPBITS_ONE,
             "timeout": 0.08,
         }    
-        self.plc_comm: SerialUIBridge = SerialUIBridge(serial_params1)
+        self.plc_comm: PLCSimulator = PLCSimulator(serial_params1)
         self.inpt = None
 
     def main(self):
@@ -41,15 +41,7 @@ class Test:
 
     def read(self):
         while True:
-            self.plc_comm.read_loop()
-            if self.inpt == exit:
-                break
-    
-    def queue(self):
-        while True:
-            data, status = self.plc_comm.process_serial_queue()
-            if data != None:
-                print(data)
+            self.plc_comm.read()
             if self.inpt == exit:
                 break
 
@@ -58,9 +50,6 @@ if __name__ == '__main__':
 
     read = threading.Thread(target=test.read)
     read.daemon = True
-    queue = threading.Thread(target=test.queue)
-    queue.daemon = True
     read.start()
-    queue.start()
 
     test.main()
