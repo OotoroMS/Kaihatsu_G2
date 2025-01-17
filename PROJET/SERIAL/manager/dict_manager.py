@@ -46,7 +46,7 @@ class DictManager:
 
 
     # 辞書からデータを探して戻り値で渡す bytes → list[str]
-    @type_check_decorator({'command_dict': dict, 'data': bytes})
+    @type_check_decorator({'command_dict': dict})
     def bytes_to_list(self, command_dict: dict[bytes, list[str]], 
                       data: bytes) -> tuple[list[str], OperationStatus]:
         try:

@@ -49,6 +49,15 @@ class SerialUIBridge(PLCCommunicator):
     # キューに値を入れる 
     def process_send_queue(self, data):
         self.send_queue.put(data)
+    
+    # データ送信
+    def send_set(self, data):
+        # 変換処理
+        cmd,status = self.dict.list_to_byte(data)
+        if status == OperationStatus.FAILURE:
+            return None
+        super().send(cmd)
+
 
 if __name__ == '__main__':
     serial_params1 = {
