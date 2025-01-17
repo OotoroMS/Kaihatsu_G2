@@ -18,7 +18,7 @@ class SerialUIBridge(PLCCommunicator):
         self.dict = DictManager()
 
     def read_loop(self):
-        # データ受信        
+        # データ受信
         data, status = super().read()
         # 受信成功
         if status == OperationStatus.SUCCESS:
@@ -61,10 +61,10 @@ if __name__ == '__main__':
     test = SerialUIBridge(serial_params1)
     msg = test.process_serial_queue()
     print(msg)
-    test.queue.put(b'\x02\x01')
+    test.rcv_queue.put(b'\x02\x01')
     msg = test.process_serial_queue()
     print(msg)
-    test.queue.put(b'\x01\xff')
+    test.rcv_queue.put(b'\x01\xff')
     msg = test.process_serial_queue()
     print(msg)
             
