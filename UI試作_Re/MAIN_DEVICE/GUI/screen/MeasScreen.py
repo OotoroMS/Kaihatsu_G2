@@ -76,14 +76,14 @@ class MeasScreen(BaseScreen):
         return result, normal
     
     def lamp_button_clicked(self, button, result):
-        self.serial.set_and_send(MEAS_COMAND[result])
+        self.serial.send_set(MEAS_COMAND[result])
         if type(button) == LampButton:
             button.update_lamp_color(YELLOW)
         while True:
             button.draw()
             pygame.display.update()
             messege = self.serial.process_serial_queue()
-            if messege and messege[0] == TERMINATION:
+            if messege and messege[0][0] == TERMINATION:
                 if type(button) == LampButton:
                     button.update_lamp_color(GREEN)
                 if type(button) == LampButton:
@@ -93,10 +93,10 @@ class MeasScreen(BaseScreen):
         pygame.display.update()
 
     def button_clicked(self, result):
-        self.serial.set_and_send(MEAS_COMAND[result])
+        self.serial.send_set(MEAS_COMAND[result])
         while True:
             messege = self.serial.process_serial_queue()
-            if messege and messege[0] == TERMINATION:
+            if messege and messege[0][0] == TERMINATION:
                 break    
 
     # 動作選択画面に戻る

@@ -16,7 +16,7 @@ from PROJET.SERIAL.manager.SerialUIBridge import SerialUIBridge
 class Test:
     def __init__(self):
         serial_params1 = {
-            "port": "COM6",
+            "port": "COM3",
             "baudrate": 9600,
             "parity": serial.PARITY_NONE,
             "stopbits": serial.STOPBITS_ONE,

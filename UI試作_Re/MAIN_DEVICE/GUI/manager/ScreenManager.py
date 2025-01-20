@@ -3,13 +3,13 @@ import pygame
 import sys
 sys.path.append("../MAIN_DEVICE")
 # 暗転用モジュール
-import GUI.parts.Blackout       as Blackout
+import GUI.parts.Blackout        as Blackout
 # 測定用
-from DEGITALINDICATOR.Meas      import MeasurementConverter
+from DEGITALINDICATOR.Meas       import MeasurementConverter
 # 定数
-from GUI.constant.screen_name import *
+from GUI.constant.screen_name    import *
 # 背景関係モジュール
-from GUI.parts.Background       import *
+from GUI.parts.Background        import *
 # 各スクリーンのクラス
 from GUI.screen.MainScreen       import MainScreen
 from GUI.screen.PassScreen       import PassScreen
@@ -101,4 +101,4 @@ class ScreenManager:
     def screen_search(self, keys):
         if keys in self.view_screens.keys():
             return True
-        return False
+        return False 

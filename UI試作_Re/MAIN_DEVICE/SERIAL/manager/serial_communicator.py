@@ -8,10 +8,10 @@ from typing import Optional
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, ログ作成
-from UTILS.type_check import type_check_decorator
-import UTILS.log_config as log
+from PROJET.UTILS.type_check import type_check_decorator
+import PROJET.UTILS.log_config as log
 # 定数ファイル
-from SERIAL.constant.Status     import OperationStatus
+from PROJET.SERIAL.constant.Status     import OperationStatus
 
 # シリアル通信（接続・送信・受信・切断)を行うクラス
 class SerialCommunicator:

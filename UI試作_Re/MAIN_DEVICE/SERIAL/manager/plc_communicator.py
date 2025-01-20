@@ -5,13 +5,13 @@ import struct
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
-from UTILS.type_check import type_check_decorator
-import UTILS.log_config as log
+from PROJET.UTILS.type_check import type_check_decorator
+import PROJET.UTILS.log_config as log
 # 定数ファイル 
-from SERIAL.constant.Status     import ResponseStatus, OperationStatus
-from SERIAL.constant.Format     import DataPrefix, LineEnding
+from PROJET.SERIAL.constant.Status     import ResponseStatus, OperationStatus
+from PROJET.SERIAL.constant.Format     import DataPrefix, LineEnding
 # シリアル通信のクラス(このクラスの親)
-from SERIAL.manager.serial_communicator import SerialCommunicator
+from PROJET.SERIAL.manager.serial_communicator import SerialCommunicator
 
 # PLCとの通信処理に基づいた処理を行うクラス
 class PLCCommunicator(SerialCommunicator):
@@ -72,7 +72,7 @@ class PLCCommunicator(SerialCommunicator):
         返値: OperationStatus.SUCCESS
     """
     def valid_data(self, data: bytes) -> OperationStatus:
-        if len(data) < 2:  # 受信データの長さが2未満の場合
+        if len(data) < 1:  # 受信データの長さが2未満の場合
             self.logger.error(f"受信データの長さが足りません")
             return OperationStatus.FAILURE
         return OperationStatus.SUCCESS

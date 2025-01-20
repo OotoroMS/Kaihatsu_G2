@@ -1,6 +1,6 @@
 
 class Compare:
-    def __init__():
+    def __init__(self):
         # ここでDataBaseのクラスをインスタンス化する？
         # いやBase/で制御した方がいいと思う
         pass

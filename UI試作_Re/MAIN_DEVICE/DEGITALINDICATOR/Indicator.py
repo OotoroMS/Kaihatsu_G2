@@ -21,7 +21,7 @@ class Indicator:
         self.meas = MeasurementConverter()
         self.compare = Compare()
         time.sleep(3)
-
+    
     def main(self, default_data: float) -> tuple[float, str]:
         self.serial_comm.serial_write(b's')
         result, status = self.serial_comm.serial_read_cr()

@@ -109,12 +109,12 @@ class MoveScreen(BaseScreen):
             button.draw()
         for button in self.presed_buttons:
             button.draw()
-        # message = self.serial.read()
+        message = self.serial.process_serial_queue()
         for key   in self.lamps:
-            # if message == "移動中のワークを検知" and key == MOVE_WORK:
-            #     self.lamps[key].update_color(GREEN)
-            # else:
-            #     self.lamps[key].update_color(YELLOW)
+            if message[0][0] == "移動中のワークを検知" and key == MOVE_WORK:
+                self.lamps[key].update_color(GREEN)
+            else:
+                self.lamps[key].update_color(YELLOW)
             self.lamps[key].draw()
 
     # 押下判定
@@ -126,7 +126,7 @@ class MoveScreen(BaseScreen):
                 return result, normal
         if self.prese:
             print("prese command :", self.command)
-            # self.serial.write_serial("辞書型コマンド[self.command]")
+            self.serial.send_set("辞書型コマンド[self.command]")
             return True, OK
 
         return result, NG
@@ -156,14 +156,14 @@ class MoveScreen(BaseScreen):
         return result, normal
 
     def lamp_button_clicked(self, button, result):
-        # self.serial.write_serial("辞書型コマンド[result]")
+        self.serial.send_set("辞書型コマンド[result]")
         if type(button) == LampButton:
             button.update_lamp_color(YELLOW)
         while True:
             button.draw()
             pygame.display.update()
-            messege = self.serial.read()
-            if messege and messege == TERMINATION:
+            messege = self.serial.process_serial_queue()
+            if messege and messege[0][0] == TERMINATION:
                 break
         button.update_lamp_color(GREEN)
         button.draw()

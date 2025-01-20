@@ -60,6 +60,10 @@ CYLINDER_UP_LAMP_STATUS = {
 TERMINATION = "動作完了"
 STACK_SENSOR = "stack_sensor"
 CYLINDER_UP = "cylinder_up"
+CYLINDER_DOWN = "cylinder_down"
+COMAND = {
+    CYLINDER_DOWN : ("シリンダ下降", "蓄積部")
+}
 
 class StackScreen(BaseScreen):
     def __init__(self, screen: pygame.Surface, serial : SerialUIBridge):
@@ -97,16 +101,16 @@ class StackScreen(BaseScreen):
             button.draw()
         for button in self.lamp_buttons:
             button.draw()
-        # message = self.serial.send_to_ui()
+        message = self.serial.process_serial_queue()
         for key   in self.lamps:
-            # if message == "蓄積部センサ" and key == STACK_SENSOR:
-            #     self.lamps[key].update_color(GREEN)
-            # else:
-            #     self.lamps[key].update_color(YELLOW)
-            # if message == "上下シリンダ上昇" and key == CYLINDER_UP:
-            #     self.lamps[key].update_color(GREEN)
-            # else:
-            #     self.lamps[key].update_color(YELLOW)
+            if message[0][0] == "蓄積部センサ" and key == STACK_SENSOR:
+                self.lamps[key].update_color(GREEN)
+            else:
+                self.lamps[key].update_color(YELLOW)
+            if message[0][0] == "上下シリンダ上昇" and key == CYLINDER_UP:
+                self.lamps[key].update_color(GREEN)
+            else:
+                self.lamps[key].update_color(YELLOW)
             self.lamps[key].draw()
 
     def clicked(self, event):
@@ -125,13 +129,13 @@ class StackScreen(BaseScreen):
         return result, normal
     
     def lamp_button_clicked(self, button: LampButton, result):
-        self.serial.set_and_send("辞書型コマンド[result]")
+        self.serial.send_Set(COMAND[result])
         button.update_lamp_color(GREEN)
         while True:
             button.draw()
             pygame.display.update()
             messege = self.serial.process_serial_queue()
-            if messege and messege == TERMINATION:
+            if messege and messege[0][0] == TERMINATION:
                 break
         button.update_lamp_color(YELLOW)
         button.draw()
@@ -143,4 +147,4 @@ class StackScreen(BaseScreen):
     
     # シリンダを下降させる
     def cylinder_down(self):
-        return "処理に対応するkeyを返す", True
+        return CYLINDER_DOWN, True

@@ -1,11 +1,11 @@
 # UI全体の制御を行うプログラム
 import pygame
+import queue
 # デバック用
 import sys
 sys.path.append("../MAIN_DEVICE")
 # 自作プログラムをインポート
 from SERIAL.manager.SerialUIBridge  import SerialUIBridge
-from DEGITALINDICATOR.Meas          import MeasurementConverter
 from GUI.constant.color             import *
 from GUI.constant.popup_message     import *
 from GUI.constant.screen_name       import *
@@ -20,7 +20,7 @@ FALSE  = False
 FPS = 15
 class Application:
     # screen : pygameのスクリーン(Sarface), serial : 制作したシリアル通信用クラス
-    def __init__(self, screen : pygame.Surface, serial : SerialUIBridge) -> None:
+    def __init__(self, screen : pygame.Surface, serial : SerialUIBridge, send_que : queue.Queue, recv_que : queue.Queue) -> None:
         self.screen            = screen
         self.serial            = serial
         self.running           = TRUE                 # ループ管理変数
@@ -31,9 +31,10 @@ class Application:
         self.error             = None
         self.screen_manager    = ScreenManager(self.screen, self.serial)
         self.popup_manager     = PopupManager(self.screen)
-        self.operating_manager = OperatingManager(self.screen, self.serial)
+        self.operating_manager = OperatingManager(self.screen, self.serial,send_que, recv_que)
         self.clock = pygame.time.Clock()
         self.clock.tick(FPS)
+
         
         self.tcnt = 15   # デバック用
 
@@ -67,6 +68,7 @@ class Application:
                 self.flag_popup = None
                 self.view_popup = ""
                 self.error      = None
+                self.operating_manager.operating_status = "停止中"
             pygame.display.update()
 
     def next_screen(self):
@@ -82,7 +84,7 @@ class Application:
         return None, ""
 
     def ran(self):
-        while self.running:  
+        while self.running:
             self.show_popup()
             draw_result = self.screen_manager.screen_draw(self.current_screen)
             self.operating_manager.status_receve_draw(self.tcnt)

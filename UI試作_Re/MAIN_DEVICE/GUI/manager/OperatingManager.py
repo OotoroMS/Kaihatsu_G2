@@ -1,5 +1,6 @@
 # 稼働状況表示管理
 import pygame
+import queue
 # シリアル通信
 from SERIAL.manager.SerialUIBridge  import SerialUIBridge
 # 定数
@@ -22,9 +23,11 @@ BACK_COROR = {
 }
 
 class OperatingManager:
-    def __init__(self, screen : pygame.Surface, serial : SerialUIBridge) -> None:
+    def __init__(self, screen : pygame.Surface, serial : SerialUIBridge, send_que : queue.Queue, recv_que : queue.Queue) -> None:
         self.screen = screen
         self.serial = serial
+        self.recv_que = recv_que
+        self.send_que = send_que
         # 表示領域生成
         self.rect = pygame.rect.Rect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT)
         # 表示フォント
@@ -38,11 +41,15 @@ class OperatingManager:
 
     # 稼働状況を受け取る
     def receive_operating_status(self) -> bool:
-        message = self.serial.process_serial_queue()
-        print("message :", message)
+        if self.operating_status == STATUS_STOP or STATUS_ERROR:
+            message = self.serial.process_serial_queue()
+        elif self.operating_status == STATUS_ACTIVE:
+            if not self.recv_que.empty():
+                message = self.recv_que.get()
         if message[0] != None:
-            self.operating_status = message[0]
-            self.plase            = message[1]
+            self.operating_status = message[0][0]
+            self.plase            = message[0][1]
+            self.send_que.put(self.operating_status)
             # print("self.operating_status :", self.operating_status)
             # print("self.plase            :", self.plase)
             return True
@@ -54,7 +61,6 @@ class OperatingManager:
     
     # 受け取った稼働状況を判別
     def status_check(self) -> bool:
-        print("status_check :", self.operating_status[:3])
         if self.operating_status[:3]   == STATUS_ERROR:
             self.text = STATUS_ERROR
             return True
@@ -65,18 +71,6 @@ class OperatingManager:
             self.text = STATUS_STOP
             return True
         return False
-        # if self.operating_status   == STATUS_ACTIVE:
-        #     self.text = STATUS_STOP
-        #     self.operating_status = STATUS_STOP
-        # elif self.operating_status == STATUS_STOP:
-        #     self.text = STATUS_ERROR
-        #     self.operating_status = STATUS_ERROR
-        # elif self.operating_status == STATUS_ERROR:
-        #     self.text = STATUS_ACTIVE
-        #     self.operating_status = STATUS_ACTIVE
-        # else:
-        #     return False
-        return True
     
     # 描画
     def draw(self) -> bool:
@@ -102,12 +96,6 @@ class OperatingManager:
             return False
         return True
         
-        # if tcnt >= 15:
-        #     if not self.status_check():
-        #         return False
-        # if not self.draw():
-        #     return False
-        # return True
     
     def foward_error(self):
         if self.operating_status:

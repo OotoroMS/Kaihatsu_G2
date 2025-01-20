@@ -8,9 +8,9 @@ from GUI.parts.Picture      import Picture
 from GUI.parts.ButtonAtLamp import ButtonAtLamp as LampButton
 from GUI.parts.Lamp         import Lamp
 # 定数
-from GUI.constant.screen.wash_constant  import *
-from constant.screen_name               import *
-from constant.color                     import *
+from GUI.constant.screen.wash_constant      import *
+from GUI.constant.screen_name               import *
+from GUI.constant.color                     import *
 # シリアル通信クラス
 from SERIAL.manager.SerialUIBridge  import SerialUIBridge
 
@@ -56,14 +56,14 @@ class WashScreen(BaseScreen):
             button.draw()
         for button in self.motion_buttons:
             button.draw()
-        # message = self.serial.send_to_ui()
+        message = self.serial.process_serial_queue()
         for key   in self.lamps:
-            # if message[0] == "ワーク検知" and key == WORK_LAMP:
-            #     self.lamps[key].update_color(GREEN)
-            # if message[0] == "引っかかり検知" and key == CATCH_LAMP:
-            #     self.lamps[key].update_color(GREEN)
-            # else:
-            #     self.lamps[key].update_color(YELLOW)
+            if message[0][0] == "ワーク検知"    and key == WORK_LAMP:
+                self.lamps[key].update_color(GREEN)
+            if message[0][0] == "引っかかり検知" and key == CATCH_LAMP:
+                self.lamps[key].update_color(GREEN)
+            else:
+                self.lamps[key].update_color(YELLOW)
             self.lamps[key].draw()
 
     # 押下処理
@@ -88,27 +88,27 @@ class WashScreen(BaseScreen):
     
     # ランプつきボタンの処理
     def lamp_button_clicked(self, button, result):
-        self.serial.set_and_send(WASH_SCREEN_COMMAND[result])
+        self.serial.send_set(WASH_SCREEN_COMMAND[result])
         if type(button) == LampButton:
             button.update_lamp_color(GREEN)
         while True:
             button.draw()
             pygame.display.update()
             messege = self.serial.process_serial_queue()
-            if messege and messege[0] == TERMINATION:
+            if messege and messege[0][0] == TERMINATION:
                 button.update_lamp_color(YELLOW)
                 break
-            elif messege:
+            elif messege:   #   動作終了かどうか比較したほうが良いかも
                 button.update_lamp_color(RED)
         button.draw()
         pygame.display.update()
 
     # 通常ボタンの処理
     def button_clicked(self, result):
-        self.serial.set_and_send(WASH_SCREEN_COMMAND[result])
+        self.serial.send_set(WASH_SCREEN_COMMAND[result])
         while True:
             messege = self.serial.process_serial_queue()
-            if messege:
+            if messege: 
                 break
 
     # 動作選択画面に戻る

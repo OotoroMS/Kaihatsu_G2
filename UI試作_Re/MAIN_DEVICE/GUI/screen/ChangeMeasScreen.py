@@ -13,7 +13,7 @@ from GUI.parts.Picture        import Picture
 from GUI.screen.PassScreen    import PassScreen
 # データベース接続クラス
 from DATABASE.SQLCommunication import SQLCommunication
-
+UPDATE_QUERY = "UPDATE indicator set calibrate_value = "
 class ChangeMeasScreen(PassScreen):
     def __init__(self, screen: pygame.Surface):
         super().__init__(screen)
@@ -21,6 +21,8 @@ class ChangeMeasScreen(PassScreen):
         button.off_hover_flag()
         self.buttons.append(button)
         self.dot_frag = True
+        self.db = SQLCommunication()
+        self.db.set_db_name("testdb_main.db")
 
     def setting_images(self):
         self.images = {
@@ -48,7 +50,7 @@ class ChangeMeasScreen(PassScreen):
     def num_check(self):
         if self.set_pass and self.set_pass[0] != ".":
             new_data = float(self.set_pass)
-            print(new_data)
+            self.db.db_query_execution(query=UPDATE_QUERY + str(new_data))
             return INDICATOR_OK,OK
         else:
             self.dot_frag = True
