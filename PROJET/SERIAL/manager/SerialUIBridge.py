@@ -8,7 +8,7 @@ from queue  import Queue
 from typing import Optional, Tuple
 from PROJET.SERIAL.manager.plc_communicator import PLCCommunicator
 from PROJET.SERIAL.manager.dict_manager     import DictManager
-from PROJET.SERIAL.constant.Status  import OperationStatus
+from PROJET.SERIAL.constant.Status  import OperationStatus, DictStatus
 
 class SerialUIBridge(PLCCommunicator):
     def __init__(self, prams: dict):
@@ -28,14 +28,14 @@ class SerialUIBridge(PLCCommunicator):
     # キューの中身があれば変換して取り出し
     def process_serial_queue(self):
         if self.rcv_queue.empty():
-            return None, OperationStatus.FAILURE
+            return DictStatus.NONE, OperationStatus.FAILURE
         else:
             data = self.rcv_queue.get()
             # 辞書を使用して変換
             msg, status = self.dict.get_message(data)
             if status == OperationStatus.SUCCESS:
                 return msg
-            return None, status
+            return DictStatus.NONE, status
     
     # データの送信用関数(キューに値があれば送信) これで使用するならこれをスレッド化すること!
     def send_loop(self):
