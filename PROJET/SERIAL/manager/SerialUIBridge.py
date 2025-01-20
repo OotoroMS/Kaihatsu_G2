@@ -28,14 +28,14 @@ class SerialUIBridge(PLCCommunicator):
     # キューの中身があれば変換して取り出し
     def process_serial_queue(self):
         if self.rcv_queue.empty():
-            return DictStatus.NONE, OperationStatus.FAILURE
+            return None, OperationStatus.FAILURE
         else:
             data = self.rcv_queue.get()
             # 辞書を使用して変換
             msg, status = self.dict.get_message(data)
             if status == OperationStatus.SUCCESS:
                 return msg
-            return DictStatus.NONE, status
+            return None, status
     
     # データの送信用関数(キューに値があれば送信) これで使用するならこれをスレッド化すること!
     def send_loop(self):
