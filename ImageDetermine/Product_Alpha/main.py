@@ -34,9 +34,16 @@ JUDGE = {               # 判定結果
 }
 
 PLC_SND_CMD = {         # PLC送信コマンド
-    "OK": "OK",
-    "NG": "NG",
-    "ROTATE": "ROTATE",
+    "EXIST": 10,
+    "NOT EXIST": 11,
+    "FLAWLESS": 20,
+    "DEFECTIVE": 21,
+    "ROTATE": 100,
+}
+
+PLC_RCV_CMD = {         # PLC受信コマンド
+    "CHECK_EXIST": 200,
+    "SET WORK": 210,
 }
 
 THRESHOLD = 0.003        # 判別閾値
@@ -220,7 +227,7 @@ def main():
         while True:
             # PLCからの動作開始を待つ
             data = serial_comm.serial_read()
-            if data == PLC_Lib.STATE["START"]:
+            if data == PLC_RCV_CMD["CHECK_EXIST"]:
                 # 現在の画像を取得
                 current_image = cmr.get_frame()
                 if current_image is None:
@@ -230,14 +237,14 @@ def main():
                 # 存在判定を行う
                 is_exist = cmr.detect_exist(current_image, init_image)
                 if is_exist:
-                    plc.write_serial(PLC_SND_CMD["OK"])  # 存在している場合、PLCにOKを送信
+                    plc.write_serial(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
                 else:
-                    plc.write_serial(PLC_SND_CMD["NG"])  # 存在していない場合、PLCにNGを送信
+                    plc.write_serial(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
                     continue   # 次のループへ
 
                 # PLCからの動作開始を待つ
                 data = serial_comm.serial_read()
-                if data == PLC_Lib.STATE["START"]:
+                if data == PLC_RCV_CMD["SET WORK"]:
                     pass
                 else:
                     continue
@@ -270,9 +277,9 @@ def main():
 
                 # 判別結果送信
                 if flg_judge == JUDGE["OK"]:
-                    plc.write_serial(PLC_SND_CMD["OK"])
+                    plc.write_serial(PLC_SND_CMD["FLAWLESS"])
                 else:
-                    plc.write_serial(PLC_SND_CMD["NG"])
+                    plc.write_serial(PLC_SND_CMD["DEFECTIVE"])
                 ##### 判別処理 #####
 
             time.sleep(0.1)  # CPU負荷を下げるためにスリープ
