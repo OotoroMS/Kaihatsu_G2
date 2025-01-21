@@ -84,7 +84,7 @@ def load_config():
 def save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path):
     result_json = {
         'timestamp': timestamp,
-        'infered_accuracy': infered_accuracy,
+        'infered_accuracy': float(infered_accuracy),
         'image_path': image_path,
         'diff_image_path': diff_image_path
     }
@@ -94,16 +94,16 @@ def save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path
         json.dump(result_json, json_file, indent=4)
 
 # 撮影、回転処理
-def getPctr_and_rotate(cmr, plc):
+def getPctr_and_rotate(cmr, serial_comm: PLC_Lib.SerialCommunicator):
     global captured_image
     # ---撮影、前処理---
     # 画像を取得
     captured_image = cmr.get_frame()
     if captured_image is None:
         print("!ERR! 画像の取得に失敗しました。")
-        return False
+        return None
     # ---回転命令送信---
-    plc.send_data(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
+    serial_comm.serial_write(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
     # PLCから回転完了の信号を受信
     """
     while True:
@@ -113,20 +113,26 @@ def getPctr_and_rotate(cmr, plc):
         # 本当は回転済み信号を受け取るまで待つ
         time.sleep(0.1)
     """
-    return True
+    return captured_image
 
 # 推論処理
-def inference(img_dtrmn, inpt_img):
+def inference(img_dtrmn: ImgDtrmn_Lib.ImgDtrmn_Lib, inpt_img: np.ndarray):
     global infered_accuracy, infered_image
-    # ---推論処理---
-    mse, infered_img = img_dtrmn.inference(inpt_img)
-    infered_accuracy = mse
-    infered_image = infered_img
-    return mse
+    try:
+        # ---推論処理---
+        mse, infered_img = img_dtrmn.inference(inpt_img)
+        infered_accuracy = mse
+        infered_image = infered_img
+        return mse
+    except Exception as e:
+        print(f"!ERR! 推論中にエラーが発生しました: {e}")
+        infered_image = None  # エラー時は推論画像をNoneに設定
+        return None
+
 
 # メイン関数
 def main():
-    global init_image  # 初期状態の背景画像
+    global init_image, infered_image
     print("#########################################")
     print("      外観判別システム  Prometheus       ")
     print("                                  ver.1.0")
@@ -220,6 +226,9 @@ def main():
     defective_images_dir = os.path.join(result_dir, 'defective_images')
     if not os.path.exists(defective_images_dir):
         os.makedirs(defective_images_dir)
+    diff_images_dir = os.path.join(result_dir, 'diff_images')
+    if not os.path.exists(diff_images_dir):
+        os.makedirs(diff_images_dir)
     json_dir = os.path.join(result_dir, 'json')
     if not os.path.exists(json_dir):
         os.makedirs(json_dir)
@@ -257,12 +266,17 @@ def main():
                 ##### 判別処理 #####
                 flg_judge = JUDGE["OK"]  # 判定結果
                 for i in range(ROTATE_COUNT):   # 回転回数分、推論処理を行う
+                    print(f"*DBG* {i+1}回目の判別処理を行います。")
                     # 画像取得と回転
-                    getPctr_and_rotate(cmr, plc)
+                    captured_image = getPctr_and_rotate(cmr, serial_comm)
+                    print("*DBG* 画像取得と回転が完了しました。")
                     # 前処理
                     preprocessed_img = img_dtrmn.pre_processing(captured_image)
+                    print("*DBG* 前処理が完了しました。")
+                    print(f"前処理後の画像形状: {preprocessed_img.shape}")
                     # 推論
                     mse = inference(img_dtrmn, preprocessed_img)
+                    print(f"*DBG* 推論結果: {mse}")
                     if mse > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
                         flg_judge = JUDGE["NG"]  # 不良を検出
                         # 結果を保存
@@ -271,16 +285,22 @@ def main():
                         image_path = os.path.join(defective_images_dir, image_filename)
                         # 元の画像を保存
                         cv2.imwrite(image_path, captured_image)
+                        print(f"*DBG* 不良画像を保存しました: {image_path}")
                         # 差分画像を生成して傷をマーク
-                        diff_image = img_dtrmn.mark_defects(preprocessed_img, infered_image)
-                        diff_image_filename = f'defective_diff_{timestamp}.jpg'
-                        diff_image_path = os.path.join(defective_images_dir, diff_image_filename)
+                        scaled_img = img_dtrmn.robust_scale_image(infered_image)# infered_imageを二次元化して、差分画像を生成
+                        print("*DBG* 推論画像を二次元化しました。")
+                        diff_image = img_dtrmn.mark_defects(preprocessed_img, scaled_img)
+                        print("*DBG* 差分画像を生成しました。")
+                        diff_image_filename = f'diff_{timestamp}.jpg'
+                        diff_image_path = os.path.join(diff_images_dir, diff_image_filename)
                         cv2.imwrite(diff_image_path, diff_image)
+                        print(f"*DBG* 差分画像を保存しました: {diff_image_path}")
                         # JSONファイルを作成
                         save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path)
                         break  # 不良を検出したらループを抜ける
 
                 # 判別結果送信
+                print("*DBG* 判別結果: {flg_judge}")
                 if flg_judge == JUDGE["OK"]:
                     serial_comm.serial_write(PLC_SND_CMD["FLAWLESS"])
                 else:

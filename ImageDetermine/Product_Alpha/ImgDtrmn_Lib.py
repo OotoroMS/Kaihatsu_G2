@@ -29,7 +29,7 @@ class ImgDtrmn_Lib:
         self.model_name = self.model.name
 
     # おそらく完成
-    def robust_scale_image(image):
+    def robust_scale_image(self, image):
         """
         画像をロバストスケーリングするユーティリティ関数。
         1. 画像をfloat型に変換
@@ -44,12 +44,18 @@ class ImgDtrmn_Lib:
         # min/maxを取り、[0,255] に押し込む例
         min_val = scaled_flat.min()
         max_val = scaled_flat.max()
-        scaled_flat = (scaled_flat - min_val) / (max_val - min_val) * 255.0
+        
+        # 分母が0の場合を考慮
+        if max_val == min_val:
+            print("!WARN! 画像が単一値で構成されています。スケーリングをスキップします。")
+            scaled_flat = flat_img  # スケーリングせず元の値を使用
+        else:
+            scaled_flat = (scaled_flat - min_val) / (max_val - min_val) * 255.0
         
         scaled_img = scaled_flat.reshape(float_img.shape).astype(np.uint8)
         return scaled_img
 
-    # おそらく完成
+
     def pre_processing(self, tmp_img):
         """
         画像の前処理:
@@ -65,10 +71,18 @@ class ImgDtrmn_Lib:
                 4. メジアンフィルタ
         """
         # 1. クロップ
-        cropped = tmp_img[self.crop_ranges[0]:self.crop_ranges[1], self.crop_ranges[2]:self.crop_ranges[3]]
+        print("クロップ範囲: ", self.crop_ranges)
+        print("画像サイズ: ", tmp_img.shape)
+        cropped = tmp_img[self.crop_ranges["y_start"]:self.crop_ranges["y_end"], self.crop_ranges["x_start"]:self.crop_ranges["x_end"]]
+        if cropped.size == 0:
+            raise ValueError("クロップ後の画像が空です。クロップ範囲を確認してください。")
         
+        # 1-1. 縮小(縦横それぞれ1/4にする)
+        cropped = cv2.resize(cropped, (cropped.shape[1] // 4, cropped.shape[0] // 4), interpolation=cv2.INTER_AREA)        
+
         # 2. ロバストスケーリング
-        scaled = self.robust_scale_image(cropped)
+        array_cropped = np.array(cropped)
+        scaled = self.robust_scale_image(array_cropped)
         
         # 3. ガウスフィルタ
         # ksize=(5,5), sigmaX=0などは例示。任意に変更可能
@@ -88,22 +102,23 @@ class ImgDtrmn_Lib:
             戻り値:
                 mse: MSE
                 infered_img: 推論画像
-            
-            処理:
-                1. 画像を推論
-                2. MSEで精度を検出
         """
-        # 前処理
-        inpt_img = self.pre_processing(inpt_img)
-        
-        # 画像を推論
+        # モデルの期待する形状にリシェイプ
+        inpt_img = inpt_img.reshape((1, -1))  # 入力を1次元に整形
+        # 推論
         infered_img = self.model.predict(inpt_img)
-        reconstructed = reconstructed.reshape(self.input_shape[1], self.input_shape[2])
+        infered_img = infered_img.reshape(-1)  # 推論結果をフラット化
 
-        # MSEで精度を検出
-        mse = np.mean((infered_img - inpt_img) ** 2)
+        # 入力画像もフラット化
+        inpt_img_flat = inpt_img.flatten()
 
-        # MSEと推論画像を返す
+        # 両者の形状を確認
+        print(f"推論後の形状: {infered_img.shape}, 入力画像の形状: {inpt_img_flat.shape}")
+
+        # MSEの計算
+        mse = np.mean((infered_img - inpt_img_flat[:infered_img.size]) ** 2)
+
+        # 推論画像とMSEを返す
         return mse, infered_img
 
     # 要検討
@@ -116,6 +131,16 @@ class ImgDtrmn_Lib:
             戻り値:
                 marked_img: 不良箇所をマークした画像
         """
+        # input_imgの形状をarrayに変換
+        input_img = np.array(input_img)
+        print("input_imgの形状: ", input_img.shape)
+        # 推論画像の形状を元の画像に変換
+        infered_img = infered_img.reshape(input_img.shape)
+        print("infered_imgの形状: ", infered_img.shape)
+
+        # 入力画像と推論画像の両方を1チャンネルに変換
+        input_img = input_img.reshape((1,) + input_img.shape)
+
         # 入力画像と推論画像の差分を計算
         diff = np.abs(input_img - infered_img)
 
