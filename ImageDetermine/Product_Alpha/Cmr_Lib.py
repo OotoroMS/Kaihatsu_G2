@@ -49,12 +49,13 @@ class Cmr_Lib:
                 2. 差分画像のピクセル値の総和を計算
                 3. 閾値と比較して存在を判定
         """
-        # グレースケールに変換
-        trgt_gray = cv2.cvtColor(trgt_img, cv2.COLOR_BGR2GRAY)
-        init_gray = cv2.cvtColor(init_img, cv2.COLOR_BGR2GRAY)
+        # 取得した画像のshapeを確認
+        if trgt_img.shape != init_img.shape:
+            print("!ERR! 画像の形状が異なります。")
+            return None
 
         # 差分を計算
-        diff_img = cv2.absdiff(trgt_gray, init_gray)
+        diff_img = cv2.absdiff(trgt_img, init_img)
 
         # 差分のピクセル値の総和を計算
         diff_sum = np.sum(diff_img)
