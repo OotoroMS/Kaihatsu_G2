@@ -240,9 +240,9 @@ def main():
                 # 存在判定を行う
                 is_exist = cmr.detect_exist(current_image, init_image)
                 if is_exist:
-                    plc.write_serial(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
+                    serial_comm.serial_write(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
                 else:
-                    plc.write_serial(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
+                    serial_comm.serial_write(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
                     #continue   # 次のループへ
                 print("*DBG* 存在判定結果: {is_exist}")
 
@@ -282,9 +282,9 @@ def main():
 
                 # 判別結果送信
                 if flg_judge == JUDGE["OK"]:
-                    plc.write_serial(PLC_SND_CMD["FLAWLESS"])
+                    serial_comm.serial_write(PLC_SND_CMD["FLAWLESS"])
                 else:
-                    plc.write_serial(PLC_SND_CMD["DEFECTIVE"])
+                    serial_comm.serial_write(PLC_SND_CMD["DEFECTIVE"])
                 ##### 判別処理 #####
 
             time.sleep(0.1)  # CPU負荷を下げるためにスリープ
