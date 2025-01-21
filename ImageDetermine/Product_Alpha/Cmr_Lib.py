@@ -16,8 +16,22 @@ class Cmr_Lib:
         if not ret:
             print("!ERR! フレームの取得に失敗しました。")
             return None
-        # グレースケール画像に変換
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        print(frame.shape)  # デバッグ用：画像の形状を表示
+        
+        if frame.shape[2] == 3:
+            # BGRの場合
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        elif frame.shape[2] == 2:
+            # 2チャンネルの場合
+            frame = frame[:,:,0]  # 最初のチャンネルのみを使用
+        elif frame.shape[2] == 1:
+            # すでにグレースケールの場合
+            pass
+        else:
+            print(f"!ERR! 未対応のチャンネル数: {frame.shape[2]}")
+            return None
+
         return frame
 
     def detect_exist(self, trgt_img, init_img, threshold=500000):
