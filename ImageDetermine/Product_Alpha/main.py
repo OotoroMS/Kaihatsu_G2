@@ -34,16 +34,16 @@ JUDGE = {               # 判定結果
 }
 
 PLC_SND_CMD = {         # PLC送信コマンド
-    "EXIST": 10,
-    "NOT EXIST": 11,
-    "FLAWLESS": 20,
-    "DEFECTIVE": 21,
-    "ROTATE": 100,
+    "EXIST": b'\x0b',
+    "NOT EXIST": b'\x0c',
+    "FLAWLESS": b'\x14',
+    "DEFECTIVE": b'\x15',
+    "ROTATE": b'\xdd',
 }
 
 PLC_RCV_CMD = {         # PLC受信コマンド
-    "CHECK_EXIST": 200,
-    "SET WORK": 210,
+    "CHECK_EXIST": b'\xc8',
+    "SET WORK": b'\xd2',
 }
 
 THRESHOLD = 0.003        # 判別閾値
