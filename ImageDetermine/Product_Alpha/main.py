@@ -247,11 +247,12 @@ def main():
                 print("*DBG* 存在判定結果: {is_exist}")
 
                 # PLCからの動作開始を待つ
-                data = serial_comm.serial_read()
-                if data == PLC_RCV_CMD["SET WORK"]:
-                    pass
-                else:
-                    continue
+                while True:
+                    data, flag = serial_comm.serial_read()
+                    if data == PLC_RCV_CMD["SET WORK"]:
+                        print("*DBG* PLCからの作業開始要求を受信しました。")
+                        break
+                    time.sleep(0.1)
 
                 ##### 判別処理 #####
                 flg_judge = JUDGE["OK"]  # 判定結果
