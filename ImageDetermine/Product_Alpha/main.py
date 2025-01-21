@@ -8,23 +8,25 @@ import threading
 import time
 import json
 import os
+import serial
 from datetime import datetime  # 追加
 
 # 自作ライブラリのインポート
-import ImageDetermine.Product_Alpha.ImgDtrmn_Lib as ImgDtrmn_Lib
-import ImageDetermine.Product_Alpha.Cmr_Lib as Cmr_Lib
+import ImgDtrmn_Lib as ImgDtrmn_Lib
+import Cmr_Lib as Cmr_Lib
 import serial_communicator as PLC_Lib
 from pc_comands import PCManager
 
 
 # グローバル変数
-COM_PLC = "COM1"        # PLCのCOMポート
 COM_CMR = 0             # カメラのデバイス番号（デフォルトカメラを使用）
 
 # 変数の初期化（後で設定ファイルから読み込む）
+WORK_NAME = ""          # ワーク名
 MDL_PATH = ""           # モデルのパス
 ROTATE_DEGREE = 0       # 回転角度
 ROTATE_COUNT = 0        # 回転回数
+CROP_RANGES = []        # クロップ範囲
 
 JUDGE = {               # 判定結果
     "OK": True,
@@ -46,32 +48,30 @@ init_image = None       # 初期状態の背景画像
 
 # 設定ファイルの読み込み
 def load_config():
-    global MDL_PATH, ROTATE_DEGREE, ROTATE_COUNT, THRESHOLD
+    global MDL_PATH, ROTATE_DEGREE, ROTATE_COUNT, THRESHOLD, CROP_RANGES
     # determine_config.jsonを読み込む
     with open('determine_config.json', 'r') as f:
         config = json.load(f)
+        
+    WORK_NAME = config['work_name']
+    ROTATE_DEGREE = config['rotate_degree']
+    ROTATE_COUNT = config['rotate_count']
+    work_config = config['work_config_file']
+    
+    # ワークの詳細設定ファイルを読み込む
+    with open(work_config, 'r') as f:
+        work_config = json.load(f)
+    MDL_PATH = work_config['model_path']
+    THRESHOLD = work_config['threshold']
+    tmp_crop_range = work_config['crop_ranges']
+    CROP_RANGES = {
+        "x_start": tmp_crop_range['x_start'],
+        "x_end": tmp_crop_range['x_end'],
+        "y_start": tmp_crop_range['y_start'],
+        "y_end": tmp_crop_range['y_end']
+    }
 
-    work_name = config.get('work_name')
-    ROTATE_DEGREE = config.get('rotate_degree')
-    ROTATE_COUNT = config.get('rotate_count')
-    model_config_file = config.get('model_config_file')
-
-    # モデル設定ファイルを読み込む
-    with open(model_config_file, 'r') as f:
-        model_config = json.load(f)
-
-    model_name = model_config.get('model_name')
-    work_name_model = model_config.get('work_name')
-    crop_ranges = model_config.get('crop_ranges')
-
-    # モデルのパスを設定
-    MDL_PATH = os.path.join('models', work_name_model, model_name + '.h5')
-
-    # THRESHOLDをモデルごとに設定（必要に応じて設定ファイルに追加）
-    # ここでは仮に設定
-    THRESHOLD = 0.003
-
-    return crop_ranges
+    return 
 
 # 傷ありの結果保存
 def save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path):
@@ -128,51 +128,60 @@ def main():
     # 設定ファイルの読み込み
     print("-----------------------------------------")
     print("[CMT] 設定ファイルを読み込みます。")
-    crop_ranges = load_config()
+    load_config()
     print("[CMT] 設定ファイルの読み込みが完了しました。")
-    print(f"  [CMT] ワーク名: {crop_ranges.get('work_name')}")
+    print(f"  [CMT] ワーク名: {WORK_NAME}")
     print(f"  [CMT] 回転角度: {ROTATE_DEGREE}")
     print(f"  [CMT] 回転回数: {ROTATE_COUNT}")
     print(f"  [CMT] モデルパス: {MDL_PATH}")
-    print(f"  [CMT] クロップ範囲: {crop_ranges}")
-
+    print(f"  [CMT] 判別閾値: {THRESHOLD}") 
+    print(f"  [CMT] クロップ範囲:")
+    print (f"    [CMT] X: {CROP_RANGES["x_start"]} to {CROP_RANGES["x_end"]}")
+    print (f"    [CMT] Y: {CROP_RANGES["y_start"]} to {CROP_RANGES["y_end"]}")
     # 初期化
     print("-----------------------------------------")
     print("[CMT] 初期化を行います。")
     # 外部デバイスの初期化
     print("  [CMT] 外部デバイスの初期化を行います。")
+
     # カメラの初期化
     print("    [CMT] カメラの初期化を行います...", end="")
     cmr = Cmr_Lib.Cmr_Lib(camera_num=COM_CMR)
+    cmr.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)  # 幅を2592pxに設定
+    cmr.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944) # 高さを1944pxに設定
+    cmr.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'YUYV'))  # 未圧縮形式に設定を試みる
     print("---[OK]")
+
     # PLCの初期化
     print("    [CMT] PLCの初期化を行います...", end="")
-    port     = input("      [IPT]PLCのCOMポートを入力してください(入力例: COM1): ")
-    baudrate = input("      [IPT]PLCのボーレートを入力してください(入力例: 9600): ")
-    parity   = input("      [IPT]パリティを入力してください(入力例: serial.PARITY_NONE): ")
-    stopbits = input("      [IPT]ストップビットを入力してください(入力例: serial.STOPBITS_ONE): ")
-    timeout  = input("      [IPT]タイムアウト時間を入力してください(入力例: 0.1): ")
+    # SerialCommunicate.jsonから設定を読み込む
+    with open("SerialCommunicate.json", "r") as f:
+        serial_setting = json.load(f)
     serial_setting = {
-        "port": port,
-        "baudrate": baudrate,
-        "parity": parity,
-        "stopbits": stopbits,
-        "timeout": timeout
+        "port": serial_setting["port"],
+        "baudrate": serial_setting["baudrate"],
+        "parity": serial_setting["parity"],
+        "stopbits": serial_setting["stopbits"],
+        "timeout": serial_setting["timeout"]
     }
-    serial_comm = PLC_Lib.SerialCommunicator(serial_setting)
+    ##### 一時的な回避
+    serial_setting["parity"] = serial.PARITY_NONE   # パリティビットなし 一時的な回避
+    serial_setting["stopbits"] = serial.STOPBITS_ONE    # ストップビット1 一時的な回避
+    serial_comm = PLC_Lib.SerialCommunicator(**serial_setting)
     plc = PCManager(serial_comm)
-
     print("---[OK]")
+
     # 初期状態の背景画像を取得
     print("  [CMT] 初期状態の背景画像を取得します...")
     time.sleep(1)  # カメラの安定化のため待機
     init_image = cmr.get_frame()
     if init_image is None:
         print("!ERR! 初期状態の背景画像の取得に失敗しました。")
-        cmr.release()
-        #plc.release()
+        cmr.release()   # カメラの解放
+        #plc.release()  # PLCとの通信の解放
         exit()
     print("  [CMT] 背景画像の取得が完了しました。")
+
     # 変数の初期化
     print("  [CMT] 変数の初期化を行います。")
     is_exist = False    # 存在判定
@@ -242,7 +251,7 @@ def main():
                     preprocessed_img = img_dtrmn.pre_processing(captured_image)
                     # 推論
                     mse = inference(img_dtrmn, preprocessed_img)
-                    if infered_accuracy > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
+                    if mse > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
                         flg_judge = JUDGE["NG"]  # 不良を検出
                         # 結果を保存
                         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
