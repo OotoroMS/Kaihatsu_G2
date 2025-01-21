@@ -1,8 +1,7 @@
 {
     "work_name": "Sample2024",
-    "target_epochs": 100,
     "rotate_degree": 45,
     "rotate_count": 8,
-    "model_config_file": "2024Sample.json"
+    "work_config_file": "Sample2024.json"
   }
   

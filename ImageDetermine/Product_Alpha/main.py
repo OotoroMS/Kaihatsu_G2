@@ -8,23 +8,25 @@ import threading
 import time
 import json
 import os
+import serial
 from datetime import datetime  # 追加
 
 # 自作ライブラリのインポート
-import ImageDetermine.Product_Alpha.ImgDtrmn_Lib as ImgDtrmn_Lib
-import ImageDetermine.Product_Alpha.Cmr_Lib as Cmr_Lib
+import ImgDtrmn_Lib as ImgDtrmn_Lib
+import Cmr_Lib as Cmr_Lib
 import serial_communicator as PLC_Lib
 from pc_comands import PCManager
 
 
 # グローバル変数
-COM_PLC = "COM1"        # PLCのCOMポート
 COM_CMR = 0             # カメラのデバイス番号（デフォルトカメラを使用）
 
 # 変数の初期化（後で設定ファイルから読み込む）
+WORK_NAME = ""          # ワーク名
 MDL_PATH = ""           # モデルのパス
 ROTATE_DEGREE = 0       # 回転角度
 ROTATE_COUNT = 0        # 回転回数
+CROP_RANGES = []        # クロップ範囲
 
 JUDGE = {               # 判定結果
     "OK": True,
@@ -32,9 +34,16 @@ JUDGE = {               # 判定結果
 }
 
 PLC_SND_CMD = {         # PLC送信コマンド
-    "OK": "OK",
-    "NG": "NG",
-    "ROTATE": "ROTATE",
+    "EXIST": b'\x0b',
+    "NOT EXIST": b'\x0c',
+    "FLAWLESS": b'\x14',
+    "DEFECTIVE": b'\x15',
+    "ROTATE": b'\xdd',
+}
+
+PLC_RCV_CMD = {         # PLC受信コマンド
+    "CHECK_EXIST": b'\xc8',
+    "SET WORK": b'\xd2',
 }
 
 THRESHOLD = 0.003        # 判別閾値
@@ -46,38 +55,36 @@ init_image = None       # 初期状態の背景画像
 
 # 設定ファイルの読み込み
 def load_config():
-    global MDL_PATH, ROTATE_DEGREE, ROTATE_COUNT, THRESHOLD
+    global MDL_PATH, ROTATE_DEGREE, ROTATE_COUNT, THRESHOLD, CROP_RANGES
     # determine_config.jsonを読み込む
     with open('determine_config.json', 'r') as f:
         config = json.load(f)
+        
+    WORK_NAME = config['work_name']
+    ROTATE_DEGREE = config['rotate_degree']
+    ROTATE_COUNT = config['rotate_count']
+    work_config = config['work_config_file']
+    
+    # ワークの詳細設定ファイルを読み込む
+    with open(work_config, 'r') as f:
+        work_config = json.load(f)
+    MDL_PATH = work_config['model_path']
+    THRESHOLD = work_config['threshold']
+    tmp_crop_range = work_config['crop_ranges']
+    CROP_RANGES = {
+        "x_start": tmp_crop_range['x_start'],
+        "x_end": tmp_crop_range['x_end'],
+        "y_start": tmp_crop_range['y_start'],
+        "y_end": tmp_crop_range['y_end']
+    }
 
-    work_name = config.get('work_name')
-    ROTATE_DEGREE = config.get('rotate_degree')
-    ROTATE_COUNT = config.get('rotate_count')
-    model_config_file = config.get('model_config_file')
-
-    # モデル設定ファイルを読み込む
-    with open(model_config_file, 'r') as f:
-        model_config = json.load(f)
-
-    model_name = model_config.get('model_name')
-    work_name_model = model_config.get('work_name')
-    crop_ranges = model_config.get('crop_ranges')
-
-    # モデルのパスを設定
-    MDL_PATH = os.path.join('models', work_name_model, model_name + '.h5')
-
-    # THRESHOLDをモデルごとに設定（必要に応じて設定ファイルに追加）
-    # ここでは仮に設定
-    THRESHOLD = 0.003
-
-    return crop_ranges
+    return 
 
 # 傷ありの結果保存
 def save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path):
     result_json = {
         'timestamp': timestamp,
-        'infered_accuracy': infered_accuracy,
+        'infered_accuracy': float(infered_accuracy),
         'image_path': image_path,
         'diff_image_path': diff_image_path
     }
@@ -87,37 +94,45 @@ def save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path
         json.dump(result_json, json_file, indent=4)
 
 # 撮影、回転処理
-def getPctr_and_rotate(cmr, plc):
+def getPctr_and_rotate(cmr, serial_comm: PLC_Lib.SerialCommunicator):
     global captured_image
     # ---撮影、前処理---
     # 画像を取得
     captured_image = cmr.get_frame()
     if captured_image is None:
         print("!ERR! 画像の取得に失敗しました。")
-        return False
+        return None
     # ---回転命令送信---
-    plc.send_data(PLC_SND_CMD["ROTATE"])
+    serial_comm.serial_write(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
     # PLCから回転完了の信号を受信
+    """
     while True:
         data = plc.get_data()
         if data == "ROTATED":
             break
         # 本当は回転済み信号を受け取るまで待つ
         time.sleep(0.1)
-    return True
+    """
+    return captured_image
 
 # 推論処理
-def inference(img_dtrmn, inpt_img):
+def inference(img_dtrmn: ImgDtrmn_Lib.ImgDtrmn_Lib, inpt_img: np.ndarray):
     global infered_accuracy, infered_image
-    # ---推論処理---
-    mse, infered_img = img_dtrmn.inference(inpt_img)
-    infered_accuracy = mse
-    infered_image = infered_img
-    return mse
+    try:
+        # ---推論処理---
+        mse, infered_img = img_dtrmn.inference(inpt_img)
+        infered_accuracy = mse
+        infered_image = infered_img
+        return mse
+    except Exception as e:
+        print(f"!ERR! 推論中にエラーが発生しました: {e}")
+        infered_image = None  # エラー時は推論画像をNoneに設定
+        return None
+
 
 # メイン関数
 def main():
-    global init_image  # 初期状態の背景画像
+    global init_image, infered_image
     print("#########################################")
     print("      外観判別システム  Prometheus       ")
     print("                                  ver.1.0")
@@ -128,51 +143,60 @@ def main():
     # 設定ファイルの読み込み
     print("-----------------------------------------")
     print("[CMT] 設定ファイルを読み込みます。")
-    crop_ranges = load_config()
+    load_config()
     print("[CMT] 設定ファイルの読み込みが完了しました。")
-    print(f"  [CMT] ワーク名: {crop_ranges.get('work_name')}")
+    print(f"  [CMT] ワーク名: {WORK_NAME}")
     print(f"  [CMT] 回転角度: {ROTATE_DEGREE}")
     print(f"  [CMT] 回転回数: {ROTATE_COUNT}")
     print(f"  [CMT] モデルパス: {MDL_PATH}")
-    print(f"  [CMT] クロップ範囲: {crop_ranges}")
-
+    print(f"  [CMT] 判別閾値: {THRESHOLD}") 
+    print(f"  [CMT] クロップ範囲:")
+    print (f"    [CMT] X: {CROP_RANGES["x_start"]} to {CROP_RANGES["x_end"]}")
+    print (f"    [CMT] Y: {CROP_RANGES["y_start"]} to {CROP_RANGES["y_end"]}")
     # 初期化
     print("-----------------------------------------")
     print("[CMT] 初期化を行います。")
     # 外部デバイスの初期化
     print("  [CMT] 外部デバイスの初期化を行います。")
+
     # カメラの初期化
     print("    [CMT] カメラの初期化を行います...", end="")
     cmr = Cmr_Lib.Cmr_Lib(camera_num=COM_CMR)
+    cmr.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)  # 幅を2592pxに設定
+    cmr.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944) # 高さを1944pxに設定
+    cmr.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'YUYV'))  # 未圧縮形式に設定を試みる
     print("---[OK]")
+
     # PLCの初期化
     print("    [CMT] PLCの初期化を行います...", end="")
-    port     = input("      [IPT]PLCのCOMポートを入力してください(入力例: COM1): ")
-    baudrate = input("      [IPT]PLCのボーレートを入力してください(入力例: 9600): ")
-    parity   = input("      [IPT]パリティを入力してください(入力例: serial.PARITY_NONE): ")
-    stopbits = input("      [IPT]ストップビットを入力してください(入力例: serial.STOPBITS_ONE): ")
-    timeout  = input("      [IPT]タイムアウト時間を入力してください(入力例: 0.1): ")
+    # SerialCommunicate.jsonから設定を読み込む
+    with open("SerialCommunicate.json", "r") as f:
+        serial_setting = json.load(f)
     serial_setting = {
-        "port": port,
-        "baudrate": baudrate,
-        "parity": parity,
-        "stopbits": stopbits,
-        "timeout": timeout
+        "port": serial_setting["port"],
+        "baudrate": serial_setting["baudrate"],
+        "parity": serial_setting["parity"],
+        "stopbits": serial_setting["stopbits"],
+        "timeout": serial_setting["timeout"]
     }
-    serial_comm = PLC_Lib.SerialCommunicator(serial_setting)
+    ##### 一時的な回避
+    serial_setting["parity"] = serial.PARITY_NONE   # パリティビットなし 一時的な回避
+    serial_setting["stopbits"] = serial.STOPBITS_ONE    # ストップビット1 一時的な回避
+    serial_comm = PLC_Lib.SerialCommunicator(**serial_setting)
     plc = PCManager(serial_comm)
-
     print("---[OK]")
+
     # 初期状態の背景画像を取得
     print("  [CMT] 初期状態の背景画像を取得します...")
     time.sleep(1)  # カメラの安定化のため待機
     init_image = cmr.get_frame()
     if init_image is None:
         print("!ERR! 初期状態の背景画像の取得に失敗しました。")
-        cmr.release()
-        #plc.release()
+        cmr.release()   # カメラの解放
+        #plc.release()  # PLCとの通信の解放
         exit()
     print("  [CMT] 背景画像の取得が完了しました。")
+
     # 変数の初期化
     print("  [CMT] 変数の初期化を行います。")
     is_exist = False    # 存在判定
@@ -182,7 +206,7 @@ def main():
     # モデルのロード
     print("-----------------------------------------")
     print("[CMT] 画像処理システムの初期化を行います。")
-    img_dtrmn = ImgDtrmn_Lib.ImgDtrmn_Lib(model_path=MDL_PATH, crop_ranges=crop_ranges)
+    img_dtrmn = ImgDtrmn_Lib.ImgDtrmn_Lib(model_path=MDL_PATH, crop_ranges=CROP_RANGES)
     # モデルのロード
     print("  [CMT] モデルのロードを行います...", end="")
     img_dtrmn.load_model()
@@ -202,6 +226,9 @@ def main():
     defective_images_dir = os.path.join(result_dir, 'defective_images')
     if not os.path.exists(defective_images_dir):
         os.makedirs(defective_images_dir)
+    diff_images_dir = os.path.join(result_dir, 'diff_images')
+    if not os.path.exists(diff_images_dir):
+        os.makedirs(diff_images_dir)
     json_dir = os.path.join(result_dir, 'json')
     if not os.path.exists(json_dir):
         os.makedirs(json_dir)
@@ -210,8 +237,9 @@ def main():
     try:
         while True:
             # PLCからの動作開始を待つ
-            data = plc.read()
-            if data == PLC_Lib.STATE["START"]:
+            data, flag = serial_comm.serial_read()
+            if data == PLC_RCV_CMD["CHECK_EXIST"]:
+                print("*DBG* PLCからの存在確認要求を受信しました。")
                 # 現在の画像を取得
                 current_image = cmr.get_frame()
                 if current_image is None:
@@ -221,28 +249,35 @@ def main():
                 # 存在判定を行う
                 is_exist = cmr.detect_exist(current_image, init_image)
                 if is_exist:
-                    plc.write_serial(PLC_SND_CMD["OK"])  # 存在している場合、PLCにOKを送信
+                    serial_comm.serial_write(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
                 else:
-                    plc.write_serial(PLC_SND_CMD["NG"])  # 存在していない場合、PLCにNGを送信
-                    continue   # 次のループへ
+                    serial_comm.serial_write(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
+                    #continue   # 次のループへ
+                print("*DBG* 存在判定結果: {is_exist}")
 
                 # PLCからの動作開始を待つ
-                data = plc.read()
-                if data == PLC_Lib.STATE["START"]:
-                    pass
-                else:
-                    continue
+                while True:
+                    data, flag = serial_comm.serial_read()
+                    if data == PLC_RCV_CMD["SET WORK"]:
+                        print("*DBG* PLCからの作業開始要求を受信しました。")
+                        break
+                    time.sleep(0.1)
 
                 ##### 判別処理 #####
                 flg_judge = JUDGE["OK"]  # 判定結果
                 for i in range(ROTATE_COUNT):   # 回転回数分、推論処理を行う
+                    print(f"*DBG* {i+1}回目の判別処理を行います。")
                     # 画像取得と回転
-                    getPctr_and_rotate(cmr, plc)
+                    captured_image = getPctr_and_rotate(cmr, serial_comm)
+                    print("*DBG* 画像取得と回転が完了しました。")
                     # 前処理
                     preprocessed_img = img_dtrmn.pre_processing(captured_image)
+                    print("*DBG* 前処理が完了しました。")
+                    print(f"前処理後の画像形状: {preprocessed_img.shape}")
                     # 推論
                     mse = inference(img_dtrmn, preprocessed_img)
-                    if infered_accuracy > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
+                    print(f"*DBG* 推論結果: {mse}")
+                    if mse > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
                         flg_judge = JUDGE["NG"]  # 不良を検出
                         # 結果を保存
                         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
@@ -250,20 +285,26 @@ def main():
                         image_path = os.path.join(defective_images_dir, image_filename)
                         # 元の画像を保存
                         cv2.imwrite(image_path, captured_image)
+                        print(f"*DBG* 不良画像を保存しました: {image_path}")
                         # 差分画像を生成して傷をマーク
-                        diff_image = img_dtrmn.mark_defects(preprocessed_img, infered_image)
-                        diff_image_filename = f'defective_diff_{timestamp}.jpg'
-                        diff_image_path = os.path.join(defective_images_dir, diff_image_filename)
+                        scaled_img = img_dtrmn.robust_scale_image(infered_image)# infered_imageを二次元化して、差分画像を生成
+                        print("*DBG* 推論画像を二次元化しました。")
+                        diff_image = img_dtrmn.mark_defects(preprocessed_img, scaled_img)
+                        print("*DBG* 差分画像を生成しました。")
+                        diff_image_filename = f'diff_{timestamp}.jpg'
+                        diff_image_path = os.path.join(diff_images_dir, diff_image_filename)
                         cv2.imwrite(diff_image_path, diff_image)
+                        print(f"*DBG* 差分画像を保存しました: {diff_image_path}")
                         # JSONファイルを作成
                         save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path)
                         break  # 不良を検出したらループを抜ける
 
                 # 判別結果送信
+                print("*DBG* 判別結果: {flg_judge}")
                 if flg_judge == JUDGE["OK"]:
-                    plc.write_serial(PLC_SND_CMD["OK"])
+                    serial_comm.serial_write(PLC_SND_CMD["FLAWLESS"])
                 else:
-                    plc.write_serial(PLC_SND_CMD["NG"])
+                    serial_comm.serial_write(PLC_SND_CMD["DEFECTIVE"])
                 ##### 判別処理 #####
 
             time.sleep(0.1)  # CPU負荷を下げるためにスリープ
