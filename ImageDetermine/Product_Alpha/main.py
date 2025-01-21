@@ -219,7 +219,7 @@ def main():
     try:
         while True:
             # PLCからの動作開始を待つ
-            data = plc.read()
+            data = serial_comm.serial_read()
             if data == PLC_Lib.STATE["START"]:
                 # 現在の画像を取得
                 current_image = cmr.get_frame()
@@ -236,7 +236,7 @@ def main():
                     continue   # 次のループへ
 
                 # PLCからの動作開始を待つ
-                data = plc.read()
+                data = serial_comm.serial_read()
                 if data == PLC_Lib.STATE["START"]:
                     pass
                 else:
