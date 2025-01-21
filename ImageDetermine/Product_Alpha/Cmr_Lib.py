@@ -16,6 +16,8 @@ class Cmr_Lib:
         if not ret:
             print("!ERR! フレームの取得に失敗しました。")
             return None
+        # グレースケール画像に変換
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         return frame
 
     def detect_exist(self, trgt_img, init_img, threshold=500000):
