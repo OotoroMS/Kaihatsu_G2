@@ -1,7 +1,5 @@
-ひとまずよいかと思います。
-次に、判別が終了した後に結果を保存する機能を実装します。
-
-今回、実現したいこととして以下のことがあります。
-・不良品と判定したとき、その画像を保存
-・不良品と判定した画像と、AEで推論した画像の差分をとり、傷をマークする。
-・不良が発生した時間、accuracy、撮影した画像のパスを保存したjsonファイルを作成。
+cv::impl::`anonymous namespace'::Set<3,4,-1>,struct cv::impl::A0x46dff480::Set<1,-1,-1>,struct cv::impl::A0x46dff480::Set<0,2,5>,4>::CvtHelper(const class cv::_InputArray &,const class cv::_OutputArray &,int)'
+> Invalid number of channels in input image:
+>     'VScn::contains(scn)'
+> where
+>     'scn' is 2

@@ -103,14 +103,16 @@ def getPctr_and_rotate(cmr, plc):
         print("!ERR! 画像の取得に失敗しました。")
         return False
     # ---回転命令送信---
-    plc.send_data(PLC_SND_CMD["ROTATE"])
+    plc.send_data(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
     # PLCから回転完了の信号を受信
+    """
     while True:
         data = plc.get_data()
         if data == "ROTATED":
             break
         # 本当は回転済み信号を受け取るまで待つ
         time.sleep(0.1)
+    """
     return True
 
 # 推論処理
@@ -226,8 +228,9 @@ def main():
     try:
         while True:
             # PLCからの動作開始を待つ
-            data = serial_comm.serial_read()
+            data, flag = serial_comm.serial_read()
             if data == PLC_RCV_CMD["CHECK_EXIST"]:
+                print("*DBG* PLCからの存在確認要求を受信しました。")
                 # 現在の画像を取得
                 current_image = cmr.get_frame()
                 if current_image is None:
@@ -240,7 +243,8 @@ def main():
                     plc.write_serial(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
                 else:
                     plc.write_serial(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
-                    continue   # 次のループへ
+                    #continue   # 次のループへ
+                print("*DBG* 存在判定結果: {is_exist}")
 
                 # PLCからの動作開始を待つ
                 data = serial_comm.serial_read()
