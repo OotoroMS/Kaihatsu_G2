@@ -191,7 +191,7 @@ def main():
     # モデルのロード
     print("-----------------------------------------")
     print("[CMT] 画像処理システムの初期化を行います。")
-    img_dtrmn = ImgDtrmn_Lib.ImgDtrmn_Lib(model_path=MDL_PATH, crop_ranges=crop_ranges)
+    img_dtrmn = ImgDtrmn_Lib.ImgDtrmn_Lib(model_path=MDL_PATH, crop_ranges=CROP_RANGES)
     # モデルのロード
     print("  [CMT] モデルのロードを行います...", end="")
     img_dtrmn.load_model()
