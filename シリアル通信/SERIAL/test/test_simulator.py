@@ -10,7 +10,7 @@ import struct
 import threading
 
 # 自作プログラムをimport
-from PROJET.SERIAL.manager.plc_Simulator import PLCSimulator
+from SERIAL.manager.plc_Simulator import PLCSimulator
 
 
 class Test:

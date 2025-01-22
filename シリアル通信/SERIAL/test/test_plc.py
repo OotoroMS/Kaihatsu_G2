@@ -10,7 +10,7 @@ import struct
 import threading
 
 # 自作プログラムをimport
-from PROJET.SERIAL.manager.SerialUIBridge import SerialUIBridge
+from SERIAL.manager.SerialUIBridge import SerialUIBridge
 
 
 class Test:

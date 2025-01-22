@@ -4,16 +4,16 @@ from typing import Optional, Dict, Tuple
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
-from PROJET.UTILS.type_check import type_check_decorator
-import PROJET.UTILS.log_config as log
+from UTILS.type_check import type_check_decorator
+import UTILS.log_config as log
 # 作成した辞書
 # この２つは key = bytes value = list[str]
-from PROJET.SERIAL.dict.error      import comand as error
-from PROJET.SERIAL.dict.normal     import comand as normal
+from SERIAL.dict.error      import comand as error
+from SERIAL.dict.normal     import comand as normal
 # これは    key = tuple[str] value = bytes
-from PROJET.SERIAL.dict.plc_cmd    import comand as comand
+from SERIAL.dict.plc_cmd    import comand as comand
 # 定数ファイル
-from PROJET.SERIAL.constant.Status import OperationStatus
+from SERIAL.constant.Status import OperationStatus
 
 # 辞書定義
 ERROR_OR_NORMAL = {

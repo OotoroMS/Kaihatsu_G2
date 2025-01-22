@@ -6,9 +6,6 @@ class OperationStatus(Enum):
     SUCCESS = True
     FAILURE = False
 
-class DictStatus(Enum):
-    NONE = [None, None]
-
 class ShutdownStatus(Enum):
     STARTUP  = True
     SHUTDOWN = False
