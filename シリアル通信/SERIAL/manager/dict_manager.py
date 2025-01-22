@@ -60,14 +60,14 @@ class DictManager:
             return ["動作不良", ""], OperationStatus.FAILURE
 
         
-    # 辞書からデータを探して戻り値で渡す list[str] → bytes
-    @type_check_decorator({'msg': tuple})
-    def list_to_byte(self, msg: tuple[str]) -> Optional[bytes]:
+    # 辞書からデータを探して戻り値で渡す str → bytes
+    @type_check_decorator({'msg': str})
+    def str_to_byte(self, msg: str) -> Optional[bytes]:
         try:            
             cmd = CMD_DICT.get(msg, b'')
             return cmd, OperationStatus.SUCCESS
         except Exception as e:
-            logger.error(f"{self}: {self.list_to_byte.__name__}: {e}")
+            logger.error(f"{self}: {self.str_to_byte.__name__}: {e}")
             return None, OperationStatus.FAILURE
 
     # 受け取ったデータから対応する文字列を返す

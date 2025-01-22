@@ -53,7 +53,7 @@ class SerialUIBridge(PLCCommunicator):
     # データ送信
     def send_set(self, data):
         # 変換処理
-        cmd,status = self.dict.list_to_byte(data)
+        cmd,status = self.dict.str_to_byte(data)
         if status == OperationStatus.FAILURE:
             return None
         super().send(cmd)
