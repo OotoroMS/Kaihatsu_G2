@@ -32,7 +32,8 @@ class SerialUIBridge(PLCCommunicator):
         else:
             data = self.rcv_queue.get()
             # 辞書を使用して変換
-            msg, status = self.dict.get_message(data)            
+            msg, status = self.dict.get_message(data)
+            print(f"変換前:{data} 変換後:{msg}")
             return msg, status
     
     # データの送信用関数(キューに値があれば送信) これで使用するならこれをスレッド化すること!
