@@ -28,7 +28,7 @@ logger = log.setup_logging()
 
 class DictManager:
     # どちらの辞書を使用するか選択
-    @type_check_decorator({'data': bytes})
+    # @type_check_decorator({'data': bytes})
     def compare_dict(self, data: bytes) -> tuple[dict, OperationStatus]:
         try:
             if len(data) < 1:
@@ -46,7 +46,7 @@ class DictManager:
 
 
     # 辞書からデータを探して戻り値で渡す bytes → list[str]
-    @type_check_decorator({'command_dict': dict})
+    # @type_check_decorator({'command_dict': dict})
     def bytes_to_list(self, command_dict: dict[bytes, list[str]], 
                       data: bytes) -> tuple[list[str], OperationStatus]:
         try:
@@ -61,7 +61,7 @@ class DictManager:
 
         
     # 辞書からデータを探して戻り値で渡す str → bytes
-    @type_check_decorator({'msg': str})
+    # @type_check_decorator({'msg': str})
     def str_to_byte(self, msg: str) -> Optional[bytes]:
         try:            
             cmd = CMD_DICT.get(msg, b'')
@@ -71,7 +71,7 @@ class DictManager:
             return None, OperationStatus.FAILURE
 
     # 受け取ったデータから対応する文字列を返す
-    @type_check_decorator({'data': bytes})
+    # @type_check_decorator({'data': bytes})
     def get_message(self, data: bytes) -> tuple[list[str], OperationStatus]:
         try:
             command_dict, status = self.compare_dict(data)
