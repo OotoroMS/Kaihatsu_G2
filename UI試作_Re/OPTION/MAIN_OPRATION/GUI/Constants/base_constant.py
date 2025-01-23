@@ -1,0 +1,2 @@
+FONT_SIZE   = 100
+CALC_CENTER = 2
