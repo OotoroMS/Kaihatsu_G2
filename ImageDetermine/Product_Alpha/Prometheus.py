@@ -59,6 +59,11 @@ init_image = None       # 初期状態の背景画像
 
 
 class Prometheus:
+    # コンストラクタ
+    def __init__(self, stop_event: threading.Event):
+        self.stop_event = stop_event
+        pass        
+
     # 設定ファイルの読み込み
     def load_config():
         global MDL_PATH, ROTATE_DEGREE, ROTATE_COUNT, THRESHOLD, CROP_RANGES

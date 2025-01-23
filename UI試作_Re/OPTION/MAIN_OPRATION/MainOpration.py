@@ -12,11 +12,13 @@ def MainOpration():
     pass
     gui   = MainUIManager.MainUIManager()
     # バックエンド実行
-    # backend = Prometheus()
+    stop_event = threading.Event()
+    # backend = Prometheus(stop_event)
     # thread = threading.Thread(target=backend.run)
     result = gui.run()
     # thread.start()
     # 終了まで待機
+    stop_event.set()
     # thread.join()
     
     # 判別
