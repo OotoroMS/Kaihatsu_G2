@@ -42,8 +42,8 @@ PLC_SND_CMD = {         # PLC送信コマンド
 }
 
 PLC_RCV_CMD = {         # PLC受信コマンド
-    "CHECK_EXIST": b'\xc8',
-    "SET WORK": b'\xd2',
+    "CHECK_EXIST": b'\xc8\n',
+    "SET WORK": b'\xd2\n',
 }
 
 THRESHOLD = 0.003        # 判別閾値
@@ -238,6 +238,8 @@ def main():
         while True:
             # PLCからの動作開始を待つ
             data, flag = serial_comm.serial_read()
+            #if data != None:
+            #    print(f"*DBG* 受信データ: {data}")
             if data == PLC_RCV_CMD["CHECK_EXIST"]:
                 print("*DBG* PLCからの存在確認要求を受信しました。")
                 # 現在の画像を取得
@@ -248,12 +250,15 @@ def main():
 
                 # 存在判定を行う
                 is_exist = cmr.detect_exist(current_image, init_image)
+                # DEBUG 常に存在していると判定
+                is_exist = True
                 if is_exist:
                     serial_comm.serial_write(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
                 else:
                     serial_comm.serial_write(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
                     #continue   # 次のループへ
-                print("*DBG* 存在判定結果: {is_exist}")
+                print(f"*DBG* 存在判定結果: {is_exist}")
+                time.sleep(0.2)  # CPU負荷を下げるためにスリープ
 
                 # PLCからの動作開始を待つ
                 while True:
@@ -306,9 +311,6 @@ def main():
                 else:
                     serial_comm.serial_write(PLC_SND_CMD["DEFECTIVE"])
                 ##### 判別処理 #####
-
-            # 終了するか判断(MySQLからの受信)
-            
 
             time.sleep(0.1)  # CPU負荷を下げるためにスリープ
 
