@@ -48,16 +48,16 @@ class DictManager:
     # 辞書からデータを探して戻り値で渡す bytes → list[str]
     # @type_check_decorator({'command_dict': dict})
     def bytes_to_list(self, command_dict: dict[bytes, list[str]], 
-                      data: bytes) -> tuple[list[str], OperationStatus]:
+                      data: bytes):
         try:
             if len(data) < 2:
                 raise ValueError("コマンドデータが含まれていません。")
             # 辞書から値を取得
             text = command_dict.get(data[1:], None)
-            return text, OperationStatus.SUCCESS
+            return text
         except Exception as e:
             logger.error(f"{self}: {self.bytes_to_list.__name__}: {e}")
-            return DictStatus.NONE.value, OperationStatus.FAILURE
+            return DictStatus.NONE.value
 
         
     # 辞書からデータを探して戻り値で渡す str → bytes
@@ -72,7 +72,7 @@ class DictManager:
 
     # 受け取ったデータから対応する文字列を返す
     @type_check_decorator({'data': bytes})
-    def get_message(self, data: bytes) -> tuple[list[str], OperationStatus]:
+    def get_message(self, data: bytes):
         try:
             command_dict, status = self.compare_dict(data)
             if status == OperationStatus.SUCCESS:
