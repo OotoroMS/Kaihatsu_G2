@@ -13,7 +13,7 @@ from SERIAL.dict.normal     import comand as normal
 # これは    key = tuple[str] value = bytes
 from SERIAL.dict.plc_cmd    import comand as comand
 # 定数ファイル
-from SERIAL.constant.Status import OperationStatus
+from SERIAL.constant.Status import OperationStatus, DictStatus
 
 # 辞書定義
 ERROR_OR_NORMAL = {
@@ -28,7 +28,7 @@ logger = log.setup_logging()
 
 class DictManager:
     # どちらの辞書を使用するか選択
-    # @type_check_decorator({'data': bytes})
+    @type_check_decorator({'data': bytes})
     def compare_dict(self, data: bytes) -> tuple[dict, OperationStatus]:
         try:
             if len(data) < 1:
@@ -42,11 +42,11 @@ class DictManager:
             return command_dict, OperationStatus.SUCCESS
         except Exception as e:
             logger.error(f"{self}: {self.compare_dict.__name__}: {e}")
-            return {}, OperationStatus.FAILURE
+            return DictStatus.NONE.value, OperationStatus.FAILURE
 
 
     # 辞書からデータを探して戻り値で渡す bytes → list[str]
-    # @type_check_decorator({'command_dict': dict})
+    @type_check_decorator({'command_dict': dict})
     def bytes_to_list(self, command_dict: dict[bytes, list[str]], 
                       data: bytes) -> tuple[list[str], OperationStatus]:
         try:
@@ -57,21 +57,21 @@ class DictManager:
             return text, OperationStatus.SUCCESS
         except Exception as e:
             logger.error(f"{self}: {self.bytes_to_list.__name__}: {e}")
-            return ["動作不良", ""], OperationStatus.FAILURE
+            return DictStatus.NONE.value, OperationStatus.FAILURE
 
         
     # 辞書からデータを探して戻り値で渡す str → bytes
-    # @type_check_decorator({'msg': str})
+    @type_check_decorator({'msg': str})
     def str_to_byte(self, msg: str) -> Optional[bytes]:
         try:            
             cmd = CMD_DICT.get(msg, b'')
             return cmd, OperationStatus.SUCCESS
         except Exception as e:
             logger.error(f"{self}: {self.str_to_byte.__name__}: {e}")
-            return None, OperationStatus.FAILURE
+            return b'', OperationStatus.FAILURE
 
     # 受け取ったデータから対応する文字列を返す
-    # @type_check_decorator({'data': bytes})
+    @type_check_decorator({'data': bytes})
     def get_message(self, data: bytes) -> tuple[list[str], OperationStatus]:
         try:
             command_dict, status = self.compare_dict(data)
@@ -79,10 +79,10 @@ class DictManager:
                 # 戻り値 例 ["正常001", "投入部"], OperationStatus.SUCCESS
                 return self.bytes_to_list(command_dict, data), status
             else:
-                return ["動作不良", ""], OperationStatus.FAILURE
+                return DictStatus.NONE.value, OperationStatus.FAILURE
         except (ValueError, TypeError) as e:
             logger.error(f"{self}: {self.get_message.__name__}: {e}")
-            return ["動作不良", ""], OperationStatus.FAILURE
+            return DictStatus.NONE.value, OperationStatus.FAILURE
 """
     # 動作テスト用関数
     @type_check_decorator({'data': bytes})
