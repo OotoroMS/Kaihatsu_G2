@@ -16,7 +16,7 @@ import ImgDtrmn_Lib as ImgDtrmn_Lib
 import Cmr_Lib as Cmr_Lib
 import serial_communicator as PLC_Lib
 from pc_comands import PCManager
-import SQLCommunication as SQLComm
+#import SQLCommunication as SQLComm
 import serial_gate
 
 
