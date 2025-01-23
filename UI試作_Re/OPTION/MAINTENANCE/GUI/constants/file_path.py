@@ -1,5 +1,6 @@
 # 画像保存フォルダまでのファイルパス
-IMAGE_FILE_PATH  = "\\kaihatsu\\OPTION\\MAINTENANCE\\GUI\\images\\"
+# IMAGE_FILE_PATH  = "\\kaihatsu\\OPTION\\MAINTENANCE\\GUI\\images\\"
+IMAGE_FILE_PATH  = "GUI\\images\\"
 # ボタン保存フォルダのファイルパス
 BUTTON_FILE_PATH = IMAGE_FILE_PATH + "buttons\\"
 # タイトル保存フォルダのファイルパス

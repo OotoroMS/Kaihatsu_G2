@@ -4,16 +4,16 @@ from typing import Optional, Dict, Tuple
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
-from PROJET.UTILS.type_check import type_check_decorator
-import PROJET.UTILS.log_config as log
+from UTILS.type_check import type_check_decorator
+import UTILS.log_config as log
 # 作成した辞書
 # この２つは key = bytes value = list[str]
-from PROJET.SERIAL.dict.error      import comand as error
-from PROJET.SERIAL.dict.normal     import comand as normal
+from SERIAL.dict.error      import comand as error
+from SERIAL.dict.normal     import comand as normal
 # これは    key = tuple[str] value = bytes
-from PROJET.SERIAL.dict.plc_cmd    import comand as comand
+from SERIAL.dict.plc_cmd    import comand as comand
 # 定数ファイル
-from PROJET.SERIAL.constant.Status import OperationStatus
+from SERIAL.constant.Status import OperationStatus, DictStatus
 
 # 辞書定義
 ERROR_OR_NORMAL = {
@@ -42,47 +42,47 @@ class DictManager:
             return command_dict, OperationStatus.SUCCESS
         except Exception as e:
             logger.error(f"{self}: {self.compare_dict.__name__}: {e}")
-            return {}, OperationStatus.FAILURE
+            return DictStatus.NONE.value, OperationStatus.FAILURE
 
 
     # 辞書からデータを探して戻り値で渡す bytes → list[str]
-    @type_check_decorator({'command_dict': dict})
+    # @type_check_decorator({'command_dict': dict})
     def bytes_to_list(self, command_dict: dict[bytes, list[str]], 
-                      data: bytes) -> tuple[list[str], OperationStatus]:
+                      data: bytes):
         try:
             if len(data) < 2:
                 raise ValueError("コマンドデータが含まれていません。")
             # 辞書から値を取得
             text = command_dict.get(data[1:], None)
-            return text, OperationStatus.SUCCESS
+            return text
         except Exception as e:
             logger.error(f"{self}: {self.bytes_to_list.__name__}: {e}")
-            return ["動作不良", ""], OperationStatus.FAILURE
+            return DictStatus.NONE.value
 
         
-    # 辞書からデータを探して戻り値で渡す list[str] → bytes
-    @type_check_decorator({'msg': tuple})
-    def list_to_byte(self, msg: tuple[str]) -> Optional[bytes]:
+    # 辞書からデータを探して戻り値で渡す str → bytes
+    @type_check_decorator({'msg': str})
+    def str_to_byte(self, msg: str) -> Optional[bytes]:
         try:            
             cmd = CMD_DICT.get(msg, b'')
             return cmd, OperationStatus.SUCCESS
         except Exception as e:
-            logger.error(f"{self}: {self.list_to_byte.__name__}: {e}")
-            return None, OperationStatus.FAILURE
+            logger.error(f"{self}: {self.str_to_byte.__name__}: {e}")
+            return b'', OperationStatus.FAILURE
 
     # 受け取ったデータから対応する文字列を返す
     @type_check_decorator({'data': bytes})
-    def get_message(self, data: bytes) -> tuple[list[str], OperationStatus]:
+    def get_message(self, data: bytes):
         try:
             command_dict, status = self.compare_dict(data)
             if status == OperationStatus.SUCCESS:
                 # 戻り値 例 ["正常001", "投入部"], OperationStatus.SUCCESS
                 return self.bytes_to_list(command_dict, data), status
             else:
-                return ["動作不良", ""], OperationStatus.FAILURE
+                return DictStatus.NONE.value, OperationStatus.FAILURE
         except (ValueError, TypeError) as e:
             logger.error(f"{self}: {self.get_message.__name__}: {e}")
-            return ["動作不良", ""], OperationStatus.FAILURE
+            return DictStatus.NONE.value, OperationStatus.FAILURE
 """
     # 動作テスト用関数
     @type_check_decorator({'data': bytes})
