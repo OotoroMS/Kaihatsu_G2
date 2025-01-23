@@ -353,7 +353,20 @@ class Prometheus:
 
 if __name__ == '__main__':
     stop_event = threading.Event()
-    serial_data = serial_gate.SerialGate(stop_event)
+    # SerialCommunicate.jsonから設定を読み込む
+    with open("SerialCommunicate.json", "r") as f:
+        serial_setting = json.load(f)
+    serial_setting = {
+        "port": serial_setting["port"],
+        "baudrate": serial_setting["baudrate"],
+        "parity": serial_setting["parity"],
+        "stopbits": serial_setting["stopbits"],
+        "timeout": serial_setting["timeout"]
+    }
+    ##### 一時的な回避
+    serial_setting["parity"] = serial.PARITY_NONE   # パリティビットなし 一時的な回避
+    serial_setting["stopbits"] = serial.STOPBITS_ONE    # ストップビット1 一時的な回避
+    serial_data = serial_gate.SerialGate(serial_setting, stop_event)
     prometheus = Prometheus(stop_event)
     prometheus.run(serial_data, stop_event)
     stop_event.set()
