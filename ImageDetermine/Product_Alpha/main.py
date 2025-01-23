@@ -307,6 +307,9 @@ def main():
                     serial_comm.serial_write(PLC_SND_CMD["DEFECTIVE"])
                 ##### 判別処理 #####
 
+            # 終了するか判断(MySQLからの受信)
+            
+
             time.sleep(0.1)  # CPU負荷を下げるためにスリープ
 
     except Exception as e:
