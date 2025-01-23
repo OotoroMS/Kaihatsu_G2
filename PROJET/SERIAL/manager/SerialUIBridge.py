@@ -6,9 +6,9 @@ sys.path.append(os.getcwd())
 import serial
 from queue  import Queue
 from typing import Optional, Tuple
-from PROJET.SERIAL.manager.plc_communicator import PLCCommunicator
-from PROJET.SERIAL.manager.dict_manager     import DictManager
-from PROJET.SERIAL.constant.Status  import OperationStatus, DictStatus
+from SERIAL.manager.plc_communicator import PLCCommunicator
+from SERIAL.manager.dict_manager     import DictManager
+from SERIAL.constant.Status  import OperationStatus
 
 class SerialUIBridge(PLCCommunicator):
     def __init__(self, prams: dict):
@@ -53,7 +53,7 @@ class SerialUIBridge(PLCCommunicator):
     # データ送信
     def send_set(self, data):
         # 変換処理
-        cmd,status = self.dict.list_to_byte(data)
+        cmd,status = self.dict.str_to_byte(data)
         if status == OperationStatus.FAILURE:
             return None
         super().send(cmd)

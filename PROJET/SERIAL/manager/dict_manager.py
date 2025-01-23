@@ -4,16 +4,16 @@ from typing import Optional, Dict, Tuple
 
 # 自作プログラムをimport
 # 型チェックのデコレータ, エラー文表示
-from PROJET.UTILS.type_check import type_check_decorator
-import PROJET.UTILS.log_config as log
+from UTILS.type_check import type_check_decorator
+import UTILS.log_config as log
 # 作成した辞書
 # この２つは key = bytes value = list[str]
-from PROJET.SERIAL.dict.error      import comand as error
-from PROJET.SERIAL.dict.normal     import comand as normal
+from SERIAL.dict.error      import comand as error
+from SERIAL.dict.normal     import comand as normal
 # これは    key = tuple[str] value = bytes
-from PROJET.SERIAL.dict.plc_cmd    import comand as comand
+from SERIAL.dict.plc_cmd    import comand as comand
 # 定数ファイル
-from PROJET.SERIAL.constant.Status import OperationStatus
+from SERIAL.constant.Status import OperationStatus
 
 # 辞書定義
 ERROR_OR_NORMAL = {
@@ -60,14 +60,14 @@ class DictManager:
             return ["動作不良", ""], OperationStatus.FAILURE
 
         
-    # 辞書からデータを探して戻り値で渡す list[str] → bytes
-    @type_check_decorator({'msg': tuple})
-    def list_to_byte(self, msg: tuple[str]) -> Optional[bytes]:
+    # 辞書からデータを探して戻り値で渡す str → bytes
+    @type_check_decorator({'msg': str})
+    def str_to_byte(self, msg: str) -> Optional[bytes]:
         try:            
             cmd = CMD_DICT.get(msg, b'')
             return cmd, OperationStatus.SUCCESS
         except Exception as e:
-            logger.error(f"{self}: {self.list_to_byte.__name__}: {e}")
+            logger.error(f"{self}: {self.str_to_byte.__name__}: {e}")
             return None, OperationStatus.FAILURE
 
     # 受け取ったデータから対応する文字列を返す
