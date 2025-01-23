@@ -17,6 +17,7 @@ import Cmr_Lib as Cmr_Lib
 import serial_communicator as PLC_Lib
 from pc_comands import PCManager
 import SQLCommunication as SQLComm
+import serial_gate
 
 
 # 定数
@@ -105,7 +106,7 @@ class Prometheus:
             json.dump(result_json, json_file, indent=4)
 
     # 撮影、回転処理
-    def getPctr_and_rotate(cmr, serial_comm: PLC_Lib.SerialCommunicator):
+    def getPctr_and_rotate(cmr, tmp_serial_data):
         global captured_image
         # ---撮影、前処理---
         # 画像を取得
@@ -114,7 +115,7 @@ class Prometheus:
             print("!ERR! 画像の取得に失敗しました。")
             return None
         # ---回転命令送信---
-        serial_comm.serial_write(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
+        tmp_serial_data.send(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
         # PLCから回転完了の信号を受信
         """
         while True:
@@ -142,7 +143,7 @@ class Prometheus:
 
 
     # メイン関数
-    def run(self, stop_event: threading.Event):
+    def run(self, serial_data, stop_event: threading.Event):
         global init_image, infered_image
         print("#########################################")
         print("      外観判別システム  Prometheus       ")
@@ -187,6 +188,7 @@ class Prometheus:
         cmr.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'YUYV'))  # 未圧縮形式に設定を試みる
         print("---[OK]")
 
+        """
         # PLCの初期化
         print("    [CMT] PLCの初期化を行います...", end="")
         # SerialCommunicate.jsonから設定を読み込む
@@ -205,6 +207,7 @@ class Prometheus:
         serial_comm = PLC_Lib.SerialCommunicator(**serial_setting)
         plc = PCManager(serial_comm)
         print("---[OK]")
+        """
 
         # 初期状態の背景画像を取得
         print("  [CMT] 初期状態の背景画像を取得します...")
@@ -257,7 +260,7 @@ class Prometheus:
         try:
             while True:
                 # PLCからの動作開始を待つ
-                data, flag = serial_comm.serial_read()
+                data, flag = serial_data.get_receive_data()
                 if data == PLC_RCV_CMD["CHECK_EXIST"]:
                     print("*DBG* PLCからの存在確認要求を受信しました。")
                     # 現在の画像を取得
@@ -269,15 +272,15 @@ class Prometheus:
                     # 存在判定を行う
                     is_exist = cmr.detect_exist(current_image, init_image)
                     if is_exist:
-                        serial_comm.serial_write(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
+                        serial_data.send(PLC_SND_CMD["EXIST"])  # 存在している場合、PLCにOKを送信
                     else:
-                        serial_comm.serial_write(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
+                        serial_data.send(PLC_SND_CMD["NOT EXIST"])  # 存在していない場合、PLCにNGを送信
                         #continue   # 次のループへ
                     print("*DBG* 存在判定結果: {is_exist}")
 
                     # PLCからの動作開始を待つ
                     while True:
-                        data, flag = serial_comm.serial_read()
+                        data, flag = serial_data.get_receive_data()
                         if data == PLC_RCV_CMD["SET WORK"]:
                             print("*DBG* PLCからの作業開始要求を受信しました。")
                             break
@@ -288,7 +291,7 @@ class Prometheus:
                     for i in range(ROTATE_COUNT):   # 回転回数分、推論処理を行う
                         print(f"*DBG* {i+1}回目の判別処理を行います。")
                         # 画像取得と回転
-                        captured_image = self.getPctr_and_rotate(cmr, serial_comm)
+                        captured_image = self.getPctr_and_rotate(cmr, serial_data)
                         print("*DBG* 画像取得と回転が完了しました。")
                         # 前処理
                         preprocessed_img = img_dtrmn.pre_processing(captured_image)
@@ -322,15 +325,15 @@ class Prometheus:
                     # 判別結果送信
                     print("*DBG* 判別結果: {flg_judge}")
                     if flg_judge == JUDGE["OK"]:
-                        serial_comm.serial_write(PLC_SND_CMD["FLAWLESS"])
+                        serial_data.send(PLC_SND_CMD["FLAWLESS"])
                         # 良品をカウントアップ  SQLiteに保存
                     else:
-                        serial_comm.serial_write(PLC_SND_CMD["DEFECTIVE"])
+                        serial_data.send(PLC_SND_CMD["DEFECTIVE"])
                         # 不良品をカウントアップ SQLiteに保存
                     ##### 判別処理 #####
 
                 # threadの停止判断
-                if stop_event.is_set():
+                if self.stop_event.is_set():
                     print("[CMT] プログラムを終了します。")
                     break
                 
@@ -347,3 +350,12 @@ class Prometheus:
             # リソースの解放
             cmr.release()
             #plc.release()
+
+if __name__ == '__main__':
+    stop_event = threading.Event()
+    serial_data = serial_gate.SerialGate(stop_event)
+    prometheus = Prometheus(stop_event)
+    prometheus.run(serial_data, stop_event)
+    stop_event.set()
+    print("[CMT] プログラムを終了します。")
+    exit()
