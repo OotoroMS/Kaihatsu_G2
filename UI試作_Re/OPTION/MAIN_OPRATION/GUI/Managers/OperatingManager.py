@@ -26,13 +26,13 @@ class OperatingManager:
     
     def status_check(self):
         if self.oprating_status:
-            if self.oprating_status >= STOP_STATUS:
+            if self.oprating_status == STOP_STATUS:
                 self.oprating_text = OPERATION_STOP
                 return True
-            elif self.oprating_status >= ERROR_STATUS:
+            elif self.oprating_status in ERROR_STATUS:
                 self.oprating_text = OPERATION_ERROR
                 return True
-            elif self.oprating_status >= OPERATION_ACTIVE:
+            elif self.oprating_status in OPERATION_ACTIVE:
                 self.oprating_text = OPERATION_ACTIVE
                 return True
         return True

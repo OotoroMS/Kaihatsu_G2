@@ -9,7 +9,7 @@ from SERIAL.serial_gate import SerialGate
 OPERATION = "operation"
 
 def MainOpration(prams : dict):
-    # ストップイベント
+    # ストップイベント(シリアル通信)
     serial_stop = threading.Event()
     # シリアル通信
     serial_gate = SerialGate(prams, serial_stop)
@@ -27,7 +27,9 @@ def MainOpration(prams : dict):
     # serial_thread.start()
     # 終了まで待機
     stop_event.set()
+    serial_stop.set()
     # thread.join()
+    # serial_thread.join()
     
     # 判別
     if result == MOTION:
