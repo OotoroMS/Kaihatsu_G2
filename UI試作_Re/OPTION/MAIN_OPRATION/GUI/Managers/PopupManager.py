@@ -56,5 +56,5 @@ class PopupManager:
         return False
     
     # # エラーポップの表示内容を更新
-    # def set_error_popup(self, error : tuple[str, str]):
-    #     self.popups[ERROR_POPUP].error_update(error)
+    def set_error_popup(self, error : tuple[str, str]):
+        self.popups[ERROR_POPUP].error_update(error)

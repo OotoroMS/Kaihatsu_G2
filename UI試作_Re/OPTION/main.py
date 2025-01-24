@@ -18,7 +18,7 @@ def main():
     loop = True
     while loop:
         if mode == MAIN:
-            result = MAIN_OPRATION.MainOpration.MainOpration()
+            result = MAIN_OPRATION.MainOpration.MainOpration(SERIAL_PARAMS_GUI)
             if result == OPERATION:
                 mode = OPERATION
             elif result == "end":
