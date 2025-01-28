@@ -16,7 +16,7 @@ import ImgDtrmn_Lib as ImgDtrmn_Lib
 import Cmr_Lib as Cmr_Lib
 import serial_communicator as PLC_Lib
 from pc_comands import PCManager
-#import SQLCommunication as SQLComm
+import SQLCommunication as SQLComm
 import serial_gate
 
 
@@ -143,7 +143,7 @@ class Prometheus:
 
 
     # メイン関数
-    def run(self, serial_data, stop_event: threading.Event):
+    def run(self, serial_data: serial_gate.SerialGate, stop_event: threading.Event):
         global init_image, infered_image
         print("#########################################")
         print("      外観判別システム  Prometheus       ")
@@ -169,13 +169,11 @@ class Prometheus:
         print("-----------------------------------------")
         print("[CMT] 初期化を行います。")
 
-        """
         # SQLサーバーの初期化
         print("  [CMT] SQL通信の初期化を行います。")
         sql_comm = SQLComm.SQLCommunication()
         sql_comm.set_db_name(DB_NAME)
         print("  [CMT] SQL通信の初期化が完了しました。")
-        """
 
         # 外部デバイスの初期化
         print("  [CMT] 外部デバイスの初期化を行います。")
@@ -187,28 +185,7 @@ class Prometheus:
         cmr.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944) # 高さを1944pxに設定
         cmr.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'YUYV'))  # 未圧縮形式に設定を試みる
         print("---[OK]")
-
-        """
-        # PLCの初期化
-        print("    [CMT] PLCの初期化を行います...", end="")
-        # SerialCommunicate.jsonから設定を読み込む
-        with open("SerialCommunicate.json", "r") as f:
-            serial_setting = json.load(f)
-        serial_setting = {
-            "port": serial_setting["port"],
-            "baudrate": serial_setting["baudrate"],
-            "parity": serial_setting["parity"],
-            "stopbits": serial_setting["stopbits"],
-            "timeout": serial_setting["timeout"]
-        }
-        ##### 一時的な回避
-        serial_setting["parity"] = serial.PARITY_NONE   # パリティビットなし 一時的な回避
-        serial_setting["stopbits"] = serial.STOPBITS_ONE    # ストップビット1 一時的な回避
-        serial_comm = PLC_Lib.SerialCommunicator(**serial_setting)
-        plc = PCManager(serial_comm)
-        print("---[OK]")
-        """
-
+        
         # 初期状態の背景画像を取得
         print("  [CMT] 初期状態の背景画像を取得します...")
         time.sleep(1)  # カメラの安定化のため待機
@@ -260,7 +237,7 @@ class Prometheus:
         try:
             while True:
                 # PLCからの動作開始を待つ
-                data, flag = serial_data.get_receive_data()
+                data = serial_data.get_receive_data()
                 if data == PLC_RCV_CMD["CHECK_EXIST"]:
                     print("*DBG* PLCからの存在確認要求を受信しました。")
                     # 現在の画像を取得
@@ -280,7 +257,7 @@ class Prometheus:
 
                     # PLCからの動作開始を待つ
                     while True:
-                        data, flag = serial_data.get_receive_data()
+                        data = serial_data.get_receive_data()
                         if data == PLC_RCV_CMD["SET WORK"]:
                             print("*DBG* PLCからの作業開始要求を受信しました。")
                             break
@@ -327,6 +304,7 @@ class Prometheus:
                     if flg_judge == JUDGE["OK"]:
                         serial_data.send(PLC_SND_CMD["FLAWLESS"])
                         # 良品をカウントアップ  SQLiteに保存
+                        
                     else:
                         serial_data.send(PLC_SND_CMD["DEFECTIVE"])
                         # 不良品をカウントアップ SQLiteに保存
