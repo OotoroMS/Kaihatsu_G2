@@ -1,22 +1,18 @@
 #   データベース処理クラス-メイン装置
 import sqlite3
 import datetime
-import sys
-sys.path.append("../MAIN_DEVICE/GUI")
-sys.path.append("../MAIN_DEVICE/")
-from GUI.constant.file_path import *
 #   テーブル接続用クエリ
-DB_CONNECT = DB_FILE_PATH
+DB_CONNECT = "DATABASE\\"
 #   確認用クエリ
-DB_LIST         = "select * from "   #   データベース一覧を取得
-TABLE_LIST      = "show tables"      #   テーブル一覧を取得
+DB_LIST = "select * from "   #   データベース一覧を取得
+TABLE_LIST = "show tables"      #   テーブル一覧を取得
 TABLE_DATA_LIST = "select * from "  #   テーブルの中身取得
 
 #   良否判定テーブル
-GOOD_SIZE_UPDATE   = "update DB_now set good_size = "
-BAD_SIZE_UPDATE    = "update DB_now set bad_size = "
+GOOD_SIZE_UPDATE = "update DB_now set good_size = "
+BAD_SIZE_UPDATE = "update DB_now set bad_size = "
 GOOD_VISION_UPDATE = "update DB_now set good_vision = "
-BAD_VISION_UPDATE  = "update DB_now set bad_vision = "
+BAD_VISION_UPDATE = "update DB_now set bad_vision = "
 #   不良品テーブル
 TIMELOG_UPDATE = "insert into DB_timelog(datetime) values "
 
@@ -24,7 +20,7 @@ TIMELOG_UPDATE = "insert into DB_timelog(datetime) values "
 class SQLCommunication:
     #   コンストラクタ
     def __init__(self):
-        self.db_name    = ""
+        self.db_name = ""
         self.table_name = ""
     
     #   データベース名を設定

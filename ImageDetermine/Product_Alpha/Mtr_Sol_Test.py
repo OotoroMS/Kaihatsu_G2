@@ -1,4 +1,3 @@
-import serial.test
 import pc_comands
 import plc_pc
 import serial_communicator
@@ -18,20 +17,23 @@ def main():
     # serial_test = pc_comands.PCManager(serial_comm1)
 
     while True:
+        """
         inpt = input("Enter command: ")
         if inpt == "exit":
             break
+        """
         try:
             # 入力を数値に変換
-            number = int(inpt)
+            #number = int(inpt)
             # 数値をバイト列に変換（整数型として送信）
-            data = struct.pack(">B", number)
-            serial_comm1.serial_write(data)
+            #data = struct.pack(">B", number)
+            #serial_comm1.serial_write(data)
             data = serial_comm1.serial_read()
             if data[0]:
                 print(data)
             else:
-                print("No data received.")
+                pass
+                #print("No data received.")
         except ValueError:
             print("Invalid input. Please enter a valid integer.") 
         
