@@ -1,0 +1,6 @@
+{
+    "timestamp": "20250128_145622_161809",
+    "infered_accuracy": 187.4398956298828,
+    "image_path": "results\\defective_images\\defective_20250128_145622_161809.jpg",
+    "diff_image_path": "results\\diff_images\\diff_20250128_145622_161809.jpg"
+}

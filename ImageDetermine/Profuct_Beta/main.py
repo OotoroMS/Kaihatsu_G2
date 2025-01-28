@@ -10,7 +10,7 @@ SERIAL_PARAMS_GUI = {
     "baudrate": 9600,
     "parity": serial.PARITY_NONE,
     "stopbits": serial.STOPBITS_ONE,
-    "timeout": 0.08
+    "timeout": 0.1
 }
 
 def main():

@@ -1,0 +1,11 @@
+{
+  "model_path": "model/Sample2024_noble_quarter_50.keras",
+  "work_name": "Sample2024",
+  "threshold": 50,
+  "crop_ranges": {
+    "x_start": 470,
+    "x_end": 2518,
+    "y_start": 744,
+    "y_end": 1256
+  }
+}

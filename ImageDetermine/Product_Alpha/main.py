@@ -261,10 +261,15 @@ def main():
                 time.sleep(0.2)  # CPU負荷を下げるためにスリープ
 
                 # PLCからの動作開始を待つ
+                cnt = 0
                 while True:
+                    cnt += 1
                     data, flag = serial_comm.serial_read()
                     if data == PLC_RCV_CMD["SET WORK"]:
                         print("*DBG* PLCからの作業開始要求を受信しました。")
+                        break
+                    if cnt > 50:
+                        print("!ERR! PLCからの作業開始要求がタイムアウトしました。")
                         break
                     time.sleep(0.1)
 
@@ -305,7 +310,9 @@ def main():
                         break  # 不良を検出したらループを抜ける
 
                 # 判別結果送信
-                print("*DBG* 判別結果: {flg_judge}")
+                # デバッグ用 デフォルトでOKを返す
+                flg_judge = JUDGE["NG"]
+                print(f"*DBG* 判別結果: {flg_judge}")
                 if flg_judge == JUDGE["OK"]:
                     serial_comm.serial_write(PLC_SND_CMD["FLAWLESS"])
                 else:

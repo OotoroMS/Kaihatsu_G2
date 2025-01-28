@@ -2,7 +2,7 @@
 import sqlite3
 import datetime
 #   テーブル接続用クエリ
-DB_CONNECT = "DATABASE\\"
+DB_CONNECT = "UI試作_Re\\OPTION\\DATABASE\\"
 #   確認用クエリ
 DB_LIST = "select * from "   #   データベース一覧を取得
 TABLE_LIST = "show tables"      #   テーブル一覧を取得

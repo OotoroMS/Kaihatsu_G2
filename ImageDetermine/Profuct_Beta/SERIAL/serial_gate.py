@@ -23,6 +23,10 @@ class SerialGate:
             # 受信
             rcv_data, flag = self.serial_comm.serial_read()
             self.r_data = rcv_data
+            if flag:
+                # 受信データがある場合
+                #print(f"受信データ: {rcv_data}")
+                pass
             time.sleep(0.1)
 
     def get_receive_data(self):
