@@ -14,7 +14,7 @@ BAD_SIZE_UPDATE = "update DB_now set bad_size = "
 GOOD_VISION_UPDATE = "update DB_now set good_vision = "
 BAD_VISION_UPDATE = "update DB_now set bad_vision = "
 #   不良品テーブル
-TIMELOG_UPDATE = "insert into DB_timelog(datetime) values "
+TIMELOG_UPDATE = "insert into DB_timelog(datetime, bad_vision_path, bad_mark_path) values "
 
 #   データベース通信用クラス
 class SQLCommunication:
@@ -159,7 +159,7 @@ class SQLCommunication:
         #   各種代入処理
         if db_name == None:
             db_name = self.db_name
-        print("connect DB: ", db_name)
+        #print("connect DB: ", db_name)
         con = sqlite3.connect(DB_CONNECT+db_name)
         day = datetime.datetime.today()
         today = day.date()
@@ -171,8 +171,8 @@ class SQLCommunication:
             for i in result:
                 db_day = i[1]
             if str(today) != str(db_day):
-                cursor.execute("insert into DB_countlog(day,good_size,bad_size)values('%s',%d,%d)" %(i[1],i[2],i[3]))
-                cursor.execute("update DB_now set day='%s',good_size=0,bad_size=0 where id=0" %(today))
+                cursor.execute("insert into DB_countlog(day,good_vision,bad_vision)values('%s',%d,%d)" %(i[1],i[2],i[3]))
+                cursor.execute("update DB_now set day='%s',good_vision=0,bad_vision=0 where id=0" %(today))
                 con.commit()
         except Exception as e:
                 print("DbCommunication:check_day error: ",e)
@@ -270,24 +270,27 @@ class SQLCommunication:
             cursor.close()
             con.close()
     
-    def bad_time_update(self, db_name=None):
+    def bad_time_update(self, db_name=None, vision_path=None, mark_path=None):
         #   各種代入処理
         if db_name == None:
             db_name = self.db_name
-        con = sqlite3.connect(DB_CONNECT+db_name)
-        try:
-            #   カーソルを取得
-            cursor = con.cursor()
-            days = datetime.datetime.now().replace(microsecond=0)
-            que = TIMELOG_UPDATE + "('" + str(days) + "')"
-            print(que)
-            cursor.execute(que)
-            con.commit()
-        except Exception as e:
-                print("DbCommunication:bad_time_update error: ",e)
-        finally:
-            cursor.close()
-            con.close()
+        if vision_path == None and mark_path == None:
+            print("Please specify the path to the vision and mark images.")
+        else:
+            con = sqlite3.connect(DB_CONNECT+db_name)
+            try:
+                #   カーソルを取得
+                cursor = con.cursor()
+                days = datetime.datetime.now().replace(microsecond=0)
+                que = TIMELOG_UPDATE + "('" + str(days) + "','" + vision_path + "','" + mark_path + "')"
+                # print(que)
+                cursor.execute(que)
+                con.commit()
+            except Exception as e:
+                    print("DbCommunication:bad_time_update error: ",e)
+            finally:
+                cursor.close()
+                con.close()
 
 if __name__ == "__main__":
     db = SQLCommunication()

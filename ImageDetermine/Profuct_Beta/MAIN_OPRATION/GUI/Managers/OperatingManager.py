@@ -14,7 +14,7 @@ class OperatingManager:
         # シリアル通信クラス(受信のみ)
         self.serial = serial
         # 稼働状況保持変数
-        self.oprating_status = b'241'
+        self.oprating_status = b'0'
         self.oprating_text   = OPERATION_STOP
         # 表示領域生成
         self.rect = pygame.rect.Rect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT)
@@ -22,7 +22,15 @@ class OperatingManager:
         self.font = pygame.font.Font(FONT, FONT_SIZE)
     
     def receive_operating_status(self):
-        self.oprating_status = self.serial.get_receive_data()
+        tmp_getdata = self.serial.get_receive_data()
+        # bytes型のデータをint型に変換
+        if tmp_getdata != None:
+            tmp_int_converted_data = int.from_bytes(tmp_getdata, "big")
+        else:
+            print("OperatingManager.py receive_operating_status : 受信データなし")
+
+        # 変換したintデータをリストの要素数指定に使用し、文字列に変換
+
     
     def status_check(self):
         if self.oprating_status:
@@ -32,7 +40,7 @@ class OperatingManager:
             elif self.oprating_status in ERROR_STATUS:
                 self.oprating_text = OPERATION_ERROR
                 return True
-            elif self.oprating_status in OPERATION_ACTIVE:
+            elif self.oprating_status in ACTIVE_STATUS:
                 self.oprating_text = OPERATION_ACTIVE
                 return True
         return True

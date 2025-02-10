@@ -7,8 +7,8 @@ TITLE_VISION_STATUS = {
     "image_path" : TITLE_FILE_PATH + "title_vision.png"
 }
 EXPTXT_NO_IMAGE_STATUS = {
-    "coordinate" : (310,  200),
-    "size"       : (1300, 740),
+    "coordinate" : ((1920-1296)//2,  ((1080-972+972*0.15)//2) + 20),
+    "size"       : (1296, int(972*0.85)),
     "image_path" : EXPTXT_FILE_PATH + "no_image.png"
 }
 BUTTON_BACK_STATUS = {

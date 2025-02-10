@@ -115,11 +115,11 @@ class ImgDtrmn_Lib:
         # 両者の形状を確認
         print(f"推論後の形状: {infered_img.shape}, 入力画像の形状: {inpt_img_flat.shape}")
 
-        # MSEの計算
-        mse = np.mean((infered_img - inpt_img_flat[:infered_img.size]) ** 2)
+        # MAEを計算
+        mae = np.mean(np.abs(inpt_img_flat - infered_img))
 
         # 推論画像とMSEを返す
-        return mse, infered_img
+        return mae, infered_img
 
     # 要検討
     def mark_defects(self, input_img, infered_img):

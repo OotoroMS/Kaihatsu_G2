@@ -30,8 +30,8 @@ class VisionScreen(BaseScreen):
     # 画像の設定
     def setting_images(self):
         self.images = [
-            Picture(self.screen, **TITLE_VISION_STATUS),
-            Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS)
+            Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS),
+            Picture(self.screen, **TITLE_VISION_STATUS)
         ]
 
     def draw(self):
@@ -43,13 +43,15 @@ class VisionScreen(BaseScreen):
         # 画像読み込み
         dir_path = Path(SUMPLE_FILE_PATH)
         files    = list(dir_path.glob("*.jpg"))
-        # 画像が存在すれば
+        # 画像存在チェックとロード
+        tmp_img = None
         if len(files) > ZERO:
             image_path = files[0]
-            self.images[1] = Picture(self.screen, EXPTXT_NO_IMAGE_STATUS["coordinate"], EXPTXT_NO_IMAGE_STATUS["size"], f"{image_path}")
+            tmp_img = Picture(self.screen, EXPTXT_NO_IMAGE_STATUS["coordinate"], EXPTXT_NO_IMAGE_STATUS["size"], f"{image_path}")
         else:
-             self.images[1] = Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS)
-        
+            tmp_img = Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS)        
+        # 画像を表示
+        self.images[ZERO] = tmp_img
 
     # 古い画像を削除
     def delete_old_images(self):
