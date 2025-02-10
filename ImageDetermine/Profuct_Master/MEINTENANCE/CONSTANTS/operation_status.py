@@ -1,0 +1,3 @@
+OPERATION_ACTIVE = "稼働中"
+OPERATION_STOP   = "停止中"
+OPERATION_ERROR  = "エラー"

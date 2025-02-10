@@ -1,0 +1,10 @@
+from MAIN_OPRATION.GUI.Constants.color import *
+OPERATION_ACTIVE = "稼働中"
+OPERATION_STOP   = "停止中"
+OPERATION_ERROR  = "エラー"
+
+BACK_COROR = {
+    OPERATION_ACTIVE : GREEN,
+    OPERATION_STOP   : YELLOW,
+    OPERATION_ERROR  : RED
+}

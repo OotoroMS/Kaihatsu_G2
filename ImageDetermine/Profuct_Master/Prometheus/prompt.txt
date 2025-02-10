@@ -1,0 +1,3 @@
+*DBG* 差分画像を保存しました: results\defective_images\defective_diff_20250121_150718_766787.jpg
+!ERR! プログラムを異常終了します。
+!ERR! エラー内容: Object of type float32 is not JSON serializable
