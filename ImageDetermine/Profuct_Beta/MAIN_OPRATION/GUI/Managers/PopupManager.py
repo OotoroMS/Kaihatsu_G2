@@ -20,7 +20,8 @@ class PopupManager:
             SPASS_POPUP : TextPopup(self.screen, SPASS_POPUP),
             RPASS_POPUP : TextPopup(self.screen, RPASS_POPUP),
             RESET_ASK   : ResetPopup(self.screen, RESET_ASK),
-            ERROR_POPUP : ErrorPopup(self.screen, ERROR_POPUP)
+            ERROR_POPUP : ErrorPopup(self.screen, ERROR_POPUP),
+            STOP_POPUP  : TextPopup(self.screen, STOP_POPUP)
         }
     
     # POPUP描画

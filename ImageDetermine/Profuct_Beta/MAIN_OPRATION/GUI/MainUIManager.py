@@ -8,6 +8,7 @@ from MAIN_OPRATION.GUI.Constants.popup_name  import *
 import MAIN_OPRATION.GUI.Managers.ScreenManager     as ScreenManager
 import MAIN_OPRATION.GUI.Managers.PopupManager      as PopupManager
 import MAIN_OPRATION.GUI.Managers.OperatingManager  as OperatingManager
+import MAIN_OPRATION.GUI.Constants.operation_status as operation_status
 SCREEN_SIZE = (1920, 1080)
 
 class MainUIManager:
@@ -52,13 +53,22 @@ class MainUIManager:
     
     # 画面表示イベント
     def screen_event(self, event_result, is_click):
-        if is_click and self.screen_manager.screen_search(event_result):
+        if is_click and event_result == PASS and self.operation_manager.oprating_type == operation_status.OPERATION_ACTIVE:
+            print("NOT MOVE")
+            if self.popup_manager.popup_search(STOP_POPUP):
+                self.show_popup(STOP_POPUP)
+        elif is_click and self.screen_manager.screen_search(event_result):
             self.curent_screen = event_result
             return True
-        elif is_click and event_result == MOTION:
+        # 稼働状況が停止中の場合、画面遷移     
+        elif is_click and event_result == MOTION and self.operation_manager.oprating_type == operation_status.OPERATION_STOP:
             self.curent_screen = event_result
             self.running = False
             return True
+        elif is_click and event_result == MOTION:
+            if self.popup_manager.popup_search(STOP_POPUP):
+                self.show_popup(STOP_POPUP)
+                return True
         if is_click and self.popup_manager.popup_search(event_result):
             self.show_popup(event_result)
             return True
