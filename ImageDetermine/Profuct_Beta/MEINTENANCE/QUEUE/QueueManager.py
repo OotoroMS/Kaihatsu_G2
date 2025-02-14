@@ -34,11 +34,11 @@ class QueueManager:
         while True:
             result = self.recv_message()
             if result:
-                # print("QueueManager.py until_recv_message : get messsage is ", result)
                 return result
 
     # 2つのメッセージを送る(対象と命令または変更値)
     def send_two_message(self, type : str, message : str):
+        print("QueueManager.py send_two_message : send message")
         self.send_message(type)
         self.send_message(message)
     

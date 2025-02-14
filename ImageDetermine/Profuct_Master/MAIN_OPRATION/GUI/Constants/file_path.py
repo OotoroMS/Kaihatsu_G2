@@ -9,7 +9,7 @@ DB_FILE_PATH         = "DATABASE\\"
 DATABESE = "DB_option.db"
 # 画像読み込みエラーの場合,
 # 基本的にここを変更すればOK
-IMAGE_FFAILE_PATH    = "D:\\Kaihatsu\\OPTION_py311\\MAIN_OPRATION\\GUI\\Images\\"
+IMAGE_FFAILE_PATH    = "MAIN_OPRATION\\GUI\\Images\\"
 # ディレクトリが増えたらここに,
 # IMAGEFFAILEPATH + "ディレクトリ名" の形で宣言
 TITLE_FILE_PATH      = IMAGE_FFAILE_PATH + "title\\"

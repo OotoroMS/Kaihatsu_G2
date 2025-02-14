@@ -10,9 +10,13 @@ PUSH_COMMAND = {
 HOLD_DOWN_COMMAND = {
     MOTOR_NOMAL         : ("移動用モータ正転コマンド", "移載部"),
     MOTOR_REVERSE       : ("移動用モータ逆転コマンド", "移載部"),
-    HOLD_END            : ("モータ停止コマンド", "移載部")
+    # HOLD_END            : ("移動用モータ停止コマンド", "移載部")
 }
 ADSORPTION_COMMAND = {
     ADSORPTION_ON       : ("吸着開始コマンド", "移載部"),
     ADSORPTION_OFF      : ("吸着終了コマンド", "移載部")
+}
+LIGHT_COMMAND = {
+    LIGHT_ON            : ("照明点灯コマンド", "外観検査部"),
+    LIGHT_OFF           : ("照明消灯コマンド", "外観検査部")
 }

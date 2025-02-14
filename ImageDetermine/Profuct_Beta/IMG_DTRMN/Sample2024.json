@@ -1,5 +1,5 @@
 {
-  "model_path": "model/Sample2024_noble_quarter_50.keras",
+  "model_path": "model/Sample2024_advanced_quarter_50.keras",
   "work_name": "Sample2024",
   "threshold": 22,
   "crop_ranges": {

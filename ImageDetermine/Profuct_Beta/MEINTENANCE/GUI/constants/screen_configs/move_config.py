@@ -117,3 +117,8 @@ TERMINATION  = "動作完了"
 
 BUTTON_ON  = 0
 BUTTON_OFF = 1
+
+IN_WORK_ON_STAUTS   = b'\xcf\n'
+IN_WORK_OFF_STAUTS  = b'\xd0\n'
+OUT_WORK_ON_STAUTS  = b'\xcd\n'
+OUT_WORK_OFF_STAUTS = b'\xce\n'

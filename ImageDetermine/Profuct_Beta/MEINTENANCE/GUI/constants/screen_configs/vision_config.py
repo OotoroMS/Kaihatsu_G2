@@ -19,7 +19,15 @@ BUTTON_SOLENOID_STATUS = {
     "image_path" : BUTTON_FILE_PATH + "button_solenoid.png"
 }
 BUTTON_STAPING_STATUS = {
-    "coordinate" : (1000, 400),
+    "coordinate" : (1000, 300),
     "size"       : (650,  320),
     "image_path" : BUTTON_FILE_PATH + "button_staping.png"
 }
+BUTTON_LIGHT_STATUS = {
+    "coordinate" : (1000, 650),
+    "size"       : (650,  320),
+    "image_path" : BUTTON_FILE_PATH + "button_light.png"
+}
+
+ON  = 1
+OFF = 0

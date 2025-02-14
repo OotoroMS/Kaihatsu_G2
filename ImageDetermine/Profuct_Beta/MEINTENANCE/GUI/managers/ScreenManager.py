@@ -16,6 +16,8 @@ class ScreenManager:
     def __init__(self, screen : pygame.Surface) -> None:
         self.screen      = screen
         self.screen_now  = MAIN
+        self.in_work     = b'\xd0'
+        self.out_work    = b'\xce'
         self.settng_screen()
 
     # 画面を登録
@@ -80,4 +82,11 @@ class ScreenManager:
     def move_lamp_update(self, opration, command):
         check_screen = self.screen_check(self.screen_now)
         if hasattr(check_screen, "move_lamp_update"):
+            # print("ScreenManager.py move_lamp_update : ", opration, command)
             check_screen.move_lamp_update(opration, command)
+
+    def work_lamp_update(self, key):
+        check_screen = self.screen_check(self.screen_now)
+        if hasattr(check_screen, "work_status_update"):
+            # print("ScreenManager.py work_lamp_update key is ", key)
+            check_screen.work_status_update(key)

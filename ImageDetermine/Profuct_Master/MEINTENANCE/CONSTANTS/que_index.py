@@ -1,0 +1,19 @@
+# キューのインデックスを定義する
+# PLC-PC間のコマンド送信キューと受信キューのインデックスを定義する
+PLC_SEND_QUEUE_INDEX = 0
+PLC_RECV_QUEUE_INDEX = 1
+# PC-PLC間のキューのスレッドロックのインデックスを定義する
+PLC_SEND_THREAD_LOCK_INDEX = 0
+PLC_RECV_THREAD_LOCK_INDEX = 1
+# ワーク検知キューのインデックスを定義する
+WORK_SEND_QUEUE_INDEX = 0
+WORK_RECV_QUEUE_INDEX = 1
+# ワーク検知キューのスレッドロックのインデックスを定義する
+WORK_SEND_THREAD_LOCK_INDEX = 0
+WORK_RECV_THREAD_LOCK_INDEX = 1
+# 稼働状況キューのインデックスを定義する
+OPERATION_SEND_QUEUE_INDEX = 0
+OPERATION_RECV_QUEUE_INDEX = 1
+# 稼働状況キューのスレッドロックのインデックスを定義する
+OPERATION_SEND_THREAD_LOCK_INDEX = 0
+OPERATION_RECV_THREAD_LOCK_INDEX = 1

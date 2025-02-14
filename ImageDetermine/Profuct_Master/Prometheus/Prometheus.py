@@ -12,8 +12,8 @@ import serial
 from datetime import datetime 
 
 # 自作ライブラリのインポート
-import ImgDtrmn_Lib as ImgDtrmn_Lib
-import Cmr_Lib as Cmr_Lib
+import Prometheus.ImgDtrmn_Lib as ImgDtrmn_Lib
+import Prometheus.Cmr_Lib as Cmr_Lib
 import SERIAL.serial_gate as SG
 import DATABASE.SQLCommunication as SQLComm
 

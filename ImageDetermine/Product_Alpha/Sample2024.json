@@ -1,7 +1,7 @@
 {
   "model_path": "model/Sample2024_advanced_quarter_50.keras",
   "work_name": "Sample2024",
-  "threshold": 50,
+  "threshold": 100,
   "crop_ranges": {
     "x_start": 470,
     "x_end": 2518,

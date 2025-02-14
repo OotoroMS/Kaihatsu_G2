@@ -41,7 +41,7 @@ PLC_SND_CMD = {         # PLC送信コマンド
     "NOT EXIST": b'\x0c',
     "FLAWLESS": b'\x14',
     "DEFECTIVE": b'\x15',
-    "ROTATE": b'\xdd',
+    "ROTATE": b'\x64',
 }
 
 PLC_RCV_CMD = {         # PLC受信コマンド
@@ -114,7 +114,14 @@ class Prometheus:
             print("!ERR! 画像の取得に失敗しました。")
             return None
         # ---回転命令送信---
-        tmp_serial_data.send(PLC_SND_CMD["ROTATE"] + bytes([ROTATE_DEGREE]))
+        # intに変換
+        tmp_cmd = int.from_bytes(PLC_SND_CMD["ROTATE"])
+        tmp_cmd += ROTATE_DEGREE
+        print(f"*DBG* 回転コマンド算出します。data:{tmp_cmd}")
+        # byteに変換
+        plc_cmnd = tmp_cmd.to_bytes(1, 'big')
+        print(f"*DBG* 回転命令をPLCに送信します。data:{plc_cmnd}")
+        tmp_serial_data.send(plc_cmnd)
         # PLCから回転完了の信号を受信
         """
         while True:
@@ -281,11 +288,30 @@ class Prometheus:
                         # 推論
                         mae = self.inference(img_dtrmn, preprocessed_img)
                         print(f"*DBG* 推論結果: {mae}")
+
+                        # jsonに追加保存
+                        # jsonファイルの読み込み
+                        with open('results/inference_test_0213.json', 'r') as f:
+                            json_data = json.load(f)
+                        # 追加するデータ
+                        add_data = {
+                            'timestamp': datetime.now().strftime('%Y%m%d_%H%M%S_%f'),
+                            'mae': float(mae),
+                        }
+                        # jsondataを配列に変換
+                        tmp_data = json_data['data']
+                        tmp_data.append(add_data)
+                        json_data['data'] = tmp_data
+                        # jsonファイルに書き込み
+                        with open('results/inference_test.json', 'w') as f:
+                            json.dump(json_data, f, indent=4)
+                        print("*DBG* JSONファイルに追加保存しました。")
+
                         if mae > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
                             flg_judge = JUDGE["NG"]  # 不良を検出
                             # 結果を保存
                             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-                            image_filename = f'defective_{timestamp}.jpg'
+                            image_filename = f'defective_{timestamp}.bmp'
                             image_path = os.path.join(defective_images_dir, image_filename)
                             # 元の画像を保存
                             cv2.imwrite(image_path, captured_image)
@@ -301,9 +327,16 @@ class Prometheus:
                             print(f"*DBG* 差分画像を保存しました: {diff_image_path}")
                             # JSONファイルを作成
                             self.save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path)
-                            break  # 不良を検出したらループを抜ける
+                            #break  # 不良を検出したらループを抜ける
 
                     # 判別結果送信
+                    #flg_judge = JUDGE["OK"]  # デバッグ用
+                    num_random = np.random.randint(0,10)
+                    if num_random % 8 == 0:
+                        flg_judge = JUDGE["NG"]
+                    else:
+                        flg_judge = JUDGE["OK"]
+
                     print(f"*DBG* 判別結果: {flg_judge}")
                     if flg_judge == JUDGE["OK"]:
                         self.serial_data.send(PLC_SND_CMD["FLAWLESS"])

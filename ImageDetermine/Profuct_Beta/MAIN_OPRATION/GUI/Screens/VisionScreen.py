@@ -39,28 +39,37 @@ class VisionScreen(BaseScreen):
         super().draw()
 
     def update_vision(self):
-        self.delete_old_images()
-        # 画像読み込み
-        dir_path = Path(SUMPLE_FILE_PATH)
-        files    = list(dir_path.glob("*.jpg"))
-        # 画像存在チェックとロード
-        tmp_img = None
-        if len(files) > ZERO:
-            image_path = files[0]
-            tmp_img = Picture(self.screen, EXPTXT_NO_IMAGE_STATUS["coordinate"], EXPTXT_NO_IMAGE_STATUS["size"], f"{image_path}")
-        else:
-            tmp_img = Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS)        
-        # 画像を表示
-        self.images[ZERO] = tmp_img
+        # self.delete_old_images()
+        try:
+            # 画像読み込み
+            dir_path = Path(SUMPLE_FILE_PATH)
+            files    = list(dir_path.glob("*.jpg"))
+            # 画像存在チェックとロード
+            tmp_img = None
+            if len(files) > ZERO:
+                image_path = files[0]
+                tmp_img = Picture(self.screen, EXPTXT_NO_IMAGE_STATUS["coordinate"], EXPTXT_NO_IMAGE_STATUS["size"], f"{image_path}")
+            else:
+                tmp_img = Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS)        
+            # 画像を表示
+            self.images[ZERO] = tmp_img
+        except Exception as e:
+            print(f"エラーが発生しました: {e}")
+            tmp_img = Picture(self.screen, **EXPTXT_NO_IMAGE_STATUS)
+            self.images[ZERO] = tmp_img
 
     # 古い画像を削除
     def delete_old_images(self):
-        # 画像を取得
-        image_files = glob.glob(os.path.join(SUMPLE_FILE_PATH, "*.[jp][pn]g"))
-        if image_files:
-            self.delete_images(image_files)
+        try:
+            # 画像を取得
+            image_files = glob.glob(os.path.join(SUMPLE_FILE_PATH, "*.[jp][pn]g"))
+            if image_files:
+                self.delete_images(image_files)
+        except Exception as e:
+            print(f"エラーが発生しました: {e}")
         
     def delete_images(self, files : list[str]):
+
         # 新しい順にソート
         files.sort(key=os.path.getatime, reverse=True)
         # 最も新しい画像を残して削除

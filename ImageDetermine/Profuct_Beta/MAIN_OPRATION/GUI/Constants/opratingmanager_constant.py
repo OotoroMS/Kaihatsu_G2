@@ -6,8 +6,8 @@ RECT_HEIGHT = 160
 FONT_SIZE   = 30
 
 # 稼働状態識別用
-STOP_STATUS    = b'250'
-ACTIVE_STATUS  = (b'220',b'221',b'222',b'223',b'224',b'225',b'226',b'227',b'228',b'229')
-ERROR_STATUS   = (b'230',b'231',b'232',b'233',b'234',b'235',b'236',b'237',b'238',b'239',
-                 b'240',b'241',b'242',b'243',b'244',b'245',b'246',b'247',b'248',b'249')
+STOP_STATUS    = (b'\xfa\n', b'\xfb\n', b'\xfc\n', b'\xfd\n')
+ACTIVE_STATUS  = ( b'\xdc\n', b'\xdd\n', b'\xde\n', b'\xdf\n', b'\xe0\n', b'\xe1\n', b'\xe2\n', b'\xe3\n', b'\xe4\n', b'\xe5\n')
+ERROR_STATUS   = ( b'\xe6\n', b'\xe7\n', b'\xe8\n', b'\xe9\n', b'\xea\n', b'\xeb\n', b'\xec\n', b'\xed\n', b'\xee\n', b'\xef\n',
+                   b'\xf0\n', b'\xf1\n', b'\xf2\n', b'\xf3\n', b'\xf4\n', b'\xf5\n', b'\xf6\n', b'\xf7\n', b'\xf8\n', b'\xf9\n')
 

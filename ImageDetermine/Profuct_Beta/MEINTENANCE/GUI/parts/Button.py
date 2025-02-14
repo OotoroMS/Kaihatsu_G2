@@ -91,12 +91,13 @@ class Button:
         result = None
         normal = False
         if event.type == pygame.MOUSEBUTTONDOWN:
+            # print("press")
             if self.rect.collidepoint(event.pos):
-                self.cnt = 0
                 self.presse = True
                 result, normal = self.func()
                 return result, normal
         elif event.type == pygame.MOUSEBUTTONUP:
+            # print("up")
             if self.rect.collidepoint(event.pos) or self.presse:
                 self.presse = False
                 result = HOLD_DOWN_END

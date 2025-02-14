@@ -50,6 +50,7 @@ class SerialCommunicator:
                 # データが無しならとっとと次の処理に行く
                 if self.serial.in_waiting > serial_none:
                     data = self.serial.readline()
+                    # print("serial_communicator.py serial_read : serial_read data is ", data)
                 # 受信データの有無
                 if data:
                     self.logger.debug(f"{self.serial.name} 受信：{data}")

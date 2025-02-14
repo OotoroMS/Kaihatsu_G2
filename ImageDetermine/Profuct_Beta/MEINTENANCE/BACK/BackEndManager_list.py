@@ -8,13 +8,14 @@ from SERIAL.manager.SerialUIBridge  import SerialUIBridge
 import SERIAL.dict.plc_cmd as cmd
 import SERIAL.dict.normal as nomal
 # キュー管理
-from MEINTENANCE.QUEUE.QueueManager import QueueManager
+from MEINTENANCE.QUEUE.QueueManager_list import QueueManager
 # 定数
 from MEINTENANCE.CONSTANTS.operation_status  import *
 from MEINTENANCE.CONSTANTS.command_type      import *
 from MEINTENANCE.CONSTANTS.pless_command     import *
 from MEINTENANCE.GUI.constants.file_path     import *
 from MEINTENANCE.CONSTANTS.ui_plc_pc_command import *
+import MEINTENANCE.CONSTANTS.move_moter_pos  as motor_pos
 # データベース
 from DATABASE.SQLCommunication  import SQLCommunication
 MEINTENANCE = ("メンテナンス", "動作確認")
@@ -32,9 +33,9 @@ TARGETTABLE = [
 ]
 
 class BackEndManager:
-    def __init__(self, send_que : queue.Queue, recv_que : queue.Queue, send_lock : threading.Lock, recv_rock : threading.Lock, serial : SerialUIBridge) -> None:
+    def __init__(self, plc_cmd_que_list : list, plc_cmd_thred_lock : list, work_cmd_que_list : list, work_cmd_thred_lock: list, operation_que_list : list, operation_thread_lock : list, serial : SerialUIBridge) -> None:
         # キュー管理クラス
-        self.queue_manager = QueueManager(send_que, recv_que, send_lock, recv_rock)
+        self.queue_manager = QueueManager(plc_cmd_que_list, plc_cmd_thred_lock, work_cmd_que_list, work_cmd_thred_lock, operation_que_list, operation_thread_lock)
         # 稼働状況保持用
         self.operation = (OPERATION_STOP, "投入部")
         # ループフラグ
@@ -90,9 +91,7 @@ class BackEndManager:
         print("BackEndManager.py run : end")
     
     def receive_ui(self):
-        command_type = self.queue_manager.recv_message()
-        if command_type:
-            print
+        command_type = self.queue_manager.recv_plc_command()
         # if command_type:
         #     print("BackEndManager.py run : command_type is ", command_type)
         if command_type == PLC:
@@ -109,10 +108,14 @@ class BackEndManager:
             self.app_end_command()
         elif command_type == ADSORPTION:
             self.plc_adsorption_command()
+        elif command_type == LIGHT:
+            self.plc_light_command()
         elif command_type == HOLD_DOWN:
             self.plc_hold_down_command()
         elif command_type == OPERATION_STATUS:
             self.send_operation_status()
+        elif command_type == WORK_STATUS:
+            self.send_work_status()
 
     def recv_plc(self):
         # PLCからの通信を受け取る
@@ -135,7 +138,7 @@ class BackEndManager:
     
     def plc_push_command(self):
         print("BackEndManager.py plc_push_command : Start")
-        key = self.queue_manager.until_recv_message()
+        key = self.queue_manager.recv_plc_command()
         if key:
             print("BackEndManager.py plc_push_command : key is ", key)
             if key in PUSH_COMMAND:
@@ -152,26 +155,34 @@ class BackEndManager:
             message = self.recv_message(result)
             time.sleep(1)
             message = ("動作完了", "動作確認")
-            self.queue_manager.send_message(message)
+            self.queue_manager.send_plc_command(message)
         else:
             print("BackEndManager.py plc_push_command : key is None")
         print("BackEndManager.py plc_push_command : End")
 
     def plc_hold_down_start_command(self):
-        key = self.queue_manager.until_recv_message()
-        if key:
+        key = self.queue_manager.recv_plc_command()
+        if key in HOLD_DOWN_COMMAND:
             command = HOLD_DOWN_COMMAND[key]
             # PLCに動作命令を出す
-            self.serial.send_set(command)
+            self.send_message(command)
             print("BackEndManager.py plc_hold_down_start_command : PLC command is ", command)
             # 動作を始めたことを表示部に送る
-            # print("BackEndManager.py plc_hold_down_start_command : Hold down is start")
-            self.queue_manager.send_message(SUCCESS)
+            print("BackEndManager.py plc_hold_down_start_command : Hold down is start")
+            self.queue_manager.send_plc_command(SUCCESS)
+            self.queue_manager.send_plc_command(self.serial.get_move_pos())
 
     def plc_hold_down_command(self):
         # PLCからの送信結果を受け取る
-        message = RUN
-        message = self.serial.process_serial_queue()
+        # if self.serial.rcv_queue.empty():
+        #     message = None
+        # else:
+        #     message = self.serial.rcv_queue.get()
+        message = self.serial.get_move_pos()
+        # print("BackEndManager.py plc_hold_down_command : message is ", message)
+        # 受信結果を判別
+        if message in motor_pos.MOTOR_POS_LIST:
+            self.queue_manager.send_plc_command(message)
         # # デバック用
         # if self.timer >= 8:
         #             self.timer = 0
@@ -179,19 +190,23 @@ class BackEndManager:
         # ｾﾝｻが反応しなければ
         # else:
         #     self.timer += 1
-        if message == FINISH:
-            self.queue_manager.send_message(message)
-        elif self.queue_manager.send_que.empty():
-            self.queue_manager.send_message(message)
+        # if message == FINISH:
+        #     self.queue_manager.send_message(message)
+        # elif self.queue_manager.send_que.empty():
+        #     self.queue_manager.send_message(message)
 
     def plc_hold_down_end_command(self):
         # PLCに動作終了命令を出す
-        self.serial.send_set(HOLD_DOWN_COMMAND[HOLD_END])
+        # self.send_message(HOLD_DOWN_COMMAND[HOLD_END])
+        self.send_message(("移動用モータ停止コマンド", "移載部"))
         print("BackEndManager.py plc_hold_down_end_command : Hold down is end.")
-        self.queue_manager.send_message(SUCCESS)
+        pos = self.serial.get_move_pos()
+        # self.queue_manager.send_plc_command(pos)
+        # 動作終了を表示部に送る
+        self.queue_manager.send_plc_command(SUCCESS)
 
     def plc_adsorption_command(self):
-        message = self.queue_manager.until_recv_message()
+        message = self.queue_manager.recv_plc_command()
         print("BackEndManager.py plc_adsorption_command : message is ", message)
         cmd_key = ADSORPTION_COMMAND[message]
         # コマンドをPLCに送信
@@ -201,7 +216,20 @@ class BackEndManager:
         result = ADSORPTION_RESULT[message]
         self.recv_message(result)
         
-        self.queue_manager.send_message(SUCCESS)
+        self.queue_manager.send_plc_command(SUCCESS)
+    
+    def plc_light_command(self):
+        message = self.queue_manager.recv_plc_command()
+        print("BackEndManager.py plc_light_command : message is ", message)
+        cmd_key = LIGHT_COMMAND[message]
+        # コマンドをPLCに送信
+        print("BackEndManager.py plc_light_command : cmd_key is ", cmd_key)
+        self.send_message(cmd_key)
+        # 実行結果を受けとる
+        result = LIGHT_RESULT[message]
+        self.recv_message(result)
+        
+        self.queue_manager.send_plc_command(SUCCESS)
 
     def password_command(self):
         new_password = self.queue_manager.until_recv_message()
@@ -213,7 +241,7 @@ class BackEndManager:
 
     def app_end_command(self):
         self.running = False
-        self.queue_manager.send_message(APP_END)
+        self.queue_manager.send_plc_command(APP_END)
     
     def db_reset_command(self):
         # データベース初期化処理を記述
@@ -230,10 +258,17 @@ class BackEndManager:
         self.queue_manager.send_message(SUCCESS)
     
     def send_operation_status(self):
-        self.queue_manager.send_message(self.operation)
+        self.queue_manager.send_operation_command(self.operation)
         # デバック用
         # self.op_flg = True
         # self.queue_manager.send_message([self.operation, "投入部"])
+    
+    def send_work_status(self):
+        in_work = self.serial.in_work
+        out_work = self.serial.out_work
+        if in_work or out_work:
+            self.queue_manager.send_work_command([in_work, out_work])
+
 
     def create_csv(self):
         with open(CSV_FILE_PATH, "w") as f:

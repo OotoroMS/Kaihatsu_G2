@@ -63,7 +63,9 @@ class PLCCommunicator(SerialCommunicator):
         data, status = super().serial_read()  # シリアルポートからデータを受信
         if status == OperationStatus.FAILURE:
             return data, status
+        print("PLCCommunicator.py read data is ", data, " status is ", status)
         rcv_data, status = self.compare_and_process(data)  # 受信データを判別して処理
+        print("PLCCommunicator.py read rcv_data is ", rcv_data, " status is ", status)
         return rcv_data, status
 
     # 受信データの長さ確認
@@ -72,7 +74,7 @@ class PLCCommunicator(SerialCommunicator):
         返値: OperationStatus.SUCCESS
     """
     def valid_data(self, data: bytes) -> OperationStatus:
-        if len(data) < 1:  # 受信データの長さが2未満の場合
+        if len(data) < 1:  # 受信データの長さが2未満の場合]
             self.logger.error(f"受信データの長さが足りません")
             return OperationStatus.FAILURE
         return OperationStatus.SUCCESS

@@ -24,7 +24,7 @@ def main():
     with open(serial_settings_path, "r") as f:
         j_data = json.load(f)
         SERIAL_PARAMS_GUI["port"] = j_data["port"]
-        SERIAL_PARAMS_GUI["baudrate"] = j_data["baudrate"]
+        SERIAL_PARAMS_GUI["baudrate"] = j_data["baudRate"]
         SERIAL_PARAMS_GUI["timeout"] = j_data["timeout"]
 
     # メインループ

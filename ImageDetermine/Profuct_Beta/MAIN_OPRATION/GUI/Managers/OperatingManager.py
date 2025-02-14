@@ -5,7 +5,10 @@ import SERIAL.serial_gate
 from MAIN_OPRATION.GUI.Constants.operation_status           import *
 from MAIN_OPRATION.GUI.Constants.opratingmanager_constant   import *
 from MAIN_OPRATION.GUI.Constants.file_path                  import *
-from MEINTENANCE.GUI.constants.popup_name                   import *
+from MAIN_OPRATION.GUI.Constants.popup_name                 import *
+import MAIN_OPRATION.GUI.Constants.active_text              as active_text
+import MAIN_OPRATION.GUI.Constants.error_text               as error_text
+import MAIN_OPRATION.GUI.Constants.stop_text                as stop_text
 
 class OperatingManager:
     def __init__(self, screen : pygame.Surface, serial : SERIAL.serial_gate.SerialGate) -> None:
@@ -16,39 +19,40 @@ class OperatingManager:
         # 稼働状況保持変数
         self.oprating_status = b'0'
         self.oprating_text   = OPERATION_STOP
+        self.oprating_type   = OPERATION_STOP   
         # 表示領域生成
         self.rect = pygame.rect.Rect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT)
         # 表示フォント
         self.font = pygame.font.Font(FONT, FONT_SIZE)
-    
+        # デバック用
+        self.old = self.oprating_status
+
     def receive_operating_status(self):
-        tmp_getdata = self.serial.get_receive_data()
-        # bytes型のデータをint型に変換
-        if tmp_getdata != None:
-            tmp_int_converted_data = int.from_bytes(tmp_getdata, "big")
-        else:
-            print("OperatingManager.py receive_operating_status : 受信データなし")
+        self.oprating_status = self.serial.get_receive_data()
+        if self.old != self.oprating_status:
+            self.old = self.oprating_status
+            # print("OperatingManager.py receive_operating_status : self.oprating_status = ", self.oprating_status)
 
-        # 変換したintデータをリストの要素数指定に使用し、文字列に変換
-
-    
     def status_check(self):
         if self.oprating_status:
-            if self.oprating_status == STOP_STATUS:
-                self.oprating_text = OPERATION_STOP
+            if self.oprating_status in STOP_STATUS:
+                self.oprating_text = stop_text.STOP_TEXT_LIST[self.oprating_status]
+                self.oprating_type = OPERATION_STOP
                 return True
             elif self.oprating_status in ERROR_STATUS:
-                self.oprating_text = OPERATION_ERROR
+                self.oprating_text = error_text.ERROR_TEXT_LIST[self.oprating_status]
+                self.oprating_type = OPERATION_ERROR
                 return True
             elif self.oprating_status in ACTIVE_STATUS:
-                self.oprating_text = OPERATION_ACTIVE
+                self.oprating_text = active_text.ACTIVE_TEXT[self.oprating_status]
+                self.oprating_type = OPERATION_ACTIVE
                 return True
         return True
     
     def draw(self):
         try:
             veiw_status = self.font.render(self.oprating_text, True, BLACK)
-            pygame.draw.rect(self.screen, BACK_COROR[self.oprating_text], self.rect)    # 表示領域
+            pygame.draw.rect(self.screen, BACK_COROR[self.oprating_type], self.rect)    # 表示領域
             pygame.draw.rect(self.screen, BLACK,                          self.rect, 1) # 外枠  
             veiw_xy = veiw_status.get_rect(center=self.rect.center)
             self.screen.blit(veiw_status, veiw_xy)

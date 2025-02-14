@@ -4,6 +4,7 @@ from pygame.event import Event
 from MEINTENANCE.CONSTANTS.command_type     import *
 from MEINTENANCE.CONSTANTS.command          import *
 from MEINTENANCE.CONSTANTS.serial_result    import *
+import MEINTENANCE.CONSTANTS.move_moter_pos as MOVE_MOTOR_POS
 # 定数
 from MEINTENANCE.GUI.constants.screen_configs.move_config   import *
 from MEINTENANCE.GUI.constants.button_result                import *
@@ -25,7 +26,10 @@ class MoveScreen(BaseScreen):
         self.setting_lamps()
         self.move_lamp_point = 1
         self.show_adsorption = BUTTON_ON
-    
+        self.in_work  = b'\xd0\n'
+        self.out_work = b'\xce\n'
+        self.move_pos = None
+
     def setting_buttons(self):
         self.buttons = [
             Button(self.screen, **BOTTON_BACK_STATUS,          func=self.back)
@@ -71,6 +75,7 @@ class MoveScreen(BaseScreen):
     def draw(self):
         super().draw()
         self.draw_lamps()
+        
     
     def draw_buttons(self):
         super().draw_buttons()
@@ -83,6 +88,7 @@ class MoveScreen(BaseScreen):
     def draw_lamps(self):
         for lamp in self.motor_lamps:
             lamp.draw()
+        self.work_lamp_update()
         for lamp in self.work_lamps:
             lamp.draw()
     
@@ -104,7 +110,6 @@ class MoveScreen(BaseScreen):
             result, normal = button.is_pressed(event)
             if normal:
                 return result, normal
-            cnt += 1
         result, normal = self.absorption_buttons[self.show_adsorption].is_clicked(event)
         return result, normal
 
@@ -130,35 +135,64 @@ class MoveScreen(BaseScreen):
             self.draw_buttons()
             pygame.display.update()
 
-    def work_lamp_update(self, key):
-        if key in WORK_RESULT.keys():
-            lump_index = WORK_RESULT[key]
-            for i in range(len(self.work_lamps)):
-                if i == lump_index:
-                    self.work_lamps[i].update_color(GREEN)
-                else:
-                    self.work_lamps[i].update_color(GRAY)
-        else:
-            for lamp in self.work_lamps:
-                lamp.update_color(GRAY)
+    def work_lamp_update(self):
+        if self.in_work == IN_WORK_ON_STAUTS:
+            self.work_lamps[0].update_color(GREEN)
+        elif self.in_work == IN_WORK_OFF_STAUTS:
+            self.work_lamps[0].update_color(GRAY)
+        if self.out_work == OUT_WORK_ON_STAUTS:
+            self.work_lamps[1].update_color(GREEN)
+        elif self.out_work == OUT_WORK_OFF_STAUTS:
+            self.work_lamps[1].update_color(GRAY)
+        # if key in WORK_RESULT.keys():
+        #     lump_index = WORK_RESULT[key]
+        #     for i in range(len(self.work_lamps)):
+        #         if i == lump_index:
+        #             self.work_lamps[i].update_color(GREEN)
+        #         else:
+        #             self.work_lamps[i].update_color(GRAY)
+        # else:
+        #     for lamp in self.work_lamps:
+        #         lamp.update_color(GRAY)
+
+    def work_status_update(self, key : list):
+        if len(key) >= 2:
+            self.in_work  = key[0]
+            self.out_work = key[1]
+            # print("MoveScreen.py work_status_update : in_work is ", self.in_work)
+            # print("MoveScreen.py work_status_update : out_work is ", self.out_work)
+
 
     def move_lamp_update(self, opration : str, command : str):
         color = GRAY
-        if opration == RUN:
-            color = GREEN
-        if opration == FINISH:
-            color = YELLOW
-            if command == MOTOR_NOMAL and self.move_lamp_point < 5:
-                self.move_lamp_point += 1
-            elif command == MOTOR_REVERSE and self.move_lamp_point > 0:
-                self.move_lamp_point -= 1
-        if self.move_lamp_point <= 0 or self.move_lamp_point >= 5:
-            color = RED
-        for i in range(len(self.motor_lamps)):
-            if i == self.move_lamp_point:
-                self.motor_lamps[i].update_color(color)
+        if opration in MOVE_MOTOR_POS.MOTOR_POS_LIST:
+            move_pos = MOVE_MOTOR_POS.MOTOR_POS_LAMP_DICT[opration]
+            if move_pos == 0 or move_pos == 5:
+                color = RED
             else:
-                self.motor_lamps[i].update_color(GRAY)
+                color = GREEN
+            for i in range(len(self.motor_lamps)):
+                if i == move_pos:
+                    self.motor_lamps[i].update_color(color)
+                else:
+                    self.motor_lamps[i].update_color(GRAY)
+                
+        
+        # if opration == RUN:
+        #     color = GREEN
+        # if opration == FINISH:
+        #     color = YELLOW
+        #     if command == MOTOR_NOMAL and self.move_lamp_point < 5:
+        #         self.move_lamp_point += 1
+        #     elif command == MOTOR_REVERSE and self.move_lamp_point > 0:
+        #         self.move_lamp_point -= 1
+        # if self.move_lamp_point <= 0 or self.move_lamp_point >= 5:
+        #     color = RED
+        # for i in range(len(self.motor_lamps)):
+        #     if i == self.move_lamp_point:
+        #         self.motor_lamps[i].update_color(color)
+        #     else:
+        #         self.motor_lamps[i].update_color(GRAY)
         self.draw_lamps()
         pygame.display.update()
     

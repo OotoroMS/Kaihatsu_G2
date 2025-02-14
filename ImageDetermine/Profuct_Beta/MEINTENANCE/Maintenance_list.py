@@ -3,8 +3,8 @@ import threading
 import queue
 import time
 from SERIAL.manager.SerialUIBridge      import SerialUIBridge
-from MEINTENANCE.GUI.UIManager          import UIMabager
-from MEINTENANCE.BACK.BackEndManager    import BackEndManager
+from MEINTENANCE.GUI.ListUIManager          import UIMabager
+from MEINTENANCE.BACK.BackEndManager_list    import BackEndManager
 
 class SerialRead:
     def __init__(self, serial : SerialUIBridge):
@@ -27,18 +27,26 @@ class SerialRead:
 
 def Maintenance(prms : dict):
         # キュー
-        ui_backend_que  = queue.Queue()
-        backend_ui_que  = queue.Queue()
+        ui_backend_que      = queue.Queue() # PC-PLCの生成
+        backend_ui_que      = queue.Queue() # PLC-PCの生成
+        work_ui_backend_que = queue.Queue() # ワーク関係送信キューの生成
+        work_backend_ui_que = queue.Queue() # ワーク関係受信キューの生成
+        opretion_ui_backend_que = queue.Queue() # メンテナンス関係送信キューの生成
+        opretion_backend_ui_que = queue.Queue() # メンテナンス関係受信キューの生成
         ui_backend_lock = threading.Lock()
         backend_ui_lock = threading.Lock()
+        work_ui_backend_lock = threading.Lock()
+        work_backend_ui_lock = threading.Lock()
+        opretion_ui_backend_lock = threading.Lock()
+        opretion_backend_ui_lock = threading.Lock()
 
         UIBridge = SerialUIBridge(prms)
         # シリアル通信受信スレッド
         serial_read     = SerialRead(UIBridge)
         # GUI表示クラス
-        gui             = UIMabager(send_que=ui_backend_que, recv_que=backend_ui_que, send_lock=ui_backend_lock, recv_lock=backend_ui_lock)
+        gui             = UIMabager([ui_backend_que, backend_ui_que], [ui_backend_lock, backend_ui_lock], [work_ui_backend_que, work_backend_ui_que], [work_ui_backend_lock, work_backend_ui_lock], [opretion_ui_backend_que, opretion_backend_ui_que], [opretion_ui_backend_lock, opretion_backend_ui_lock])
         # バックエンド処理クラス
-        backendManager  = BackEndManager(send_que=backend_ui_que, recv_que=ui_backend_que, send_lock=backend_ui_lock, recv_rock=ui_backend_lock, serial=UIBridge)
+        backendManager  = BackEndManager([backend_ui_que, ui_backend_que], [backend_ui_lock, ui_backend_lock], [work_backend_ui_que, work_ui_backend_que], [work_backend_ui_lock, work_ui_backend_lock], [opretion_backend_ui_que, opretion_ui_backend_que], [opretion_backend_ui_lock, opretion_ui_backend_lock], serial=UIBridge)
         # バックグラウンドスレッド生成
         back_thread     = threading.Thread(target=backendManager.run)
         # シリアル通信受信スレッド生成

@@ -9,21 +9,39 @@ from typing import Optional, Tuple
 from SERIAL.manager.plc_communicator import PLCCommunicator
 from SERIAL.manager.dict_manager     import DictManager
 from SERIAL.constant.Status  import OperationStatus, DictStatus
-
+from SERIAL.constant.Work_status import *
+import MEINTENANCE.CONSTANTS.move_moter_pos as MOVE_MOTOR_POS
 class SerialUIBridge(PLCCommunicator):
     def __init__(self, prams: dict):
         super().__init__(prams)
         self.rcv_queue = Queue()
         self.send_queue = Queue()
         self.dict = DictManager()
+        # ワーク状態
+        self.in_work  = b'\xd0\n'
+        self.out_work = b'\xce\n'
+        self.move_pos = None
 
     def read_loop(self):
         # データ受信
-        data, status = super().read()
+        data, status = super().serial_read()
         # 受信成功
         if status == OperationStatus.SUCCESS:
-            # キューに値を入れる
-            self.rcv_queue.put(data)
+            if data == IN_WORK_ON_STAUTS:
+                self.in_work = data
+            elif data == IN_WORK_OFF_STAUTS:
+                self.in_work = data
+            if data == OUT_WORK_ON_STAUTS:
+                self.out_work = data
+            elif data == OUT_WORK_OFF_STAUTS:
+                self.out_work = data
+            elif data in MOVE_MOTOR_POS.MOTOR_POS_LIST:
+                self.move_pos = data
+            else:
+                # キューに値を入れる
+                self.rcv_queue.put(data)
+                # print("SerialUIBridge.py read_loop data set")
+            print("SerialUIBridge.py read_loop data is ", data)
     
     # キューの中身があれば変換して取り出し
     def process_serial_queue(self):
@@ -31,6 +49,8 @@ class SerialUIBridge(PLCCommunicator):
             return None, OperationStatus.FAILURE
         else:
             data = self.rcv_queue.get()
+            # print("SerialUIBridge.py process_serial_queue data is ", data)
+            
             # 辞書を使用して変換
             msg, status = self.dict.get_message(data)
             if status == OperationStatus.SUCCESS:
@@ -56,8 +76,13 @@ class SerialUIBridge(PLCCommunicator):
         cmd,status = self.dict.list_to_byte(data)
         if status == OperationStatus.FAILURE:
             return None
+        # print("SerialUIBridge.py send_set cmd is ", cmd)
         super().send(cmd)
-
+    
+    def get_move_pos(self):
+        move_pos = self.move_pos
+        # self.move_pos = None
+        return move_pos
 
 if __name__ == '__main__':
     serial_params1 = {

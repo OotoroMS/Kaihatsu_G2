@@ -1,5 +1,5 @@
 # 画像保存フォルダまでのファイルパス
-IMAGE_FILE_PATH  = "MEINTENANCE\\GUI\\images\\"
+IMAGE_FILE_PATH  = "UI試作_Re\\OPTION\\MEINTENANCE\\GUI\\images\\"
 # ボタン保存フォルダのファイルパス
 BUTTON_FILE_PATH = IMAGE_FILE_PATH + "buttons\\"
 # タイトル保存フォルダのファイルパス

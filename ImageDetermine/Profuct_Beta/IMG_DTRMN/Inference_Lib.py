@@ -116,7 +116,7 @@ class ImgDtrmn_Lib:
         print(f"推論後の形状: {infered_img.shape}, 入力画像の形状: {inpt_img_flat.shape}")
 
         # MAEの計算
-        mae = np.mean(np.abs(infered_img - inpt_img_flat[:infered_img.size]))
+        mae = np.mean(np.abs(infered_img - inpt_img_flat))
 
         # 推論画像とMSEを返す
         return mae, infered_img

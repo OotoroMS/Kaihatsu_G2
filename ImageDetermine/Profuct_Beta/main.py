@@ -1,7 +1,7 @@
 import pygame
 import serial
-import MEINTENANCE.Maintenance
-import MAIN_OPRATION.MainOpration
+import MEINTENANCE.Maintenance_list as MEINTENANCE
+import MAIN_OPRATION.MainOpration 
 MAIN      = "main"
 OPERATION = "operation"
 
@@ -15,9 +15,11 @@ SERIAL_PARAMS_GUI = {
 
 def main():
     mode = MAIN
+    # mode = OPERATION
     loop = True
     while loop:
         if mode == MAIN:
+            print("main")
             result = MAIN_OPRATION.MainOpration.MainOpration(SERIAL_PARAMS_GUI)
             if result == OPERATION:
                 mode = OPERATION
@@ -25,7 +27,8 @@ def main():
                 loop = False
         elif mode == OPERATION:
             # メンテナンス動作
-            MEINTENANCE.Maintenance.Maintenance(SERIAL_PARAMS_GUI)
+            # MEINTENANCE.Maintenance.Maintenance(SERIAL_PARAMS_GUI)
+            MEINTENANCE.Maintenance(SERIAL_PARAMS_GUI)
             mode = MAIN
 
 if __name__ == "__main__":
