@@ -17,8 +17,6 @@ class Cmr_Lib:
             print("!ERR! フレームの取得に失敗しました。")
             return None
         
-        print(frame.shape)  # デバッグ用：画像の形状を表示
-        
         if frame.shape[2] == 3:
             # BGRの場合
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

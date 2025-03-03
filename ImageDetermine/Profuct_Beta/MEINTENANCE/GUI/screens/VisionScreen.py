@@ -47,11 +47,12 @@ class VitisonScreen(BaseScreen):
             result, normal = self.lamp_buttons[self.lamp_mode].is_clicked(event)
             # print("VisionScreen.py class:VisionScreen def:cxlick_event text: self.lamp_mode = ", self.lamp_mode)
             if normal:
+                print("VisionScreen.py class:VisionScreen def:cxlick_event text: result = ", result)
                 if self.lamp_mode == OFF:
                     self.lamp_mode = ON
                 else:
                     self.lamp_mode = OFF
-                # return result, normal
+                return result, normal
         return result, normal
 
     # 画像の設定

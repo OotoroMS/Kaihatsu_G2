@@ -53,6 +53,9 @@ class OperatingManager:
         elif self.operating_status[:3] == OPERATION_ERROR:
             self.text = OPERATION_ERROR
             return True
+        elif self.operating_status == "非常停止中":
+            self.text = OPERATION_ERROR
+            return True
         return False
     
     # 描画
@@ -83,8 +86,8 @@ class OperatingManager:
     def foward_error(self):
         # デバック用
         if self.operating_status[:3] == OPERATION_ERROR:
-            error = [self.operating_status + "001", self.plase]
-            # error = [self.operating_status, self.plase]
+            # error = [self.operating_status + "001", self.plase]
+            error = [self.operating_status, self.plase]
             return True, ERROR_POPUP, error
         else:
             return False, None, None

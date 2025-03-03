@@ -10,6 +10,7 @@ PASSWORD            = "PASSWORD"
 DB_RESET            = "DB_RESET"
 LIGHT              = "LIGHT"
 PLC                 = "plc"
+STOP_RESET         = "STOP_RESET"
 
 # PLC->PCの処理識別用
 PLC_PC_MESSAGE = "plc_pc_message"

@@ -1,21 +1,20 @@
 import pygame
 from typing import Tuple, Optional, List
-# ベースクラス
 from MAIN_OPRATION.GUI.Popups.BasePopup import BasePopup
 # 定数
-from MAIN_OPRATION.GUI.Constants.file_path  import *
-from MAIN_OPRATION.GUI.Constants.popup_name import *
-from MAIN_OPRATION.GUI.Constants.color      import *
-from MAIN_OPRATION.GUI.Constants.popup_text import *
-from MAIN_OPRATION.GUI.Constants.normal     import *
+import MEINTENANCE.GUI.constants.file_path  as file_path
+import MEINTENANCE.GUI.constants.popup_name as popup_name
+import MEINTENANCE.GUI.constants.color      as color
+import MEINTENANCE.GUI.constants.popup_text as popup_text
 # 部品
-from MAIN_OPRATION.GUI.Parts.Button         import Button
-from MAIN_OPRATION.GUI.Parts.Picture        import Picture
+import MAIN_OPRATION.GUI.Parts.Button         as Button
+import MAIN_OPRATION.GUI.Parts.Picture        as Picture
 
 ERROR_IMG = {    
     "size"       : (380, 280),
-    "image_path" : EXPTXT_FILE_PATH + "error.png"
+    "image_path" : file_path.EXP_FILE_PATH + "exptxt_error.png"
 }
+BACK_BOTTON_FILE_PATH = file_path.BUTTON_FILE_PATH + "button_back.png"
 
 class ErrorPopup(BasePopup):
     def __init__(self, screen: pygame.Surface, text_index: str) -> None:
@@ -28,18 +27,18 @@ class ErrorPopup(BasePopup):
     # テキストを生成
     def setting_text(self, text_index: str) -> None:
         self.view_texts: List[pygame.Surface] = []  # view_texts の型を明確に指定
-        if text_index in POPUP_TEXT.keys():
+        if text_index in popup_text.POPUP_TEXT.keys():
             # 表示用テキストを生成
             self.view_texts = [
-                self.text_font.render(POPUP_TEXT[text_index], True, WHITE),
-                self.text_font.render(self.code, True, WHITE),
-                self.text_font.render(self.location, True, WHITE)
+                self.text_font.render(popup_text.POPUP_TEXT[text_index], True, color.WHITE),
+                self.text_font.render(self.code, True, color.WHITE),
+                self.text_font.render(self.location, True, color.WHITE)
             ]
 
     def view_images(self, coordinate: Optional[List[int]] = None) -> None:
         if coordinate is None:
             coordinate = self.img_coordinate()
-        self.view_img: Picture = Picture(self.screen, coordinate=coordinate, **ERROR_IMG)
+        self.view_img: Picture.Picture = Picture.Picture(self.screen, coordinate=coordinate, **ERROR_IMG)
 
     # ボタンの設定
     def setting_buttons(self) -> None:
@@ -47,8 +46,8 @@ class ErrorPopup(BasePopup):
         button_height: int = self.height // 4
         button_x: int = self.pos_x + (self.width // 2) - (button_width // 2)
         button_y: int = self.height - (self.height // 4)
-        self.buttons: List[Button] = [
-            Button(self.screen, (button_x, button_y), (button_width, button_height), BACK_BOTTON_FILE_PATH, self.close_popup)
+        self.buttons: List[Button.Button] = [
+            Button.Button(self.screen, (button_x, button_y), (button_width, button_height), BACK_BOTTON_FILE_PATH, self.close_popup)
         ]
 
     def draw(self) -> None:
@@ -94,7 +93,7 @@ class ErrorPopup(BasePopup):
 
     # ボタンのイベント処理
     def close_popup(self) -> Tuple[bool, str]:
-        return True, OK
+        return True, True
 
     # エラーメッセージの内容を更新
     def error_update(self, error: Tuple[str, str]):
@@ -104,5 +103,5 @@ class ErrorPopup(BasePopup):
     
     # エラーメッセージを更新
     def text_update(self):
-        self.view_texts[1] = self.text_font.render(self.code, True, WHITE)
-        self.view_texts[2] = self.text_font.render(self.location, True, WHITE)
+        self.view_texts[1] = self.text_font.render(self.code,     True, color.WHITE)
+        self.view_texts[2] = self.text_font.render(self.location, True, color. WHITE)

@@ -39,7 +39,7 @@ class DataScreen(BaseScreen):
             return DATA_COUNT, OK
         else:
             print("POPUPに置き換えます。データベースにデータなし")
-            return None, NG
+            return NONE_DATA, OK
     
     # 動作確認画面に遷移
     def move_graph(self):

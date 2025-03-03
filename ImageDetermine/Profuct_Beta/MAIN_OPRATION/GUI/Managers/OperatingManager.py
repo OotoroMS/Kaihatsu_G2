@@ -19,7 +19,8 @@ class OperatingManager:
         # 稼働状況保持変数
         self.oprating_status = b'0'
         self.oprating_text   = OPERATION_STOP
-        self.oprating_type   = OPERATION_STOP   
+        self.oprating_type   = OPERATION_STOP
+        self.error = [None, None]
         # 表示領域生成
         self.rect = pygame.rect.Rect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT)
         # 表示フォント
@@ -40,7 +41,9 @@ class OperatingManager:
                 self.oprating_type = OPERATION_STOP
                 return True
             elif self.oprating_status in ERROR_STATUS:
-                self.oprating_text = error_text.ERROR_TEXT_LIST[self.oprating_status]
+                
+                self.error = error_text.ERROR_TEXT_LIST[self.oprating_status]
+                self.oprating_text = self.error[0]
                 self.oprating_type = OPERATION_ERROR
                 return True
             elif self.oprating_status in ACTIVE_STATUS:
@@ -75,6 +78,6 @@ class OperatingManager:
 
     def foward_error(self):
         if self.oprating_text == OPERATION_ERROR:
-            error = [self.oprating_text, "外観検査"]
+            error = self.error
             return True, ERROR_POPUP, error
         return False, None, [None, None]

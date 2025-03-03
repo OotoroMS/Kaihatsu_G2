@@ -113,7 +113,7 @@ class ImgDtrmn_Lib:
         inpt_img_flat = inpt_img.flatten()
 
         # 両者の形状を確認
-        print(f"推論後の形状: {infered_img.shape}, 入力画像の形状: {inpt_img_flat.shape}")
+        #print(f"推論後の形状: {infered_img.shape}, 入力画像の形状: {inpt_img_flat.shape}")
 
         # MAEの計算
         mae = np.mean(np.abs(infered_img - inpt_img_flat))
@@ -133,10 +133,10 @@ class ImgDtrmn_Lib:
         """
         # input_imgの形状をarrayに変換
         input_img = np.array(input_img)
-        print("input_imgの形状: ", input_img.shape)
+        #print("input_imgの形状: ", input_img.shape)
         # 推論画像の形状を元の画像に変換
         infered_img = infered_img.reshape(input_img.shape)
-        print("infered_imgの形状: ", infered_img.shape)
+        #print("infered_imgの形状: ", infered_img.shape)
 
         # 入力画像と推論画像の両方を1チャンネルに変換
         input_img = input_img.reshape((1,) + input_img.shape)

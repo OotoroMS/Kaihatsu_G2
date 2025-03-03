@@ -9,6 +9,7 @@ from MEINTENANCE.GUI.popups.TextPopup       import TextPopup
 from MEINTENANCE.GUI.popups.ResetPopup      import ResetPopup
 from MEINTENANCE.GUI.popups.BackPopup       import BackPopup
 from MEINTENANCE.GUI.popups.PassErrorPopup  import PassErrorPopup, RESET, RETRY
+from MEINTENANCE.GUI.popups.ErrorPopup      import ErrorPopup
 class PopupManager:
     def __init__(self, screen : pygame.Surface) -> None:
         self.screen = screen
@@ -18,7 +19,8 @@ class PopupManager:
             CHANGE_POPUP     : TextPopup(self.screen, CHANGE_POPUP),
             RPASS_POPUP      : TextPopup(self.screen, RPASS_POPUP),
             BACK_POPUP       : BackPopup(self.screen),
-            RETRY_POPUP      : PassErrorPopup(self.screen)
+            RETRY_POPUP      : PassErrorPopup(self.screen),
+            ERROR_POPUP      : ErrorPopup(self.screen, ERROR_POPUP)
         }
     
     def popup_draw(self, popup_name : str):
@@ -50,3 +52,7 @@ class PopupManager:
         if key in self.popups.keys():
             return True
         return False
+    
+    # # エラーポップの表示内容を更新
+    def set_error_popup(self, error : tuple[str, str]):
+        self.popups[ERROR_POPUP].error_update(error)

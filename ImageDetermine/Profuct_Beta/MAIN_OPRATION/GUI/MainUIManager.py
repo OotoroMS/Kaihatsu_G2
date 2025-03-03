@@ -54,7 +54,6 @@ class MainUIManager:
     # 画面表示イベント
     def screen_event(self, event_result, is_click):
         if is_click and event_result == PASS and self.operation_manager.oprating_type == operation_status.OPERATION_ACTIVE:
-            print("NOT MOVE")
             if self.popup_manager.popup_search(STOP_POPUP):
                 self.show_popup(STOP_POPUP)
         elif is_click and self.screen_manager.screen_search(event_result):
@@ -72,17 +71,26 @@ class MainUIManager:
         if is_click and self.popup_manager.popup_search(event_result):
             self.show_popup(event_result)
             return True
+        if self.operation_manager.oprating_type == operation_status.OPERATION_ERROR:
+            self.error = self.operation_manager.error
+            self.popup_manager.set_error_popup(self.error)
+            if self.popup_manager.popup_search(ERROR_POPUP):
+                self.show_popup(ERROR_POPUP)
+                return True
         return False
     
     # ポップアップ表示
     def show_popup(self, popup_name):
         while True:
+            self.operation_manager.status_receve_draw()
             self.popup_manager.popup_draw(popup_name)
             result, action = self.popup_manager.popup_event_check(popup_name)
-            
+            if result and self.operation_manager.oprating_type != operation_status.OPERATION_ERROR and popup_name == ERROR_POPUP:
+                break
             if result and popup_name == END_POPUP:
                 self.running = False
                 break
             elif action:
                 break
+            
             pygame.display.update()

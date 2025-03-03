@@ -4,5 +4,6 @@ POPUP_TEXT = {
     DB_RESET_POPUP  : "データベースを初期化しますか？",
     SUCCESS_POPUP   : "データベースを初期化しました。",
     RPASS_POPUP     : "パスワードを入力してください",
-    BACK_POPUP      : "メインメニューに戻りますか？"
+    BACK_POPUP      : "メインメニューに戻りますか？",
+    ERROR_POPUP     : "エラーが発生しました",
 }

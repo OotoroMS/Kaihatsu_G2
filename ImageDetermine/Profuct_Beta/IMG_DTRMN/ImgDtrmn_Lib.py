@@ -274,28 +274,29 @@ class Prometheus:
                     ##### 判別処理 #####
                     flg_judge = JUDGE["OK"]  # 判定結果
                     for i in range(ROTATE_COUNT):   # 回転回数分、推論処理を行う
-                        print(f"*DBG* {i+1}回目の判別処理を行います。")
+                        #print(f"*DBG* {i+1}回目の判別処理を行います。")
                         # 画像取得と回転
                         captured_image = self.getPctr_and_rotate(cmr, self.serial_data)
-                        print("*DBG* 画像取得と回転が完了しました。")
+                        #print("*DBG* 画像取得と回転が完了しました。")
                         # 表示用に画像を上書き保存
                         tmp = captured_image[int(captured_image.shape[0]*0.15):int(captured_image.shape[0]*0.85), :].copy()
                         cv2.imwrite('IMG_DTRMN/CaptureData/Current_Capture.jpg', tmp)
                         # 前処理
                         preprocessed_img = img_dtrmn.pre_processing(captured_image)
-                        print("*DBG* 前処理が完了しました。")
-                        print(f"前処理後の画像形状: {preprocessed_img.shape}")
+                        #print("*DBG* 前処理が完了しました。")
+                        #print(f"前処理後の画像形状: {preprocessed_img.shape}")
                         # 推論
                         mae = self.inference(img_dtrmn, preprocessed_img)
                         print(f"*DBG* 推論結果: {mae}")
 
                         # jsonに追加保存
                         # jsonファイルの読み込み
-                        with open('results/inference_test_0213.json', 'r') as f:
+                        with open('results/inference_test.json', 'r') as f:
                             json_data = json.load(f)
                         # 追加するデータ
+                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
                         add_data = {
-                            'timestamp': datetime.now().strftime('%Y%m%d_%H%M%S_%f'),
+                            'timestamp': timestamp,
                             'mae': float(mae),
                         }
                         # jsondataを配列に変換
@@ -305,38 +306,32 @@ class Prometheus:
                         # jsonファイルに書き込み
                         with open('results/inference_test.json', 'w') as f:
                             json.dump(json_data, f, indent=4)
-                        print("*DBG* JSONファイルに追加保存しました。")
+                        #print("*DBG* JSONファイルに追加保存しました。")
+
+                        # 不良検出時に使用するパスとファイル名
+                        # エラー回避用にここで変数宣言
+                        image_filename = f'defective_{timestamp}.bmp'
+                        image_path = os.path.join(defective_images_dir, image_filename)
 
                         if mae > THRESHOLD:    # 判定閾値を超えた場合、不良を検出
                             flg_judge = JUDGE["NG"]  # 不良を検出
-                            # 結果を保存
-                            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-                            image_filename = f'defective_{timestamp}.bmp'
-                            image_path = os.path.join(defective_images_dir, image_filename)
                             # 元の画像を保存
                             cv2.imwrite(image_path, captured_image)
-                            print(f"*DBG* 不良画像を保存しました: {image_path}")
+                            #print(f"*DBG* 不良画像を保存しました: {image_path}")
                             # 差分画像を生成して傷をマーク
                             scaled_img = img_dtrmn.robust_scale_image(infered_image)# infered_imageを二次元化して、差分画像を生成
-                            print("*DBG* 推論画像を二次元化しました。")
+                            #print("*DBG* 推論画像を二次元化しました。")
                             diff_image = img_dtrmn.mark_defects(preprocessed_img, scaled_img)
-                            print("*DBG* 差分画像を生成しました。")
+                            #print("*DBG* 差分画像を生成しました。")
                             diff_image_filename = f'diff_{timestamp}.jpg'
                             diff_image_path = os.path.join(diff_images_dir, diff_image_filename)
                             cv2.imwrite(diff_image_path, diff_image)
-                            print(f"*DBG* 差分画像を保存しました: {diff_image_path}")
+                            #print(f"*DBG* 差分画像を保存しました: {diff_image_path}")
                             # JSONファイルを作成
                             self.save_defective_info(timestamp, infered_accuracy, image_path, diff_image_path)
-                            #break  # 不良を検出したらループを抜ける
+                            break  # 不良を検出したらループを抜ける
 
                     # 判別結果送信
-                    #flg_judge = JUDGE["OK"]  # デバッグ用
-                    num_random = np.random.randint(0,10)
-                    if num_random % 8 == 0:
-                        flg_judge = JUDGE["NG"]
-                    else:
-                        flg_judge = JUDGE["OK"]
-
                     print(f"*DBG* 判別結果: {flg_judge}")
                     if flg_judge == JUDGE["OK"]:
                         self.serial_data.send(PLC_SND_CMD["FLAWLESS"])

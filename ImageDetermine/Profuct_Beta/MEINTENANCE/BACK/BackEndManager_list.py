@@ -3,6 +3,7 @@ import threading
 import csv
 # デバック用
 import time
+import datetime
 # シリアル通信
 from SERIAL.manager.SerialUIBridge  import SerialUIBridge
 import SERIAL.dict.plc_cmd as cmd
@@ -25,11 +26,13 @@ SUCCESS = "SUCCESS"
 PASS_QUERY = "UPDATE pass_num SET num = "
 DELETE_QUERY = "DELETE FROM %s"
 SELECT_QUERY = "SELECT * FROM %s"
+RESRT_ID = "DELETE FROM sqlite_sequence WHERE name = '%s'"
+DB_NOW_INSERT = "INSERT INTO db_now (day, good_vision, bad_vision) VALUES ('%s', 0, 0)"
+DB_NOW_ID_UPDATE = "UPDATE db_now SET id=0 WHERE id = 1"
 TARGETTABLE = [
     "db_now",
     "db_countlog",
-    "db_timelog",
-    "db_sizelog"
+    "db_timelog"
 ]
 
 class BackEndManager:
@@ -37,7 +40,7 @@ class BackEndManager:
         # キュー管理クラス
         self.queue_manager = QueueManager(plc_cmd_que_list, plc_cmd_thred_lock, work_cmd_que_list, work_cmd_thred_lock, operation_que_list, operation_thread_lock)
         # 稼働状況保持用
-        self.operation = (OPERATION_STOP, "投入部")
+        self.operation = [OPERATION_STOP, "投入部"]
         # ループフラグ
         self.running = True
         # シリアル通信クラス
@@ -112,10 +115,15 @@ class BackEndManager:
             self.plc_light_command()
         elif command_type == HOLD_DOWN:
             self.plc_hold_down_command()
-        elif command_type == OPERATION_STATUS:
-            self.send_operation_status()
-        elif command_type == WORK_STATUS:
+        elif command_type == STOP_RESET:
+            self.send_message(MEINTENANCE)
+            self.recv_message(MODE_MEINTENANCE)
+        if command_type == WORK_STATUS:
             self.send_work_status()
+        if command_type == OPERATION_STATUS:
+            self.send_operation_status()
+        
+        # self.operation = self.serial.operation_status
 
     def recv_plc(self):
         # PLCからの通信を受け取る
@@ -232,12 +240,12 @@ class BackEndManager:
         self.queue_manager.send_plc_command(SUCCESS)
 
     def password_command(self):
-        new_password = self.queue_manager.until_recv_message()
+        new_password = self.queue_manager.recv_plc_command()
         if new_password:
             query = PASS_QUERY + str(new_password)
             self.db.db_query_execution(query=query)
             # print("new password is ", new_password)
-            self.queue_manager.send_message(SUCCESS)
+            self.queue_manager.send_plc_command(SUCCESS)
 
     def app_end_command(self):
         self.running = False
@@ -248,17 +256,24 @@ class BackEndManager:
         self.create_csv()
         for table in TARGETTABLE:
             delete_query = DELETE_QUERY % table
+            reset_query = RESRT_ID % table
             print(delete_query)
             # print("変更前")
             # self.db.table_data_list_display(table_name=table)
-            # self.db.db_query_execution(query=delete_query)
+            self.db.db_query_execution(query=delete_query)
+            self.db.db_query_execution(query=reset_query)
             # print("変更後")
             # self.db.table_data_list_display(table_name=table)
         time.sleep(2)
-        self.queue_manager.send_message(SUCCESS)
+        day = datetime.datetime.today()
+        date = day.date()
+        insert = DB_NOW_INSERT % str(date)
+        self.db.db_query_execution(query=insert)
+        self.db.db_query_execution(query=DB_NOW_ID_UPDATE)
+        self.queue_manager.send_plc_command(SUCCESS)
     
     def send_operation_status(self):
-        self.queue_manager.send_operation_command(self.operation)
+        self.queue_manager.send_operation_command(self.serial.operation_status)
         # デバック用
         # self.op_flg = True
         # self.queue_manager.send_message([self.operation, "投入部"])

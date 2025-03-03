@@ -16,6 +16,8 @@ from MEINTENANCE.GUI.managers.ScreenManager     import ScreenManager
 from MEINTENANCE.GUI.managers.PopupManager      import PopupManager
 from MEINTENANCE.QUEUE.QueueManager_list        import QueueManager
 
+import MEINTENANCE.CONSTANTS.error_text as ERROR_TEXT
+import MEINTENANCE.CONSTANTS.stop_text as STOP_TEXT
 class UIMabager:
     def __init__(self, plc_cmd_que_list : list, plc_cmd_thred_lock : list, work_cmd_que_list : list, work_cmd_thred_lock: list, operation_que_list : list, operation_thread_lock : list) -> None:
         self.screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)
@@ -36,7 +38,10 @@ class UIMabager:
         self.operation_status = ["停止中", "プログラムに問題があります"]
         self.work_status = [b'\xcd', b'\xd0']
         self.move_log = None
-    
+        self.operation = b'\xfd\n'
+        self.popup_flg = None
+        self.popup_name = ERROR_POPUP
+
     def run(self):
         while self.running:
             self.get_opration_stutus()
@@ -46,6 +51,9 @@ class UIMabager:
             self.operation_manager.status_receve_draw(self.operation_status)
             if draw_result:
                 self.check_event()
+            if self.popup_flg:
+                self.popup_manager.set_error_popup(self.operation_status)
+                self.show_popup(self.popup_name)
             # 画面更新   
             pygame.display.update()
             self.clock.tick(FPS)
@@ -70,10 +78,16 @@ class UIMabager:
     # ポップアップ表示
     def show_popup(self, popup_name):
         while True:
+            self.get_opration_stutus()
+            self.operation_manager.status_receve_draw(self.operation_status)
             self.popup_manager.popup_draw(popup_name)
             result, action = self.popup_manager.popup_event_check(popup_name)
             if result == DB_RESET:
                 self.db_reset()
+                break
+            elif result and popup_name == ERROR_POPUP and self.operation_status[0] != "非常停止中":
+                self.queue_manager.send_plc_command(STOP_RESET)
+                self.popup_flg = False
                 break
             elif result == END:
                 self.queue_manager.send_plc_command(APP_END)
@@ -179,8 +193,8 @@ class UIMabager:
 
     # データベース初期化
     def db_reset(self):
-        self.queue_manager.send_message(DB_RESET)
-        result = self.queue_manager.until_recv_message()
+        self.queue_manager.send_plc_command(DB_RESET)
+        result = self.queue_manager.recv_plc_command()
         if result == SUCCESS:
             while True:
                 self.popup_manager.popup_draw(SUCCESS_POPUP)
@@ -204,6 +218,14 @@ class UIMabager:
     # 稼働状況を取得し描画
     def get_opration_stutus(self):
         self.queue_manager.send_plc_command(OPERATION_STATUS)
+        result = self.queue_manager.recv_operation_command()
+        if result:
+            if result in STOP_TEXT.STOP_TEXT_LIST:
+                self.operation_status = STOP_TEXT.STOP_TEXT_LIST[result]
+            elif result in ERROR_TEXT.ERROR_TEXT_LIST:
+                self.operation_status = ERROR_TEXT.ERROR_TEXT_LIST[result]
+                self.popup_flg = True
+                self.popup_name = ERROR_POPUP
         # result = self.queue_manager.recv_operation_command()
         # if result:
         #     self.operation_status = result
