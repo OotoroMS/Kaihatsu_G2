@@ -11,6 +11,7 @@ from SERIAL.manager.dict_manager     import DictManager
 from SERIAL.constant.Status  import OperationStatus, DictStatus
 from SERIAL.constant.Work_status import *
 import MEINTENANCE.CONSTANTS.move_moter_pos as MOVE_MOTOR_POS
+import MEINTENANCE.CONSTANTS.operation_status as OPERATION_STATUS
 class SerialUIBridge(PLCCommunicator):
     def __init__(self, prams: dict):
         super().__init__(prams)
@@ -21,6 +22,7 @@ class SerialUIBridge(PLCCommunicator):
         self.in_work  = b'\xd0\n'
         self.out_work = b'\xce\n'
         self.move_pos = None
+        self.operation_status = b'\xfd\n'
 
     def read_loop(self):
         # データ受信
@@ -35,6 +37,8 @@ class SerialUIBridge(PLCCommunicator):
                 self.out_work = data
             elif data == OUT_WORK_OFF_STAUTS:
                 self.out_work = data
+            elif data in OPERATION_STATUS.OPERATION_ERROR_BYTES or data in OPERATION_STATUS.OPERATION_STOP_BYTES:
+                self.operation_status = data
             elif data in MOVE_MOTOR_POS.MOTOR_POS_LIST:
                 self.move_pos = data
             else:

@@ -36,7 +36,7 @@ def MainOpration(prams : dict):
 
     # GUI開始
     result = gui.run()
-    print("GUI Run")
+    # print("GUI Run")
     # 終了まで待機
     stop_event.set()
     serial_stop.set()
