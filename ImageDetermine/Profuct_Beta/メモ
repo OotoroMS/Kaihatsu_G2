@@ -61,4 +61,4 @@ BackEndManger.pyのrun()で受信、plc_push_command()等で送信を行って�
   L log_config.py : デバック時のログの設定を行うプログラムファイルだと思われる
   L type.check.py : 引数として渡された型が対象の型か確認するプログラムを記載したファイル
 
-6.main.py : 統括プログラム
+6.main.py : 統括プログラム。実際に実行する場合はこのプログラムを動かしてください。

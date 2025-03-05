@@ -1,0 +1,626 @@
+ Profuct_Bata
+│  main.bat
+│  main.py
+│  test.py
+│  tree.txt
+│  フォルダ構成
+│  メモ
+│  
+├─DATABASE
+│  │  create_database.py
+│  │  DB_option.db
+│  │  export.csv
+│  │  SQLCommunication.py
+│  │  
+│  └─__pycache__
+│          SQLCommunication.cpython-312.pyc
+│          
+├─IMG_DTRMN
+│  │  Cmr_Lib.py
+│  │  determine_config.json
+│  │  ImgDtrmn_Lib.py
+│  │  Inference_Lib.py
+│  │  Mtr_Sol_Test.py
+│  │  prompt.txt
+│  │  Sample2024.json
+│  │  SerialCommunicate.json
+│  │  
+│  ├─CaptureData
+│  │      Current_Capture.jpg
+│  │      
+│  ├─results
+│  │  ├─defective_images
+│  │  │      defective_20250121_153151_986932.png
+│  │  │      defective_20250121_153255_366252.png
+│  │  │      
+│  │  ├─diff_images
+│  │  │      diff_20250121_153151_986932.jpg
+│  │  │      diff_20250121_153255_366252.jpg
+│  │  │      
+│  │  └─json
+│  │          result_20250121_153151_986932.json
+│  │          result_20250121_153255_366252.json
+│  │          
+│  └─__pycache__
+│          Cmr_Lib.cpython-312.pyc
+│          ImgDtrmn_Lib.cpython-312.pyc
+│          Inference_Lib.cpython-312.pyc
+│          Prometheus.cpython-312.pyc
+│          
+├─MAIN_OPRATION
+│  │  MainOpration.py
+│  │  
+│  ├─GUI
+│  │  │  MainUIManager.py
+│  │  │  
+│  │  ├─Constants
+│  │  │  │  active_text.py
+│  │  │  │  base_constant.py
+│  │  │  │  color.py
+│  │  │  │  count_constant.py
+│  │  │  │  data_constant.py
+│  │  │  │  error_text.py
+│  │  │  │  file_path.py
+│  │  │  │  judge_result.py
+│  │  │  │  main_constant.py
+│  │  │  │  normal.py
+│  │  │  │  operation_status.py
+│  │  │  │  opratingmanager_constant.py
+│  │  │  │  pass_constant.py
+│  │  │  │  popup_message.py
+│  │  │  │  popup_name.py
+│  │  │  │  popup_text.py
+│  │  │  │  screen_name.py
+│  │  │  │  stop_text.py
+│  │  │  │  vision_constant.py
+│  │  │  │  worning_constant.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          base_constant.cpython-312.pyc
+│  │  │          color.cpython-312.pyc
+│  │  │          count_constant.cpython-312.pyc
+│  │  │          data_constant.cpython-312.pyc
+│  │  │          file_path.cpython-312.pyc
+│  │  │          judge_result.cpython-312.pyc
+│  │  │          main_constant.cpython-312.pyc
+│  │  │          normal.cpython-312.pyc
+│  │  │          operation_status.cpython-312.pyc
+│  │  │          opratingmanager_constant.cpython-312.pyc
+│  │  │          pass_constant.cpython-312.pyc
+│  │  │          popup_name.cpython-312.pyc
+│  │  │          popup_text.cpython-312.pyc
+│  │  │          screen_name.cpython-312.pyc
+│  │  │          vision_constant.cpython-312.pyc
+│  │  │          
+│  │  ├─Images
+│  │  │  ├─background
+│  │  │  │      base.jpg
+│  │  │  │      password.jpg
+│  │  │  │      
+│  │  │  ├─button
+│  │  │  │      button_0.png
+│  │  │  │      button_1.png
+│  │  │  │      button_2.png
+│  │  │  │      button_3.png
+│  │  │  │      button_4.png
+│  │  │  │      button_5.png
+│  │  │  │      button_6.png
+│  │  │  │      button_7.png
+│  │  │  │      button_8.png
+│  │  │  │      button_9.png
+│  │  │  │      button_adsorption.png
+│  │  │  │      button_back.png
+│  │  │  │      button_change.png
+│  │  │  │      button_clr.png
+│  │  │  │      button_count.png
+│  │  │  │      button_cylinder_down.png
+│  │  │  │      button_cylinder_up.png
+│  │  │  │      button_data.png
+│  │  │  │      button_dbreset.png
+│  │  │  │      button_down.png
+│  │  │  │      button_end.png
+│  │  │  │      button_ent.png
+│  │  │  │      button_error.png
+│  │  │  │      button_fulldown.png
+│  │  │  │      button_fullup.png
+│  │  │  │      button_motion.png
+│  │  │  │      button_motion_move.png
+│  │  │  │      button_motion_vision.png
+│  │  │  │      button_motor_nomal.png
+│  │  │  │      button_motor_reverse.png
+│  │  │  │      button_seven.png
+│  │  │  │      button_solenoid.png
+│  │  │  │      button_staping.png
+│  │  │  │      button_today.png
+│  │  │  │      button_up.png
+│  │  │  │      button_vision.png
+│  │  │  │      pic35.png
+│  │  │  │      
+│  │  │  ├─exptxt
+│  │  │  │      error.png
+│  │  │  │      exptxt_count.png
+│  │  │  │      exptxt_data.png
+│  │  │  │      exptxt_error.png
+│  │  │  │      exptxt_fail.png
+│  │  │  │      exptxt_lamp.png
+│  │  │  │      exptxt_motion.png
+│  │  │  │      exptxt_new_pass.png
+│  │  │  │      exptxt_retry_pass.png
+│  │  │  │      exptxt_rock.png
+│  │  │  │      exptxt_seven.png
+│  │  │  │      exptxt_target.png
+│  │  │  │      exptxt_today.png
+│  │  │  │      exptxt_vision.png
+│  │  │  │      exptxt_warning.png
+│  │  │  │      exptxt_work_in.png
+│  │  │  │      exptxt_work_out.png
+│  │  │  │      no_image.png
+│  │  │  │      pic75.png
+│  │  │  │      pic77.png
+│  │  │  │      
+│  │  │  ├─sample
+│  │  │  │      20240712_100033-02.jpg
+│  │  │  │      
+│  │  │  └─title
+│  │  │          title_change_pass.png
+│  │  │          title_count.png
+│  │  │          title_data.png
+│  │  │          title_main.png
+│  │  │          title_motion.png
+│  │  │          title_motion_move.png
+│  │  │          title_motion_vition.png
+│  │  │          title_pass.png
+│  │  │          title_vision.png
+│  │  │          
+│  │  ├─Managers
+│  │  │  │  OperatingManager.py
+│  │  │  │  PopupManager.py
+│  │  │  │  ScreenManager.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          OperatingManager.cpython-312.pyc
+│  │  │          PopupManager.cpython-312.pyc
+│  │  │          ScreenManager.cpython-312.pyc
+│  │  │          
+│  │  ├─Parts
+│  │  │  │  Background.py
+│  │  │  │  Blackout.py
+│  │  │  │  Button.py
+│  │  │  │  CaluclatePopup.py
+│  │  │  │  CountList.py
+│  │  │  │  DrawTable.py
+│  │  │  │  Picture.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          Background.cpython-312.pyc
+│  │  │          Blackout.cpython-312.pyc
+│  │  │          Button.cpython-312.pyc
+│  │  │          CaluclatePopup.cpython-312.pyc
+│  │  │          CountList.cpython-312.pyc
+│  │  │          DrawTable.cpython-312.pyc
+│  │  │          Picture.cpython-312.pyc
+│  │  │          
+│  │  ├─Popups
+│  │  │  │  BasePopup.py
+│  │  │  │  EndPopup.py
+│  │  │  │  ErrorPopup.py
+│  │  │  │  PassPopup.py
+│  │  │  │  ResetPopup.py
+│  │  │  │  StopPopup.py
+│  │  │  │  TextPopup.py
+│  │  │  │  WarningPopup.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          BasePopup.cpython-312.pyc
+│  │  │          EndPopup.cpython-312.pyc
+│  │  │          ErrorPopup.cpython-312.pyc
+│  │  │          PassPopup.cpython-312.pyc
+│  │  │          ResetPopup.cpython-312.pyc
+│  │  │          TextPopup.cpython-312.pyc
+│  │  │          
+│  │  ├─Screens
+│  │  │  │  BaseScreen.py
+│  │  │  │  CountScreen.py
+│  │  │  │  DataScreen.py
+│  │  │  │  MainScreen.py
+│  │  │  │  PassScreen.py
+│  │  │  │  VisionScreen.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          BaseScreen.cpython-312.pyc
+│  │  │          CountScreen.cpython-312.pyc
+│  │  │          DataScreen.cpython-312.pyc
+│  │  │          MainScreen.cpython-312.pyc
+│  │  │          PassScreen.cpython-312.pyc
+│  │  │          VisionScreen.cpython-312.pyc
+│  │  │          
+│  │  └─__pycache__
+│  │          MainUIManager.cpython-312.pyc
+│  │          
+│  └─__pycache__
+│          MainOpration.cpython-312.pyc
+│          
+├─MEINTENANCE
+│  │  Maintenance.py
+│  │  Maintenance_list.py
+│  │  
+│  ├─BACK
+│  │  │  BackEndManager.py
+│  │  │  BackEndManager_list.py
+│  │  │  
+│  │  └─__pycache__
+│  │          BackEndManager.cpython-312.pyc
+│  │          
+│  ├─CONSTANTS
+│  │  │  command.py
+│  │  │  command_type.py
+│  │  │  error_text.py
+│  │  │  move_moter_pos.py
+│  │  │  operation_status.py
+│  │  │  pless_command.py
+│  │  │  que_index.py
+│  │  │  serial_result.py
+│  │  │  stop_text.py
+│  │  │  ui_plc_pc_command.py
+│  │  │  
+│  │  └─__pycache__
+│  │          command.cpython-312.pyc
+│  │          command_type.cpython-312.pyc
+│  │          operation_status.cpython-312.pyc
+│  │          pless_command.cpython-312.pyc
+│  │          serial_result.cpython-312.pyc
+│  │          
+│  ├─GUI
+│  │  │  ListUIManager.py
+│  │  │  UIManager.py
+│  │  │  
+│  │  ├─constants
+│  │  │  │  button_result.py
+│  │  │  │  color.py
+│  │  │  │  file_path.py
+│  │  │  │  popup_name.py
+│  │  │  │  popup_text.py
+│  │  │  │  screen_name.py
+│  │  │  │  UIManager_constant.py
+│  │  │  │  
+│  │  │  ├─popup_configs
+│  │  │  │  │  Back_config.py
+│  │  │  │  │  base_config.py
+│  │  │  │  │  Operation_config.py
+│  │  │  │  │  pass_error_config.py
+│  │  │  │  │  Reset_config.py
+│  │  │  │  │  
+│  │  │  │  └─__pycache__
+│  │  │  │          Back_config.cpython-311.pyc
+│  │  │  │          Back_config.cpython-312.pyc
+│  │  │  │          base_config.cpython-311.pyc
+│  │  │  │          base_config.cpython-312.pyc
+│  │  │  │          Operation_config.cpython-311.pyc
+│  │  │  │          Operation_config.cpython-312.pyc
+│  │  │  │          pass_error_config.cpython-311.pyc
+│  │  │  │          pass_error_config.cpython-312.pyc
+│  │  │  │          Reset_config.cpython-311.pyc
+│  │  │  │          Reset_config.cpython-312.pyc
+│  │  │  │          
+│  │  │  ├─screen_configs
+│  │  │  │  │  change_pass_config.py
+│  │  │  │  │  main_config.py
+│  │  │  │  │  move_config.py
+│  │  │  │  │  vision_config.py
+│  │  │  │  │  
+│  │  │  │  └─__pycache__
+│  │  │  │          change_pass_config.cpython-311.pyc
+│  │  │  │          change_pass_config.cpython-312.pyc
+│  │  │  │          main_config.cpython-311.pyc
+│  │  │  │          main_config.cpython-312.pyc
+│  │  │  │          move_config.cpython-311.pyc
+│  │  │  │          move_config.cpython-312.pyc
+│  │  │  │          vision_config.cpython-311.pyc
+│  │  │  │          vision_config.cpython-312.pyc
+│  │  │  │          
+│  │  │  └─__pycache__
+│  │  │          button_result.cpython-311.pyc
+│  │  │          button_result.cpython-312.pyc
+│  │  │          color.cpython-311.pyc
+│  │  │          color.cpython-312.pyc
+│  │  │          command.cpython-312.pyc
+│  │  │          file_path.cpython-311.pyc
+│  │  │          file_path.cpython-312.pyc
+│  │  │          popup_name.cpython-311.pyc
+│  │  │          popup_name.cpython-312.pyc
+│  │  │          popup_text.cpython-311.pyc
+│  │  │          popup_text.cpython-312.pyc
+│  │  │          screen_name.cpython-311.pyc
+│  │  │          screen_name.cpython-312.pyc
+│  │  │          serial_result.cpython-312.pyc
+│  │  │          UIManager_constant.cpython-311.pyc
+│  │  │          UIManager_constant.cpython-312.pyc
+│  │  │          
+│  │  ├─images
+│  │  │  ├─background
+│  │  │  │      base.jpg
+│  │  │  │      password.jpg
+│  │  │  │      
+│  │  │  ├─buttons
+│  │  │  │      button_0.png
+│  │  │  │      button_1.png
+│  │  │  │      button_2.png
+│  │  │  │      button_3.png
+│  │  │  │      button_4.png
+│  │  │  │      button_5.png
+│  │  │  │      button_6.png
+│  │  │  │      button_7.png
+│  │  │  │      button_8.png
+│  │  │  │      button_9.png
+│  │  │  │      button_adsorption.png
+│  │  │  │      button_adsorption_on_off.png
+│  │  │  │      button_back.png
+│  │  │  │      button_change.png
+│  │  │  │      button_clr.png
+│  │  │  │      button_cylinder_down.png
+│  │  │  │      button_cylinder_up.png
+│  │  │  │      button_dbreset.png
+│  │  │  │      button_ent.png
+│  │  │  │      button_light.png
+│  │  │  │      button_motor_nomal.png
+│  │  │  │      button_motor_reverse.png
+│  │  │  │      button_moving.png
+│  │  │  │      button_no.png
+│  │  │  │      button_solenoid.png
+│  │  │  │      button_staping.png
+│  │  │  │      button_vision.png
+│  │  │  │      button_yes.png
+│  │  │  │      _debag.png
+│  │  │  │      旧button_moving.png
+│  │  │  │      
+│  │  │  ├─exp
+│  │  │  │      exptxt_error.png
+│  │  │  │      exptxt_fail.png
+│  │  │  │      exptxt_lamp.png
+│  │  │  │      exptxt_new_pass.png
+│  │  │  │      exptxt_retry_pass.png
+│  │  │  │      exptxt_rock.png
+│  │  │  │      exptxt_target.png
+│  │  │  │      exptxt_work_in.png
+│  │  │  │      exptxt_work_out.png
+│  │  │  │      
+│  │  │  └─titles
+│  │  │          title_change_pass.png
+│  │  │          title_move.png
+│  │  │          title_select.png
+│  │  │          title_vition.png
+│  │  │          
+│  │  ├─managers
+│  │  │  │  OperatingManager.py
+│  │  │  │  PopupManager.py
+│  │  │  │  ScreenManager.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          OperatingManager.cpython-311.pyc
+│  │  │          OperatingManager.cpython-312.pyc
+│  │  │          PopupManager.cpython-311.pyc
+│  │  │          PopupManager.cpython-312.pyc
+│  │  │          QueueManager.cpython-312.pyc
+│  │  │          ScreenManager.cpython-311.pyc
+│  │  │          ScreenManager.cpython-312.pyc
+│  │  │          
+│  │  ├─parts
+│  │  │  │  Background.py
+│  │  │  │  Blackout.py
+│  │  │  │  Button.py
+│  │  │  │  ButtonAtLamp.py
+│  │  │  │  CaluclatePopup.py
+│  │  │  │  Lamp.py
+│  │  │  │  Picture.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          Background.cpython-311.pyc
+│  │  │          Background.cpython-312.pyc
+│  │  │          Blackout.cpython-311.pyc
+│  │  │          Blackout.cpython-312.pyc
+│  │  │          Button.cpython-311.pyc
+│  │  │          Button.cpython-312.pyc
+│  │  │          ButtonAtLamp.cpython-311.pyc
+│  │  │          ButtonAtLamp.cpython-312.pyc
+│  │  │          CaluclatePopup.cpython-311.pyc
+│  │  │          CaluclatePopup.cpython-312.pyc
+│  │  │          Lamp.cpython-311.pyc
+│  │  │          Lamp.cpython-312.pyc
+│  │  │          Picture.cpython-311.pyc
+│  │  │          Picture.cpython-312.pyc
+│  │  │          
+│  │  ├─popups
+│  │  │  │  BackPopup.py
+│  │  │  │  BasePopup.py
+│  │  │  │  ErrorPopup.py
+│  │  │  │  OperationPopup.py
+│  │  │  │  PassErrorPopup.py
+│  │  │  │  ResetPopup.py
+│  │  │  │  TextPopup.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          BackPopup.cpython-311.pyc
+│  │  │          BackPopup.cpython-312.pyc
+│  │  │          BasePopup.cpython-311.pyc
+│  │  │          BasePopup.cpython-312.pyc
+│  │  │          OperationPopup.cpython-311.pyc
+│  │  │          OperationPopup.cpython-312.pyc
+│  │  │          PassErrorPopup.cpython-311.pyc
+│  │  │          PassErrorPopup.cpython-312.pyc
+│  │  │          ResetPopup.cpython-311.pyc
+│  │  │          ResetPopup.cpython-312.pyc
+│  │  │          TextPopup.cpython-311.pyc
+│  │  │          TextPopup.cpython-312.pyc
+│  │  │          
+│  │  ├─screens
+│  │  │  │  BaseScreen.py
+│  │  │  │  ChangePassScreen.py
+│  │  │  │  MoveScreen.py
+│  │  │  │  SelectScreen.py
+│  │  │  │  VisionScreen.py
+│  │  │  │  
+│  │  │  └─__pycache__
+│  │  │          BaseScreen.cpython-311.pyc
+│  │  │          BaseScreen.cpython-312.pyc
+│  │  │          ChangePassScreen.cpython-311.pyc
+│  │  │          ChangePassScreen.cpython-312.pyc
+│  │  │          MainScreen.cpython-312.pyc
+│  │  │          MoveScreen.cpython-311.pyc
+│  │  │          MoveScreen.cpython-312.pyc
+│  │  │          SelectScreen.cpython-311.pyc
+│  │  │          SelectScreen.cpython-312.pyc
+│  │  │          VisionScreen.cpython-311.pyc
+│  │  │          VisionScreen.cpython-312.pyc
+│  │  │          
+│  │  └─__pycache__
+│  │          UIManager.cpython-312.pyc
+│  │          
+│  ├─QUEUE
+│  │  │  QueueManager.py
+│  │  │  QueueManager_list.py
+│  │  │  
+│  │  └─__pycache__
+│  │          QueueManager.cpython-312.pyc
+│  │          
+│  └─__pycache__
+│          Maintenance.cpython-312.pyc
+│          
+├─results
+│  │  benchmark.py
+│  │  defective_test.json
+│  │  flawless_test.json
+│  │  inference_test copy.json
+│  │  inference_test.json
+│  │  inference_test_0213.json
+│  │  visualize.py
+│  │  
+│  ├─defective_images
+│  │      defective_20250128_133242_675356.png
+│  │      defective_20250128_134521_122956.png
+│  │      defective_20250128_134539_178239.png
+│  │      defective_20250128_140159_264513.png
+│  │      defective_20250128_140217_136520.png
+│  │      defective_20250128_140234_990112.png
+│  │      defective_20250128_143642_147764.jpg
+│  │      defective_20250128_143700_045686.jpg
+│  │      defective_20250128_143717_853698.jpg
+│  │      defective_20250128_145453_701916.jpg
+│  │      defective_20250128_145511_713146.jpg
+│  │      defective_20250128_145622_161809.jpg
+│  │      defective_20250128_145939_537841.jpg
+│  │      defective_20250128_150530_994649.jpg
+│  │      Thumbs.db
+│  │      
+│  ├─diff_images
+│  │      diff_20250128_133242_675356.jpg
+│  │      diff_20250128_134521_122956.jpg
+│  │      diff_20250128_134539_178239.jpg
+│  │      diff_20250128_140159_264513.jpg
+│  │      diff_20250128_140217_136520.jpg
+│  │      diff_20250128_140234_990112.jpg
+│  │      diff_20250128_143642_147764.jpg
+│  │      diff_20250128_143700_045686.jpg
+│  │      diff_20250128_143717_853698.jpg
+│  │      diff_20250128_145453_701916.jpg
+│  │      diff_20250128_145511_713146.jpg
+│  │      diff_20250128_145622_161809.jpg
+│  │      diff_20250128_145939_537841.jpg
+│  │      diff_20250128_150530_994649.jpg
+│  │      
+│  └─json
+│          result_20250128_133242_675356.json
+│          result_20250128_134521_122956.json
+│          result_20250128_134539_178239.json
+│          result_20250128_140159_264513.json
+│          result_20250128_140217_136520.json
+│          result_20250128_140234_990112.json
+│          result_20250128_143642_147764.json
+│          result_20250128_143700_045686.json
+│          result_20250128_143717_853698.json
+│          result_20250128_145453_701916.json
+│          result_20250128_145511_713146.json
+│          result_20250128_145622_161809.json
+│          result_20250128_145939_537841.json
+│          result_20250128_150530_994649.json
+│          
+├─SERIAL
+│  │  serial_gate.py
+│  │  __init__.py
+│  │  
+│  ├─constant
+│  │  │  Format.py
+│  │  │  Status.py
+│  │  │  Work_status.py
+│  │  │  
+│  │  └─__pycache__
+│  │          Format.cpython-311.pyc
+│  │          Format.cpython-312.pyc
+│  │          Status.cpython-311.pyc
+│  │          Status.cpython-312.pyc
+│  │          
+│  ├─dict
+│  │  │  Dict.py
+│  │  │  error.py
+│  │  │  normal.py
+│  │  │  plc_cmd.py
+│  │  │  
+│  │  └─__pycache__
+│  │          error.cpython-311.pyc
+│  │          error.cpython-312.pyc
+│  │          normal.cpython-311.pyc
+│  │          normal.cpython-312.pyc
+│  │          plc_cmd.cpython-311.pyc
+│  │          plc_cmd.cpython-312.pyc
+│  │          
+│  ├─logs
+│  │      debug_log.txt
+│  │      error_log.txt
+│  │      
+│  ├─manager
+│  │  │  dict_manager.py
+│  │  │  plc_base_handler.py
+│  │  │  plc_communicator.py
+│  │  │  plc_signal_handler.py
+│  │  │  plc_Simulator.py
+│  │  │  SerialUIBridge.py
+│  │  │  serial_communicator.py
+│  │  │  __init__.py
+│  │  │  
+│  │  └─__pycache__
+│  │          dict_manager.cpython-311.pyc
+│  │          dict_manager.cpython-312.pyc
+│  │          plc_base_handler.cpython-312.pyc
+│  │          plc_communicator.cpython-311.pyc
+│  │          plc_communicator.cpython-312.pyc
+│  │          plc_Simulator.cpython-312.pyc
+│  │          SerialUIBridge.cpython-311.pyc
+│  │          SerialUIBridge.cpython-312.pyc
+│  │          serial_communicator.cpython-311.pyc
+│  │          serial_communicator.cpython-312.pyc
+│  │          __init__.cpython-311.pyc
+│  │          __init__.cpython-312.pyc
+│  │          
+│  ├─test
+│  │      test_plc.py
+│  │      test_serial_error.py
+│  │      test_serial_receive.py
+│  │      test_serial_send.py
+│  │      test_simulator.py
+│  │      
+│  └─__pycache__
+│          serial_gate.cpython-312.pyc
+│          __init__.cpython-312.pyc
+│          
+└─UTILS
+    │  log_config.py
+    │  type_check.py
+    │  __init__.py
+    │  
+    └─__pycache__
+            log_config.cpython-311.pyc
+            log_config.cpython-312.pyc
+            type_check.cpython-311.pyc
+            type_check.cpython-312.pyc
+            __init__.cpython-311.pyc
+            __init__.cpython-312.pyc
+            
